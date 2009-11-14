@@ -29,7 +29,9 @@ enum
     SPELL_CORRUPTED_MIND  = 29198,
     SPELL_POISON_AURA     = 29865,
     SPELL_INEVITABLE_DOOM = 29204,
-    SPELL_REMOVE_CURSE    = 30281
+    SPELL_REMOVE_CURSE    = 30281,
+
+    SPELL_FUNGAL_CREEP    = 29232
 };
 
 #define ADD_1X 2957.040
@@ -89,6 +91,12 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_LOATHEB, FAIL);
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+        if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO,0))
+            summoned->AI()->AttackStart(target);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -163,9 +171,59 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
+struct MANGOS_DLL_DECL npc_loatheb_sporesAI : public ScriptedAI
+{
+    npc_loatheb_sporesAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
+
+    uint32 DieDelay_Timer;
+
+    void Reset()
+    {
+        DieDelay_Timer = 0;
+    }
+
+    void DamageTaken(Unit* done_by, uint32 &damage)
+    {
+        if (damage > m_creature->GetHealth() && !DieDelay_Timer)
+        {
+            m_creature->CastSpell(m_creature, SPELL_FUNGAL_CREEP, true);
+            DieDelay_Timer = 500;
+        }
+        if (DieDelay_Timer)
+        {
+            damage = 0;
+            return;
+        }
+    }
+
+    void JustDied(Unit* Killer) {}
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (DieDelay_Timer)
+            if (DieDelay_Timer < diff)
+            {
+                m_creature->ForcedDespawn();
+                DieDelay_Timer = 0;
+            }else DieDelay_Timer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
 CreatureAI* GetAI_boss_loatheb(Creature* pCreature)
 {
     return new boss_loathebAI(pCreature);
+}
+CreatureAI* GetAI_npc_loatheb_spores(Creature* pCreature)
+{
+    return new npc_loatheb_sporesAI(pCreature);
 }
 
 void AddSC_boss_loatheb()
@@ -174,5 +232,10 @@ void AddSC_boss_loatheb()
     NewScript = new Script;
     NewScript->Name = "boss_loatheb";
     NewScript->GetAI = &GetAI_boss_loatheb;
+    NewScript->RegisterSelf();
+
+    NewScript = new Script;
+    NewScript->Name = "npc_loatheb_spores";
+    NewScript->GetAI = &GetAI_npc_loatheb_spores;
     NewScript->RegisterSelf();
 }

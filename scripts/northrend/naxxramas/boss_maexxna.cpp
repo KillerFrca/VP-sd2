@@ -64,12 +64,13 @@ struct MANGOS_DLL_DECL mob_webwrapAI : public ScriptedAI
         m_uiVictimGUID = 0;
     }
 
-    void SetVictim(Unit* pVictim)
+    void SetVictim(uint64 victim)
     {
-        if (pVictim)
+        if (victim)
         {
-            m_uiVictimGUID = pVictim->GetGUID();
-            pVictim->CastSpell(pVictim, SPELL_WEBWRAP, true);
+            m_uiVictimGUID = victim;
+            if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+                pVictim->CastSpell(pVictim, SPELL_WEBWRAP, true);
         }
     }
 
@@ -83,6 +84,11 @@ struct MANGOS_DLL_DECL mob_webwrapAI : public ScriptedAI
                     pVictim->RemoveAurasDueToSpell(SPELL_WEBWRAP);
             }
         }
+    }
+    void JustDied(Unit* Killer)
+    {
+        if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+            pVictim->RemoveAurasDueToSpell(SPELL_WEBWRAP);
     }
 
     void MoveInLineOfSight(Unit* pWho) { }
@@ -136,55 +142,35 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
             m_pInstance->SetData(TYPE_MAEXXNA, FAIL);
     }
 
-    void DoCastWebWrap()
+   void DoCastWebWrap()
     {
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
-        std::vector<Unit *> targets;
-
-        //This spell doesn't work if we only have 1 player on threat list
-        if (t_list.size() < 2)
-            return;
-
-        //begin + 1 , so we don't target the one with the highest threat
-        std::list<HostileReference *>::iterator itr = t_list.begin();
-        std::advance(itr, 1);
-
-        //store the threat list in a different container
-        for(; itr!= t_list.end(); ++itr)
+        Unit* pWrapped = NULL;
+        for(uint8 i = 0; i < 2; ++i)
         {
-            Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
-
-            //only on alive players
-            if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
-                targets.push_back(target);
-        }
-
-        //cut down to size if we have more than 3 targets
-        while(targets.size() > 3)
-            targets.erase(targets.begin()+rand()%targets.size());
-
-        int i = 0;
-
-        for(std::vector<Unit *>::iterator iter = targets.begin(); iter!= targets.end(); ++iter, ++i)
-        {
-            // Teleport the 3 targets to a location on the wall and summon a Web Wrap on them
-            switch(i)
+            float LocX, LocY, LocZ;
+            switch(rand()%3)
             {
                 case 0:
-                    DoTeleportPlayer((*iter), LOC_X1, LOC_Y1, LOC_Z1, (*iter)->GetOrientation());
-                    if (Creature* pWrap = m_creature->SummonCreature(16486, LOC_X1, LOC_Y1, LOC_Z1, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
-                        ((mob_webwrapAI*)pWrap->AI())->SetVictim((*iter));
+                    LocX = LOC_X1 + rand()%5; LocY = LOC_Y1 + rand()%5; LocZ = LOC_Z1 + 1;
                     break;
                 case 1:
-                    DoTeleportPlayer((*iter), LOC_X2, LOC_Y2, LOC_Z2, (*iter)->GetOrientation());
-                    if (Creature* pWrap = m_creature->SummonCreature(16486, LOC_X2, LOC_Y2, LOC_Z2, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
-                        ((mob_webwrapAI*)pWrap->AI())->SetVictim((*iter));
+                    LocX = LOC_X2 + rand()%5; LocY = LOC_Y2 + rand()%5; LocZ = LOC_Z2 + 1;
                     break;
                 case 2:
-                    DoTeleportPlayer((*iter), LOC_X3, LOC_Y3, LOC_Z3, (*iter)->GetOrientation());
-                    if (Creature* pWrap = m_creature->SummonCreature(16486, LOC_X3, LOC_Y3, LOC_Z3, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
-                        ((mob_webwrapAI*)pWrap->AI())->SetVictim((*iter));
+                    LocX = LOC_X3 + rand()%5; LocY = LOC_Y3 + rand()%5; LocZ = LOC_Z3 + 1;
                     break;
+            }
+
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+            {
+                if (pWrapped)
+                    if (pTarget == pWrapped)
+                         return;
+
+                DoTeleportPlayer(pTarget, LocX, LocY, LocZ, pTarget->GetOrientation());
+                if (Creature* pWrap = m_creature->SummonCreature(16486, LocX, LocY, LocZ, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
+                    ((mob_webwrapAI*)pWrap->AI())->SetVictim(pTarget->GetGUID());
+                pWrapped = pTarget;
             }
         }
     }

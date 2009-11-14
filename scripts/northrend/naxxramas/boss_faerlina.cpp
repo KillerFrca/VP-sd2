@@ -42,6 +42,10 @@ enum
     SPELL_ENRAGE              = 28798,
     H_SPELL_ENRAGE            = 54100,
 
+    SPELL_FIREBALL            = 54095,
+    SPELL_FIREBALL_H          = 54096,
+    SPELL_WIDOWS_EMBRACE      = 28732,
+
     SPELL_RAINOFFIRE          = 28794                       //Not sure if targeted AoEs work if casted directly upon a pPlayer
 };
 struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
@@ -151,6 +155,89 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
     }
 };
 
+struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
+{
+    mob_worshippersAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsHeroicMode;
+    bool m_bIsDead;
+
+    uint32 m_uiFireball_Timer;
+    uint32 m_uiDeathDelay_Timer;
+
+    void Reset()
+    {
+        m_bIsDead = false;
+        m_uiFireball_Timer = 0;
+        m_uiDeathDelay_Timer = 0;
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (m_bIsDead)
+        {
+            uiDamage = 0;
+            return;
+        }
+
+        if (uiDamage > m_creature->GetHealth())
+        {
+            if (m_creature->IsNonMeleeSpellCasted(false))
+                m_creature->InterruptNonMeleeSpells(false);
+
+            m_creature->RemoveAllAuras();
+            m_creature->AttackStop();
+
+            DoCast(m_creature, SPELL_WIDOWS_EMBRACE);
+
+            if (m_pInstance)
+                if (Creature* pFaerlina = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_FAERLINA))))
+                    if (m_creature->GetDistance2d(pFaerlina) <= 5 && pFaerlina->HasAura(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE))
+                        pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
+
+            m_bIsDead = true;
+            m_uiDeathDelay_Timer = 500;
+
+            uiDamage = 0;
+            return;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiDeathDelay_Timer)
+            if (m_uiDeathDelay_Timer < uiDiff)
+            {
+                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                m_uiDeathDelay_Timer = 0;
+            }
+            else m_uiDeathDelay_Timer -= uiDiff;
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_bIsDead)
+            return;
+
+        if (m_uiFireball_Timer < uiDiff)
+        {
+            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_FIREBALL_H : SPELL_FIREBALL);
+            m_uiFireball_Timer = 7000 + rand()%4000;
+        }
+        else m_uiFireball_Timer -= uiDiff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_worshippers(Creature* pCreature)
+{
+    return new mob_worshippersAI(pCreature);
+}
+
 CreatureAI* GetAI_boss_faerlina(Creature* pCreature)
 {
     return new boss_faerlinaAI(pCreature);
@@ -162,5 +249,10 @@ void AddSC_boss_faerlina()
     NewScript = new Script;
     NewScript->Name = "boss_faerlina";
     NewScript->GetAI = &GetAI_boss_faerlina;
+    NewScript->RegisterSelf();
+
+    NewScript = new Script;
+    NewScript->Name = "mob_worshippers";
+    NewScript->GetAI = &GetAI_mob_worshippers;
     NewScript->RegisterSelf();
 }

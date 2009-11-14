@@ -266,7 +266,9 @@ extern void AddSC_boss_anubrekhan();                        //naxxramas
 extern void AddSC_boss_four_horsemen();
 extern void AddSC_boss_faerlina();
 extern void AddSC_boss_gluth();
-extern void AddSC_howling_fjord();
+extern void AddSC_boss_gothik();
+extern void AddSC_boss_grobbulus();
+extern void AddSC_boss_heigan();
 extern void AddSC_boss_kelthuzad();
 extern void AddSC_boss_loatheb();
 extern void AddSC_boss_maexxna();
@@ -274,6 +276,7 @@ extern void AddSC_boss_noth();
 extern void AddSC_boss_patchwerk();
 extern void AddSC_boss_razuvious();
 extern void AddSC_boss_sapphiron();
+extern void AddSC_boss_thaddius();
 extern void AddSC_instance_naxxramas();
 extern void AddSC_boss_anomalus();                          //nexus
 extern void AddSC_boss_keristrasza();
@@ -306,6 +309,7 @@ extern void AddSC_borean_tundra();
 extern void AddSC_dalaran();
 extern void AddSC_dragonblight();
 extern void AddSC_grizzly_hills();
+extern void AddSC_howling_fjord();
 extern void AddSC_icecrown();
 extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
@@ -648,18 +652,21 @@ void AddScripts()
     AddSC_boss_moorabi();
     AddSC_boss_sladran();
     AddSC_instance_gundrak();
-    AddSC_boss_anubrekhan();                                //naxxramas
-    AddSC_boss_four_horsemen();
-    AddSC_boss_faerlina();
-    AddSC_boss_gluth();
-    AddSC_howling_fjord();
-    AddSC_boss_kelthuzad();
-    AddSC_boss_loatheb();
-    AddSC_boss_maexxna();
-    AddSC_boss_noth();
-    AddSC_boss_patchwerk();
-    AddSC_boss_razuvious();
-    AddSC_boss_sapphiron();
+    AddSC_boss_anubrekhan();                        //naxxramas
+	AddSC_boss_four_horsemen();
+	AddSC_boss_faerlina();
+	AddSC_boss_gluth();
+	AddSC_boss_gothik();
+	AddSC_boss_grobbulus();
+	AddSC_boss_heigan();
+	AddSC_boss_kelthuzad();
+	AddSC_boss_loatheb();
+	AddSC_boss_maexxna();
+	AddSC_boss_noth();
+	AddSC_boss_patchwerk();
+	AddSC_boss_razuvious();
+	AddSC_boss_sapphiron();
+	AddSC_boss_thaddius();
     AddSC_instance_naxxramas();
     AddSC_boss_anomalus();                                  //nexus
     AddSC_boss_keristrasza();
@@ -692,6 +699,7 @@ void AddScripts()
     AddSC_dalaran();
     AddSC_dragonblight();
     AddSC_grizzly_hills();
+    AddSC_howling_fjord();
     AddSC_icecrown();
     AddSC_sholazar_basin();
     AddSC_storm_peaks();
