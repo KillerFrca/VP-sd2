@@ -1,7 +1,7 @@
 10
 
 dir
-1498
+1499
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/sql/Updates
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
@@ -60,40 +60,6 @@ has-props
 
 75
 
-r1470_scriptdev2.sql
-file
-
-
-
-
-2009-11-13T16:14:43.307449Z
-c5ab29f12d1c667de7e2eb6f0f43af3b
-2009-10-13T14:30:29.332923Z
-1470
-deverend
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-968
-
 r1461_scriptdev2.sql
 file
 
@@ -128,17 +94,17 @@ has-props
 
 192
 
-r1463_mangos.sql
+r1470_scriptdev2.sql
 file
 
 
 
 
-2009-11-13T16:14:43.407593Z
-f49efbc4dbde3b671a97137f7054ab34
-2009-10-09T16:27:38.022903Z
-1464
-nofantasy
+2009-11-13T16:14:43.307449Z
+c5ab29f12d1c667de7e2eb6f0f43af3b
+2009-10-13T14:30:29.332923Z
+1470
+deverend
 has-props
 
 
@@ -160,7 +126,7 @@ has-props
 
 
 
-190
+968
 
 r1453_scriptdev2.sql
 file
@@ -196,17 +162,17 @@ has-props
 
 388
 
-r1481_scriptdev2.sql
+r1463_mangos.sql
 file
 
 
 
 
-2009-11-13T16:14:43.467680Z
-660fbd8c7deef13308ee01b78560e27a
-2009-10-26T12:58:06.778077Z
-1481
-deverend
+2009-11-13T16:14:43.407593Z
+f49efbc4dbde3b671a97137f7054ab34
+2009-10-09T16:27:38.022903Z
+1464
+nofantasy
 has-props
 
 
@@ -228,7 +194,7 @@ has-props
 
 
 
-69
+190
 
 r1490_scriptdev2.sql
 file
@@ -264,17 +230,17 @@ has-props
 
 69
 
-r1473_scriptdev2.sql
+r1481_scriptdev2.sql
 file
 
 
 
 
-2009-11-13T16:14:43.527766Z
-d14602daa723aafcedf08e28deba87a9
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-13T16:14:43.467680Z
+660fbd8c7deef13308ee01b78560e27a
+2009-10-26T12:58:06.778077Z
+1481
+deverend
 has-props
 
 
@@ -332,16 +298,16 @@ has-props
 
 123
 
-r1474_scriptdev2.sql
+r1473_scriptdev2.sql
 file
 
 
 
 
-2009-11-13T16:14:43.607881Z
-0bf5a2f4cd804261a5a91059baab6a36
-2009-10-14T17:00:17.808934Z
-1474
+2009-11-13T16:14:43.527766Z
+d14602daa723aafcedf08e28deba87a9
+2009-10-14T11:00:30.262368Z
+1473
 nofantasy
 has-props
 
@@ -400,51 +366,17 @@ has-props
 
 69
 
-r1494_mangos.sql
+r1474_scriptdev2.sql
 file
 
 
 
 
-2009-11-13T16:14:43.627910Z
-ed0cd9ed5d6bf88338c33c2b1f987536
-2009-11-08T16:53:05.972655Z
-1494
-deverend
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-81
-
-r1493_scriptdev2.sql
-file
-
-
-
-
-2009-11-13T16:14:43.657953Z
-8086718ac74d7d9dca8d9faa894c8250
-2009-11-08T16:53:05.972655Z
-1494
-deverend
+2009-11-13T16:14:43.607881Z
+0bf5a2f4cd804261a5a91059baab6a36
+2009-10-14T17:00:17.808934Z
+1474
+nofantasy
 has-props
 
 
@@ -467,6 +399,40 @@ has-props
 
 
 69
+
+r1457_scriptdev2.sql
+file
+
+
+
+
+2009-11-13T16:14:43.708025Z
+9386a2d2dd6cf9301473a7a68a4f4fc4
+2009-10-08T15:37:35.627155Z
+1457
+nofantasy
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+372
 
 r1476_mangos.sql
 file
@@ -502,17 +468,17 @@ has-props
 
 85
 
-r1457_scriptdev2.sql
+r1493_scriptdev2.sql
 file
 
 
 
 
-2009-11-13T16:14:43.708025Z
-9386a2d2dd6cf9301473a7a68a4f4fc4
-2009-10-08T15:37:35.627155Z
-1457
-nofantasy
+2009-11-13T16:14:43.657953Z
+8086718ac74d7d9dca8d9faa894c8250
+2009-11-08T16:53:05.972655Z
+1494
+deverend
 has-props
 
 
@@ -534,7 +500,41 @@ has-props
 
 
 
-372
+69
+
+r1494_mangos.sql
+file
+
+
+
+
+2009-11-13T16:14:43.627910Z
+ed0cd9ed5d6bf88338c33c2b1f987536
+2009-11-08T16:53:05.972655Z
+1494
+deverend
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+81
 
 r1466_scriptdev2.sql
 file
