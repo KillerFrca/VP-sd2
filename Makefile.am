@@ -262,6 +262,14 @@ scripts/kalimdor/caverns_of_time/old_hillsbrad/boss_leutenant_drake.cpp \
 scripts/kalimdor/caverns_of_time/old_hillsbrad/instance_old_hillsbrad.cpp \
 scripts/kalimdor/caverns_of_time/old_hillsbrad/old_hillsbrad.cpp \
 scripts/kalimdor/caverns_of_time/old_hillsbrad/old_hillsbrad.h \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_lord_epoch.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_malganis.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_meathook.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_salramm.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_lord_epoch.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/culling_of_stratholme.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/def_culling_of_stratholme.h \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/instance_culling_of_stratholme.cpp \
 scripts/kalimdor/maraudon/boss_celebras_the_cursed.cpp \
 scripts/kalimdor/maraudon/boss_landslide.cpp \
 scripts/kalimdor/maraudon/boss_noxxion.cpp \
