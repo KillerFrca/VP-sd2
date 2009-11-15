@@ -41,6 +41,7 @@ enum
     SPELL_CLEAVE           = 19983,
     SPELL_TAIL_LASH        = 55697,
     SPELL_TAIL_LASH_H      = 55696,
+    SPELL_DIES             = 29357,
 
     SAPPHIRON_X            = 3522,
     SAPPHIRON_Y            = -5236,
@@ -71,8 +72,10 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     uint32 m_uiTailSweepTimer;
     uint32 phase;
     bool landoff;
+    bool isAtGround;
     uint32 land_Timer;
     std::vector<Unit*> targets;
+
 
     void Reset()
     {
@@ -89,7 +92,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         phase = 1;
         Icebolt_Count = 0;
         landoff = false;
-
+        isAtGround = true;
         targets.clear();
 
         if (m_pInstance)
@@ -174,6 +177,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SAPPHIRON, DONE);
+
+        m_creature->CastSpell(m_creature, SPELL_DIES, true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -229,12 +234,13 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                 {
                     phase = 2;
                     m_creature->InterruptNonMeleeSpells(false);
-                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                     m_creature->StopMoving();
+                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                     m_creature->GetMotionMaster()->Clear(false);
                     m_creature->GetMotionMaster()->MoveIdle();
-                    m_creature->GetMap()->CreatureRelocation(m_creature, SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, m_creature->GetOrientation());
+                    m_creature->GetMap()->CreatureRelocation(m_creature, SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, m_creature->GetOrientation()); 
                     m_creature->SendMonsterMove(SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, 0, m_creature->GetMonsterMoveFlags(), 1);
+                    m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
                     //DoCast(m_creature,11010);
                     //m_creature->SetHover(true);
                     //DoCast(m_creature,18430);
@@ -302,7 +308,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     //m_creature->SetHover(false);
                     //m_creature->GetMotionMaster()->Clear(false);
                     //m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                    DoStartMovement(m_creature->getVictim());
+                    m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
 
                     std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
                     for (i = m_creature->getThreatManager().getThreatList().begin(); i!= m_creature->getThreatManager().getThreatList().end();++i)
@@ -314,10 +320,18 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 
                     targets.clear();
                     Fly_Timer = 67000;
+                    isAtGround = false;
                 }else land_Timer -= diff;
             }
         }
-
+        if(phase == 1 && isAtGround == false)
+        {
+            if(m_creature->GetPositionZ() <= 139)
+            {
+                isAtGround = true;
+                DoStartMovement(m_creature->getVictim());
+            }
+        }
         if (Beserk_Timer < diff)
         {
             DoScriptText(EMOTE_ENRAGE, m_creature);
@@ -325,7 +339,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             Beserk_Timer = 900000;
         }else Beserk_Timer -= diff;
 
-        if (phase!=2)
+
+        if (phase!=2 && isAtGround == true)
             DoMeleeAttackIfReady();
     }
 };
