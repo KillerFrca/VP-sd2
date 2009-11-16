@@ -43,6 +43,7 @@ enum
     DATA_RIVENDARE              = 37,
     DATA_BLAUMEUX               = 38,
     DATA_ZELIEK                 = 39,
+    DATA_HEIGAN_ERUPT           = 40,
 
     NPC_ANUB_REKHAN             = 15956,
     NPC_FAERLINA                = 15953,

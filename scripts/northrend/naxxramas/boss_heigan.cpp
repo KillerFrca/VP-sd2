@@ -42,9 +42,15 @@ EndScriptData */
 #define SPELL_DISRUPTION    29310
 #define SPELL_FEAVER        29998
 #define H_SPELL_FEAVER      55011
+#define SPELL_PLAGUED_CLOUD 30122
 
 //Spell by eye stalks
 #define SPELL_MIND_FLAY     26143
+
+#define POS_X 2793.86
+#define POS_Y -3707.38
+#define POS_Z 276.627
+#define POS_O 0.593
 
 
 struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
@@ -61,18 +67,83 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     uint32 Disruption_Timer;
     uint32 Feaver_Timer;
+    uint32 Erupt_Timer;
+    uint32 Phase_Timer;
+
+    uint32 eruptSection;
+    bool eruptDirection;
+
+    uint8 phase;
 
     void Reset()
     {
-        Disruption_Timer = 5000+rand()%10000;
-        Feaver_Timer = 40000;
+        phase = 0;
 
         if(m_pInstance)
             m_pInstance->SetData(TYPE_HEIGAN, NOT_STARTED);
     }
 
+    void AttackStart(Unit* pWho)
+    {
+    if (!pWho)
+            return;
+
+    if(phase != 1)
+        return;
+
+        if (m_creature->Attack(pWho, true))
+        {
+            m_creature->AddThreat(pWho, 0.0f);
+            DoStartMovement(pWho);
+        }
+
+    }
+    void SetPhase(uint8 tPhase)
+    {
+        if(tPhase == 0)
+        {
+            if(phase == 1)
+            {
+                phase++;
+            }
+            else if(phase == 2)
+            {
+                phase--;
+            }
+            else phase = 1;
+        }else phase = tPhase;
+
+        eruptSection = rand()%4;
+
+        if(phase == 1)
+        {
+            m_creature->InterruptNonMeleeSpells(false);
+            Feaver_Timer = 20000;
+            Phase_Timer = 85000;
+            Erupt_Timer = 10000;
+            Disruption_Timer = 5000+rand()%10000;
+            if(m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            DoStartMovement(m_creature->getVictim());
+        }else if(phase == 2)
+        {
+            m_creature->InterruptNonMeleeSpells(true);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->StopMoving();
+            m_creature->GetMotionMaster()->Clear(false);
+            m_creature->GetMotionMaster()->MoveIdle();
+            m_creature->GetMap()->CreatureRelocation(m_creature, POS_X, POS_Y, POS_Z, POS_O);
+            m_creature->SendMonsterMove(POS_X, POS_Y, POS_Z, POS_O, MONSTER_MOVE_NONE, 0);
+
+            Erupt_Timer = 5000;
+            Phase_Timer = 45000;
+            DoCast(m_creature, SPELL_PLAGUED_CLOUD);
+
+        }
+    }
     void Aggro(Unit *who)
     {
+        SetPhase(1);
         switch (rand()%3)
         {
             case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
@@ -99,7 +170,31 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if(phase == 0)
+            return;
+
+        if (Phase_Timer < diff)
+        {
+            SetPhase(0);
+        }else Phase_Timer -= diff;
+
+        if (Erupt_Timer < diff)
+        {
+            m_pInstance->SetData(DATA_HEIGAN_ERUPT, eruptSection);
+
+            if (eruptSection == 0)
+                eruptDirection = true;
+            else if (eruptSection == 3)
+                eruptDirection = false;
+
+            eruptDirection ? ++eruptSection : --eruptSection;
+            if(phase == 1)
+            {
+                Erupt_Timer = 10000;
+            }else Erupt_Timer = 3000;
+        }else Erupt_Timer -= diff;
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
             return;
 
         if (Disruption_Timer < diff)
