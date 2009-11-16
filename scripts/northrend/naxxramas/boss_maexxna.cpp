@@ -145,7 +145,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
    void DoCastWebWrap()
     {
         Unit* pWrapped = NULL;
-        for(uint8 i = 0; i < 2; ++i)
+        for(uint8 i = 0; i < 1; ++i)
         {
             float LocX, LocY, LocZ;
             switch(rand()%3)

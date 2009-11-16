@@ -240,7 +240,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     m_creature->GetMotionMaster()->MoveIdle();
                     m_creature->GetMap()->CreatureRelocation(m_creature, SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, m_creature->GetOrientation()); 
                     m_creature->SendMonsterMove(SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, 0, m_creature->GetMonsterMoveFlags(), 1);
-                    m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+
                     //DoCast(m_creature,11010);
                     //m_creature->SetHover(true);
                     //DoCast(m_creature,18430);
@@ -308,7 +308,6 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     //m_creature->SetHover(false);
                     //m_creature->GetMotionMaster()->Clear(false);
                     //m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                    m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
 
                     std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
                     for (i = m_creature->getThreatManager().getThreatList().begin(); i!= m_creature->getThreatManager().getThreatList().end();++i)

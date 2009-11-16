@@ -177,6 +177,13 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
         m_uiFireball_Timer = 0;
         m_uiDeathDelay_Timer = 0;
     }
+    void JustDied(Unit* pWho)
+    {
+         if (m_pInstance)
+             if (Creature* pFaerlina = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA))))
+                 if (m_creature->GetDistance2d(pFaerlina) <= 5 && pFaerlina->HasAura(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE))
+                     pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
+    }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
@@ -195,12 +202,6 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
             m_creature->AttackStop();
 
             DoCast(m_creature, SPELL_WIDOWS_EMBRACE);
-
-            if (m_pInstance)
-                if (Creature* pFaerlina = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_FAERLINA))))
-                    if (m_creature->GetDistance2d(pFaerlina) <= 5 && pFaerlina->HasAura(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE))
-                        pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
-
             m_bIsDead = true;
             m_uiDeathDelay_Timer = 500;
 

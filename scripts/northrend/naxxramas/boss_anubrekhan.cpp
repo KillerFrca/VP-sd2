@@ -77,7 +77,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     {
         m_uiImpaleTimer = 15000;                            // 15 seconds
         m_uiLocustSwarmTimer = urand(80000, 120000);        // Random time between 80 seconds and 2 minutes for initial cast
-        m_uiSummonTimer = m_uiLocustSwarmTimer + 45000;     // 45 seconds after initial locust swarm
+        m_uiSummonTimer = 90000;                            // 15 seconds after initial locust swarm
     }
 
     void KilledUnit(Unit* pVictim)
@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         {
             DoCast(m_creature, m_bIsHeroicMode?SPELL_LOCUSTSWARM_H:SPELL_LOCUSTSWARM);
             m_uiLocustSwarmTimer = 90000;
-            m_uiSummonTimer += 30000;
+            m_uiSummonTimer = m_uiLocustSwarmTimer + 30000;
         }
         else
             m_uiLocustSwarmTimer -= uiDiff;
@@ -175,7 +175,6 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                     pTemp->AddThreat(pTarget, 0.0f);
                     pTemp->AI()->AttackStart(pTarget);
                 }
-            m_uiSummonTimer = 30000;
         }else m_uiSummonTimer -= uiDiff;
 
         DoMeleeAttackIfReady();

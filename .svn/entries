@@ -26,9 +26,6 @@ deverend
 
 5f9c896b-1e26-0410-94da-f77f675e2462
 
-VC80
-dir
-
 scriptdev2.conf.dist.in
 file
 
@@ -63,6 +60,9 @@ has-props
 
 661
 
+VC80
+dir
+
 VC90
 dir
 
@@ -72,48 +72,14 @@ dir
 system
 dir
 
-patches
+scripts
 dir
 
-scripts
+patches
 dir
 
 docs
 dir
-
-ScriptMgr.cpp
-file
-
-
-
-
-2009-11-13T16:14:47.012777Z
-e24747df9285b6496b37205d7eae391f
-2009-10-14T23:57:13.322243Z
-1475
-nofantasy
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-14381
 
 config.h
 file
@@ -149,19 +115,53 @@ has-props
 
 1769
 
+ScriptMgr.cpp
+file
+
+
+
+
+2009-11-13T16:14:47.012777Z
+e24747df9285b6496b37205d7eae391f
+2009-10-14T23:57:13.322243Z
+1475
+nofantasy
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14381
+
 sql
 dir
 
-scriptVC80.sln
+ScriptMgr.h
 file
 
 
 
 
-2009-11-13T16:14:47.162993Z
-5d56984aaf12799735c34e3558cf285e
-2008-09-29T12:18:14.541211Z
-670
+2009-11-13T16:14:47.102907Z
+f23377818e090fde53e9bb2f151dd08d
+2009-08-01T17:04:05.949912Z
+1288
 nofantasy
 has-props
 
@@ -184,41 +184,7 @@ has-props
 
 
 
-1240
-
-config.h.in
-file
-
-
-
-
-2009-11-13T16:14:47.132950Z
-f7bc128fbeb903b9fca813ac8bfafd4f
-2009-08-03T12:59:25.920490Z
-1297
-nofantasy
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1769
+3217
 
 LICENSE.txt
 file
@@ -254,16 +220,16 @@ has-props
 
 15400
 
-ScriptMgr.h
+config.h.in
 file
 
 
 
 
-2009-11-13T16:14:47.102907Z
-f23377818e090fde53e9bb2f151dd08d
-2009-08-01T17:04:05.949912Z
-1288
+2009-11-13T16:14:47.132950Z
+f7bc128fbeb903b9fca813ac8bfafd4f
+2009-08-03T12:59:25.920490Z
+1297
 nofantasy
 has-props
 
@@ -286,7 +252,41 @@ has-props
 
 
 
-3217
+1769
+
+scriptVC80.sln
+file
+
+
+
+
+2009-11-13T16:14:47.162993Z
+5d56984aaf12799735c34e3558cf285e
+2008-09-29T12:18:14.541211Z
+670
+nofantasy
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1240
 
 scriptVC90.sln
 file
