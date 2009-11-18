@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         }else RangeCheck_Timer -= uiDiff;
 
         //Summon_Timer
-        if (Summon_Timer < diff)
+        if (Summon_Timer < uiDiff)
         {
             for(uint8 i = 0; i < (m_bIsHeroicMode ? 2 : 1); i++)
             {
@@ -260,7 +260,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
                 }
             }
             Summon_Timer = 10000;
-        } else Summon_Timer -= diff;
+        } else Summon_Timer -= uiDiff;
 
         // Berserk
         if (m_uiBerserkTimer < uiDiff)
