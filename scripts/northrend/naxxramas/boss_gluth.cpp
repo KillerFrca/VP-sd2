@@ -128,7 +128,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
     uint32 m_uiMortalWoundTimer;
     uint32 m_uiDecimateTimer;
     uint32 m_uiEnrageTimer;
-    uint32 m_uiSummonTimer;
+    uint32 Summon_Timer;
 
     uint32 m_uiBerserkTimer;
 
@@ -140,7 +140,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         m_uiMortalWoundTimer = 8000;
         m_uiDecimateTimer = 100000;
         m_uiEnrageTimer = 60000;
-        m_uiSummonTimer = 10000;
+        Summon_Timer = 10000;
 
         m_uiBerserkTimer = MINUTE*8*IN_MILISECONDS;
 
