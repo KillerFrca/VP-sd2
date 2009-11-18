@@ -56,6 +56,7 @@ enum
     NPC_THANE                   = 16064,
     NPC_BLAUMEUX                = 16065,
     NPC_RIVENDARE               = 30549,
+    NPC_HEIGAN                  = 15936,
 
     // Arachnid Quarter
     GO_ARAC_ANUB_DOOR           = 181126,                   //encounter door

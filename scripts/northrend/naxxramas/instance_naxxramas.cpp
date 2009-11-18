@@ -85,6 +85,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
     uint64 m_uiThaddiusGUID;
     uint64 m_uiStalaggGUID;
     uint64 m_uiFeugenGUID;
+    uint64 m_uiHeiganGUID;
 
     uint64 m_uiPathExitDoorGUID;
     uint64 m_uiGlutExitDoorGUID;
@@ -136,6 +137,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         m_uiThaddiusGUID        = 0;
         m_uiStalaggGUID         = 0;
         m_uiFeugenGUID          = 0;
+        m_uiHeiganGUID          = 0;
 
         m_uiPathExitDoorGUID    = 0;
         m_uiGlutExitDoorGUID    = 0;
@@ -176,6 +178,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             case NPC_THANE:       m_uiThaneGUID = pCreature->GetGUID();      break;
             case NPC_BLAUMEUX:    m_uiBlaumeuxGUID = pCreature->GetGUID();   break;
             case NPC_RIVENDARE:   m_uiRivendareGUID = pCreature->GetGUID();  break;
+            case NPC_HEIGAN:      m_uiHeiganGUID = pCreature->GetGUID();     break;     
         }
     }
 
@@ -470,7 +473,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 (*itr)->SendCustomAnim();
                 if(Creature* erupt = (*itr)->SummonCreature(2, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ(), 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                 {
-                    erupt->CastSpell(erupt, SPELL_ERUPTION, false);
+                    erupt->CastSpell(erupt, SPELL_ERUPTION, false,0,0,m_uiHeiganGUID);
                     erupt->ForcedDespawn();
                 }else debug_log("SD2: Heigan Erupt trigger do not spawn :(");
             }
