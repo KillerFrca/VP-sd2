@@ -23,7 +23,7 @@ struct MANGOS_DLL_DECL boss_salrammAI : public ScriptedAI
 {
    boss_salrammAI(Creature *c) : ScriptedAI(c)
    {
-        m_bIsHeroic = c->GetMap()->IsHeroic();
+        m_bIsHeroic = c->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
    }
 

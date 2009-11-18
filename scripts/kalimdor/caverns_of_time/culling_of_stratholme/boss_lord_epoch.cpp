@@ -24,7 +24,7 @@ struct MANGOS_DLL_DECL boss_lord_epochAI : public ScriptedAI
 {
    boss_lord_epochAI(Creature *c) : ScriptedAI(c)
    {
-        m_bIsHeroic = c->GetMap()->IsHeroic();
+        m_bIsHeroic = c->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
    }
 

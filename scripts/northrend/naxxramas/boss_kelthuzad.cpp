@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     boss_kelthuzadAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroic = pCreature->GetMap()->IsHeroic();
+        m_bIsHeroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         GuardiansOfIcecrown[0] = 0;
         GuardiansOfIcecrown[1] = 0;
         GuardiansOfIcecrown[2] = 0;

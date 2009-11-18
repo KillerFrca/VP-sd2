@@ -99,7 +99,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
     npc_arthasAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroic = pCreature->GetMap()->IsHeroic();
+        m_bIsHeroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
    }
 

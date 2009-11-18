@@ -38,7 +38,7 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
    boss_malganisAI(Creature *c) : ScriptedAI(c)
    {
         m_pInstance = (ScriptedInstance*)c->GetInstanceData();
-        m_bIsHeroic = c->GetMap()->IsHeroic();
+        m_bIsHeroic = c->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
    }
 

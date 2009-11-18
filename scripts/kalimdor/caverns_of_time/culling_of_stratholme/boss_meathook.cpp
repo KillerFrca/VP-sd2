@@ -21,7 +21,7 @@ struct MANGOS_DLL_DECL boss_meathookAI : public ScriptedAI
 {
    boss_meathookAI(Creature *c) : ScriptedAI(c)
    {
-        m_bIsHeroic = c->GetMap()->IsHeroic();
+        m_bIsHeroic = c->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
    }
 
