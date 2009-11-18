@@ -468,7 +468,11 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             {
 
                 (*itr)->SendCustomAnim();
-                (*itr)->CastSpell(NULL, SPELL_ERUPTION);
+                if(Creature* erupt = (*itr)->SummonCreature(2, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ(), 0, TEMPSUMMON_DEAD_DESPAWN, 0))
+                {
+                    erupt->CastSpell(erupt, SPELL_ERUPTION, false);
+                    erupt->ForcedDespawn();
+                }else debug_log("SD2: Heigan Erupt trigger do not spawn :(");
             }
         }
     }
