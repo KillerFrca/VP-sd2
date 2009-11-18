@@ -175,6 +175,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                     pTemp->AddThreat(pTarget, 0.0f);
                     pTemp->AI()->AttackStart(pTarget);
                 }
+            m_uiSummonTimer = 180000;
         }else m_uiSummonTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
