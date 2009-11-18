@@ -252,7 +252,7 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
             {
                 if (pPlayer->isAlive())
                 {
-                    if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                    if(pPlayer->GetDistance(m_creature) <= 8.0f)
                         DoCast(pPlayer, SPELL_ERUPTION, true);
                 }
             }
