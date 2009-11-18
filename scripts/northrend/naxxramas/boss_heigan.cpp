@@ -245,6 +245,7 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
     }
     void CastErupt()
     {
+	Map::PlayerList const &PlList = pInstance->instance->GetPlayers();
         for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
         {
             if (Player* pPlayer = i->getSource())
@@ -279,7 +280,7 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
         }else despawn_timer -= diff;
 
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         AttackStart(m_creature->getVictim());
@@ -304,7 +305,6 @@ void AddSC_boss_heigan()
     newscript->GetAI = &GetAI_boss_heigan;
     newscript->RegisterSelf();
 
-    Script *newscript;
     newscript = new Script;
     newscript->Name = "npc_heigan_eruption";
     newscript->GetAI = &GetAI_npc_heigan_eruptionAI;
