@@ -75,6 +75,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     bool isAtGround;
     uint32 land_Timer;
     std::vector<Unit*> targets;
+    uint32 land_time;
 
 
     void Reset()
@@ -94,6 +95,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         landoff = false;
         isAtGround = true;
         targets.clear();
+        land_time = 0;
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SAPPHIRON, NOT_STARTED);
@@ -320,16 +322,17 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     targets.clear();
                     Fly_Timer = 67000;
                     isAtGround = false;
+                    land_time = 3500;
                 }else land_Timer -= diff;
             }
         }
         if(phase == 1 && isAtGround == false)
         {
-            if(m_creature->GetPositionZ() <= 139)
+            if(land_time < diff)
             {
                 isAtGround = true;
                 DoStartMovement(m_creature->getVictim());
-            }
+            }else land_time -=diff;
         }
         if (Beserk_Timer < diff)
         {

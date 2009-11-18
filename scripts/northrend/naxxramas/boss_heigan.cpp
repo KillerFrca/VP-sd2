@@ -77,6 +77,8 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     void Reset()
     {
+    if(m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         phase = 0;
 
         if(m_pInstance)

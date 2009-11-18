@@ -1611,6 +1611,84 @@ bool GossipSelect_npc_tabard_vendor(Player* pPlayer, Creature* pCreature, uint32
     return true;
 }
 
+/*######
+## npc_wormhole
+######*/
+
+#define GOSSIP_ITEM_WORMHOLE1    "Borean Tundra"
+#define GOSSIP_ITEM_WORMHOLE2    "Borean Tundra"
+#define GOSSIP_ITEM_WORMHOLE3    "Howling Fjord"
+#define GOSSIP_ITEM_WORMHOLE4    "Sholazar Basin"
+#define GOSSIP_ITEM_WORMHOLE5    "Icecrown"
+#define GOSSIP_ITEM_WORMHOLE6    "Storm Peaks"
+#define GOSSIP_ITEM_WORMHOLE7    "Underground..."
+
+enum
+{
+    GOSSIP_TEXTID_WORMHOLE1      = 14785
+};
+
+bool GossipHello_npc_wormhole(Player* pPlayer, Creature* pCreature)
+{    
+    
+    if(urand(0,1)) {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    } else {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+    switch(urand(0,50)) {
+        case 15:
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+            break;
+    }
+    
+    
+
+    pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_WORMHOLE1, pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_wormhole(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    switch(uiAction) {
+        case GOSSIP_ACTION_INFO_DEF+1:
+            // Borean Tundra, 54.15
+            pPlayer->TeleportTo(571,4300.52,5452.59,64.3578,3.84644);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+2:
+            // Borean Tundra, 51.45
+            pPlayer->TeleportTo(571,3136.24,5603.01,52.3244,1.38835);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+3:
+            // Howling Fjord, 58,48
+            pPlayer->TeleportTo(571,1151.36,-4935.54,299.061,3.4366);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+4:
+            // Sholazar Basin, 48,37
+            pPlayer->TeleportTo(571,6192.98,4801.52,219.963,2.21874);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+5:
+            // Icecrown, 65,31
+            pPlayer->TeleportTo(571,8096.98,1401.17,776.921,2.63893);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+6:
+            // Storm Peaks, 43,25
+            pPlayer->TeleportTo(571,8975.23,-1255.25,1059.01,5.80022);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+7:
+            // Bonus location - underground in Dalaran
+            pPlayer->TeleportTo(571,5856.654297,517.693665,599.817932,2.1);
+            break;
+    }
+
+    return true;
+}
+
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -1693,5 +1771,11 @@ void AddSC_npcs_special()
     newscript->Name = "npc_tabard_vendor";
     newscript->pGossipHello =  &GossipHello_npc_tabard_vendor;
     newscript->pGossipSelect = &GossipSelect_npc_tabard_vendor;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_wormhole";
+    newscript->pGossipHello =  &GossipHello_npc_wormhole;
+    newscript->pGossipSelect = &GossipSelect_npc_wormhole;
     newscript->RegisterSelf();
 }

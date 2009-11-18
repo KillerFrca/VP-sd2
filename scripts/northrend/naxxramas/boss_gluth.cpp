@@ -227,8 +227,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
             DoCast(m_creature, m_bIsHeroicMode?SPELL_ENRAGE_H:SPELL_ENRAGE);
             m_uiEnrageTimer = 60000;
         }
-        else
-            m_uiEnrageTimer -= uiDiff;
+        else m_uiEnrageTimer -= uiDiff;
 
         if (RangeCheck_Timer < uiDiff)
         {
@@ -246,28 +245,22 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
             RangeCheck_Timer = 1000;
         }else RangeCheck_Timer -= uiDiff;
 
-        // Summon
-        if (m_uiSummonTimer < uiDiff)
+        //Summon_Timer
+        if (Summon_Timer < diff)
         {
-            if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW, ADD_1X, ADD_1Y, ADD_1Z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000))
+            for(uint8 i = 0; i < (m_bIsHeroicMode ? 2 : 1); i++)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    pZombie->AddThreat(pTarget);
-            }
-
-            if (m_bIsHeroicMode)
-            {
-                if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW, ADD_1X, ADD_1Y, ADD_1Z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000))
+                if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000))
                 {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        pZombie->AddThreat(pTarget);
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    {
+                        pZombie->AI()->AttackStart(pTarget);
+                        m_lZombieGUIDList.push_back(pZombie->GetGUID());
+                    }
                 }
             }
-
-            m_uiSummonTimer = 10000;
-        }
-        else
-            m_uiSummonTimer -= uiDiff;
+            Summon_Timer = 10000;
+        } else Summon_Timer -= diff;
 
         // Berserk
         if (m_uiBerserkTimer < uiDiff)
