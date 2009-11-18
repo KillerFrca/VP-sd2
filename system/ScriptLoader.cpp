@@ -319,6 +319,7 @@ extern void AddSC_howling_fjord();
 extern void AddSC_icecrown();
 extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
+extern void AddSC_zuldrak();
 
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
@@ -665,20 +666,20 @@ void AddScripts()
     AddSC_boss_sladran();
     AddSC_instance_gundrak();
     AddSC_boss_anubrekhan();                        //naxxramas
-	AddSC_boss_four_horsemen();
-	AddSC_boss_faerlina();
-	AddSC_boss_gluth();
-	AddSC_boss_gothik();
-	AddSC_boss_grobbulus();
-	AddSC_boss_heigan();
-	AddSC_boss_kelthuzad();
-	AddSC_boss_loatheb();
-	AddSC_boss_maexxna();
-	AddSC_boss_noth();
-	AddSC_boss_patchwerk();
-	AddSC_boss_razuvious();
-	AddSC_boss_sapphiron();
-	AddSC_boss_thaddius();
+    AddSC_boss_four_horsemen();
+    AddSC_boss_faerlina();
+    AddSC_boss_gluth();
+    AddSC_boss_gothik();
+    AddSC_boss_grobbulus();
+    AddSC_boss_heigan();
+    AddSC_boss_kelthuzad();
+    AddSC_boss_loatheb();
+    AddSC_boss_maexxna();
+    AddSC_boss_noth();
+    AddSC_boss_patchwerk();
+    AddSC_boss_razuvious();
+    AddSC_boss_sapphiron();
+    AddSC_boss_thaddius();
     AddSC_instance_naxxramas();
     AddSC_boss_anomalus();                                  //nexus
     AddSC_boss_keristrasza();
@@ -715,6 +716,7 @@ void AddScripts()
     AddSC_icecrown();
     AddSC_sholazar_basin();
     AddSC_storm_peaks();
+    AddSC_zuldrak();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts

@@ -1,14 +1,14 @@
 10
 
 dir
-1499
+1502
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/VC80
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-11-08T16:53:05.972655Z
-1494
+2009-11-16T16:54:47.538218Z
+1501
 deverend
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2009-11-13T16:12:42.033065Z
-ad32fa8990f633b26ff18257d167c36f
-2009-11-08T16:53:05.972655Z
-1494
+2009-11-18T14:02:50.284049Z
+12478d6fbd154669e915588300baf726
+2009-11-16T16:54:47.538218Z
+1501
 deverend
 has-props
 
@@ -58,5 +58,5 @@ has-props
 
 
 
-67530
+67616
 

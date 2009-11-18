@@ -1591,6 +1591,10 @@
 					RelativePath="..\scripts\northrend\storm_peaks.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\scripts\northrend\zuldrak.cpp"
+					>
+				</File>
 				<Filter
 					Name="azjol-nerub"
 					>
