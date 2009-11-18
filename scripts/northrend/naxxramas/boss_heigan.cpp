@@ -215,9 +215,85 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     }
 };
 
+struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
+{
+    npc_heigan_eruptionAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+    ScriptedInstance* pInstance;
+ 
+    uint32 despawn_timer;
+    bool casted;
+     
+    void Reset()
+    {
+        casted = false;
+        despawn_timer = 1000;
+    }
+    void Aggro(Unit* who)
+    {
+        //This is just for dance. It doesn't attack anybody.
+        DoStopAttack();
+        SetCombatMovement(false);
+    }
+    void JustDied(Unit* who)
+    {
+        //If dance mob was somehow killed - respawn him.
+        m_creature->Respawn();
+    }
+    void CastErupt()
+    {
+        for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
+        {
+            if (Player* pPlayer = i->getSource())
+            {
+                if (pPlayer->isAlive())
+                {
+                    if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                        DoCast(pPlayer, SPELL_ERUPTION, true);
+                }
+            }
+         }
+    }
+    void UpdateAI(const uint32 diff)
+    {
+        if(m_creature->GetMapId() != 533)
+            return;
+
+        if(pInstance->GetData(TYPE_HEIGAN) != IN_PROGRESS)
+        {
+            m_creature->ForcedDespawn();
+        }
+
+        if(casted == false)
+        {
+            CastErupt();
+            casted = true;
+        }
+
+        if(despawn_timer < diff)
+        {
+            m_creature->ForcedDespawn();
+        }else despawn_timer -= diff;
+
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
+            return;
+
+        AttackStart(m_creature->getVictim());
+     }
+};
+
 CreatureAI* GetAI_boss_heigan(Creature* pCreature)
 {
     return new boss_heiganAI(pCreature);
+}
+
+CreatureAI* GetAI_npc_heigan_eruptionAI(Creature* pCreature)
+{
+    return new npc_heigan_eruptionAI(pCreature);
 }
 
 void AddSC_boss_heigan()
@@ -226,5 +302,11 @@ void AddSC_boss_heigan()
     newscript = new Script;
     newscript->Name = "boss_heigan";
     newscript->GetAI = &GetAI_boss_heigan;
+    newscript->RegisterSelf();
+
+    Script *newscript;
+    newscript = new Script;
+    newscript->Name = "npc_heigan_eruption";
+    newscript->GetAI = &GetAI_npc_heigan_eruptionAI;
     newscript->RegisterSelf();
 }
