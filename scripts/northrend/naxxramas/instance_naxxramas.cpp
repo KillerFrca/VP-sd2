@@ -470,7 +470,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             for (std::set<GameObject*>::iterator itr = HeiganEruption[i].begin(); itr != HeiganEruption[i].end(); ++itr)
             {
 
-                (*itr)->SendCustomAnim();
+                //(*itr)->SendCustomAnim();
                 (*itr)->SummonCreature(15384, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ(), 0, TEMPSUMMON_DEAD_DESPAWN, 0);
 
             }

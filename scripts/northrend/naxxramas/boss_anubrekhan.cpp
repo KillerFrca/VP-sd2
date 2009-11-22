@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         {
             DoCast(m_creature, m_bIsHeroicMode?SPELL_LOCUSTSWARM_H:SPELL_LOCUSTSWARM);
             m_uiLocustSwarmTimer = 90000;
-            m_uiSummonTimer = m_uiLocustSwarmTimer + 30000;
+            m_uiSummonTimer = 15000;
         }
         else
             m_uiLocustSwarmTimer -= uiDiff;
@@ -175,7 +175,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                     pTemp->AddThreat(pTarget, 0.0f);
                     pTemp->AI()->AttackStart(pTarget);
                 }
-            m_uiSummonTimer = 180000;
+            m_uiSummonTimer = 240000;
         }else m_uiSummonTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
