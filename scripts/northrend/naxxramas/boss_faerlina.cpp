@@ -179,12 +179,11 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
     }
     void JustDied(Unit* pWho)
     {
-         if (m_pInstance)
-             if (Creature* pFaerlina = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA))))
-                 if (m_creature->GetDistance2d(pFaerlina) <= 5 && pFaerlina->HasAura(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE))
-                     pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
+        if (Unit* pFaerlina = Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA)))
+        {
+                pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
+        }
     }
-
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (m_bIsDead)

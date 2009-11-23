@@ -119,7 +119,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             {
                 if (m_pInstance->GetData(TYPE_SAPPHIRON) == NOT_STARTED)
                 {
-                    if (m_pInstance->GetData(TYPE_THADDIUS) == DONE && m_pInstance->GetData(TYPE_MAEXXNA) == DONE &&
+                    if (/*m_pInstance->GetData(TYPE_THADDIUS) == DONE && */m_pInstance->GetData(TYPE_MAEXXNA) == DONE &&
                         m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == DONE && m_pInstance->GetData(TYPE_LOATHEB) == DONE)
                     {
                         if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))

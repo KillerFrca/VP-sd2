@@ -52,6 +52,10 @@ EndScriptData */
 #define POS_Z 276.627
 #define POS_O 0.593
 
+#define TRIGGER_X 2769
+#define TRIGGER_Y -3671
+#define TRIGGER_Z 273.667
+#define TRIGGER_O 0
 
 struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 {
@@ -77,8 +81,8 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     void Reset()
     {
-    if(m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        if(m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         phase = 0;
 
         if(m_pInstance)
@@ -87,11 +91,11 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     void AttackStart(Unit* pWho)
     {
-    if (!pWho)
+        if (!pWho)
             return;
 
-    if(phase != 1)
-        return;
+        if(phase != 1)
+            return;
 
         if (m_creature->Attack(pWho, true))
         {
@@ -145,6 +149,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     }
     void Aggro(Unit *who)
     {
+        m_creature->SummonCreature(15384, TRIGGER_X, TRIGGER_Y, TRIGGER_Z, TRIGGER_O, TEMPSUMMON_DEAD_DESPAWN, 0);
         SetPhase(1);
         switch (rand()%3)
         {
@@ -180,7 +185,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
             SetPhase(0);
         }else Phase_Timer -= diff;
 
-        if (Erupt_Timer < diff)
+       /* if (Erupt_Timer < diff)
         {
             m_pInstance->SetData(DATA_HEIGAN_ERUPT, eruptSection);
 
@@ -194,7 +199,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
             {
                 Erupt_Timer = 10000;
             }else Erupt_Timer = 3000;
-        }else Erupt_Timer -= diff;
+        }else Erupt_Timer -= diff; */
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
             return;
@@ -224,13 +229,210 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
     }
     ScriptedInstance* pInstance;
  
-    uint32 despawn_timer;
-    bool casted;
-     
+    uint32 phase;
+    uint32 safeSpot;
+    uint32 fastTimer;
+    uint32 phaseTimer;
+    uint32 slowTimer;
+    bool forward;
+    std::list<GameObject*> GetGameObjectsByEntry(uint32 entry)
+    {
+        CellPair pair(MaNGOS::ComputeCellPair(m_creature->GetPositionX(), m_creature->GetPositionY()));
+        Cell cell(pair);
+        cell.data.Part.reserved = ALL_DISTRICT;
+        cell.SetNoCreate();
+ 
+        std::list<GameObject*> gameobjectList;
+ 
+        AllGameObjectsWithEntryInRange check(m_creature, entry, 100);
+        MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRange> searcher(m_creature, gameobjectList, check);
+        TypeContainerVisitor<MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRange>, GridTypeMapContainer> visitor(searcher);
+ 
+        CellLock<GridReadGuard> cell_lock(cell, pair);
+        cell_lock->Visit(cell_lock, visitor, *(m_creature->GetMap()));
+ 
+        return gameobjectList;
+    }
+    //Let's Dance!
+    void DoErupt(uint32 safePlace)
+    {
+        uint64 heiganGUID = pInstance->GetData64(NPC_HEIGAN);
+        Map::PlayerList const &PlList = pInstance->instance->GetPlayers();
+        if (PlList.isEmpty())
+            return;
+ 
+        if(safePlace != 1)
+        {
+            std::list<GameObject*> eruptGOs = GetGameObjectsByEntry(181678);
+            //Visual part of eruption
+            for (int32 i = 181510; i <= 181526; i++)
+            {
+                if (i == 181513 || i == 181512 || i == 181511 || i == 181525 || i == 181514 || i == 181515 || i == 181516)
+                    continue;
+                std::list<GameObject*> visualGO = GetGameObjectsByEntry(i);
+                for (std::list<GameObject*>::iterator itr = visualGO.begin(); itr != visualGO.end(); ++itr)
+                {
+                    if((*itr))
+                        //Required GO Custom Animation Patch for this
+                    {
+                        WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
+                        data << (*itr)->GetGUID();
+                        data << 0;
+                        (*itr)->SendMessageToSet(&data,true);
+                    }
+                }
+            }
+            //Damage part of eruption
+            for (std::list<GameObject*>::iterator itr = eruptGOs.begin(); itr != eruptGOs.end(); ++itr)
+            {
+                if(!(*itr))
+                    continue;
+                for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
+                {
+                    if (Player* pPlayer = i->getSource())
+                    {
+                        if (pPlayer->isGameMaster())
+                            continue;
+ 
+                        if (pPlayer->isAlive())
+                        {
+                            if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                                //We use originalCaster for deal damage by Plague Fissure
+                                DoCast(pPlayer, SPELL_ERUPTION, true);
+                        }
+                    }
+                }
+            }
+        }
+        //Change direction of dance
+        else forward = true;
+        if(safePlace != 2)
+        {
+            std::list<GameObject*> eruptGOs = GetGameObjectsByEntry(181676);
+            for (int32 i = 181511; i <= 181531; i++)
+            {
+                if ((i > 181516 && i < 181525) || (i == 181526))
+                    continue;
+                std::list<GameObject*> visualGO = GetGameObjectsByEntry(i);
+                for (std::list<GameObject*>::iterator itr = visualGO.begin(); itr != visualGO.end(); ++itr)
+                {
+                    if((*itr))
+                    {
+                        WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
+                        data << (*itr)->GetGUID();
+                        data << 0;
+                        (*itr)->SendMessageToSet(&data,true);
+                    }
+                }
+            }
+            for (std::list<GameObject*>::iterator itr = eruptGOs.begin(); itr != eruptGOs.end(); ++itr)
+            {
+                if(!(*itr))
+                    continue;
+                for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
+                {
+                    if (Player* pPlayer = i->getSource())
+                    {
+                        if (pPlayer->isGameMaster())
+                            continue;
+ 
+                        if (pPlayer->isAlive())
+                        {
+                            if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                                DoCast(pPlayer, SPELL_ERUPTION, true);
+                        }
+                    }
+                }
+            }
+        }
+        if(safePlace != 3)
+        {
+            std::list<GameObject*> eruptGOs = GetGameObjectsByEntry(181677);
+            for (int32 i = 181532; i <= 181545; i++)
+            {
+                if (i >= 181537 && i <= 181539)
+                    continue;
+                std::list<GameObject*> visualGO = GetGameObjectsByEntry(i);
+                for (std::list<GameObject*>::iterator itr = visualGO.begin(); itr != visualGO.end(); ++itr)
+                {
+                    if((*itr))
+                    {
+                        WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
+                        data << (*itr)->GetGUID();
+                        data << 0;
+                        (*itr)->SendMessageToSet(&data,true);
+                    }
+                }
+            }
+            for (std::list<GameObject*>::iterator itr = eruptGOs.begin(); itr != eruptGOs.end(); ++itr)
+            {
+                if(!(*itr))
+                    continue;
+                for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
+                {
+                    if (Player* pPlayer = i->getSource())
+                    {
+                        if (pPlayer->isGameMaster())
+                            continue;
+ 
+                        if (pPlayer->isAlive())
+                        {
+                            if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                                DoCast(pPlayer, SPELL_ERUPTION, true);
+                        }
+                    }
+                }
+            }
+        }
+        if(safePlace != 4)
+        {
+            std::list<GameObject*> eruptGOs = GetGameObjectsByEntry(181695);
+            for (int32 i = 181537; i <= 181552; i++)
+            {
+                if (i > 181539 && i < 181545)
+                    continue;
+                std::list<GameObject*> visualGO = GetGameObjectsByEntry(i);
+                for (std::list<GameObject*>::iterator itr = visualGO.begin(); itr != visualGO.end(); ++itr)
+                {
+                    if((*itr))
+                    {
+                        WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
+                        data << (*itr)->GetGUID();
+                        data << 0;
+                        (*itr)->SendMessageToSet(&data,true);
+                    }
+                }
+            }
+            for (std::list<GameObject*>::iterator itr = eruptGOs.begin(); itr != eruptGOs.end(); ++itr)
+            {
+                if(!(*itr))
+                    continue;
+                for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
+                {
+                    if (Player* pPlayer = i->getSource())
+                    {
+                        if (pPlayer->isGameMaster())
+                            continue;
+ 
+                        if (pPlayer->isAlive())
+                        {
+                            if(pPlayer->GetDistance((*itr)) <= 8.0f)
+                                DoCast(pPlayer, SPELL_ERUPTION, true);
+                        }
+                    }
+                }
+            }
+        //Let's dance back!
+        }else forward=false;
+    }
+ 
     void Reset()
     {
-        casted = false;
-        despawn_timer = 1000;
+        phase = 1;
+        safeSpot = 1;
+        fastTimer = 3500;
+        slowTimer = 10500;
+        phaseTimer = 90000;
     }
     void Aggro(Unit* who)
     {
@@ -243,21 +445,6 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
         //If dance mob was somehow killed - respawn him.
         m_creature->Respawn();
     }
-    void CastErupt()
-    {
-	Map::PlayerList const &PlList = pInstance->instance->GetPlayers();
-        for(Map::PlayerList::const_iterator i = PlList.begin(); i != PlList.end(); ++i)
-        {
-            if (Player* pPlayer = i->getSource())
-            {
-                if (pPlayer->isAlive())
-                {
-                    if(pPlayer->GetDistance(m_creature) <= 8.0f)
-                        DoCast(pPlayer, SPELL_ERUPTION, true);
-                }
-            }
-         }
-    }
     void UpdateAI(const uint32 diff)
     {
         if(m_creature->GetMapId() != 533)
@@ -267,24 +454,47 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
         {
             m_creature->ForcedDespawn();
         }
-
-        if(casted == false)
+ 
+        if (phase == 1)
         {
-            CastErupt();
-            casted = true;
+            if(phaseTimer < diff)
+            {
+                // Let's fast dance
+                phase = 2;
+                phaseTimer = 45000;
+                safeSpot = 1;
+            }else phaseTimer-=diff;
+            if(slowTimer < diff)
+            {
+                DoErupt(safeSpot);
+                if(forward)
+                    safeSpot++;
+                else
+                    safeSpot--;
+                slowTimer = 10500;
+            }else slowTimer-=diff;
         }
-
-        if(despawn_timer < diff)
+        else if(phase == 2)
         {
-            m_creature->ForcedDespawn();
-        }else despawn_timer -= diff;
-
-
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        AttackStart(m_creature->getVictim());
-     }
+            if(phaseTimer < diff)
+            {
+                // Slow dance again
+                phase = 1;
+                AttackStart(m_creature->getVictim());
+                phaseTimer = 90000;
+                safeSpot = 1;
+            }else phaseTimer-=diff;
+            if(fastTimer < diff)
+            {
+                DoErupt(safeSpot);
+                if(forward)
+                    safeSpot++;
+                else
+                    safeSpot--;
+                fastTimer = 3500;
+            }else fastTimer-=diff;
+        }
+    }
 };
 
 CreatureAI* GetAI_boss_heigan(Creature* pCreature)

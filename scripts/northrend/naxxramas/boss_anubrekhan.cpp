@@ -77,7 +77,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     {
         m_uiImpaleTimer = 15000;                            // 15 seconds
         m_uiLocustSwarmTimer = urand(80000, 120000);        // Random time between 80 seconds and 2 minutes for initial cast
-        m_uiSummonTimer = 90000;                            // 15 seconds after initial locust swarm
+        m_uiSummonTimer = 25000;                            // 15 seconds after initial locust swarm
     }
 
     void KilledUnit(Unit* pVictim)

@@ -333,8 +333,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
     {
         switch(uiType)
         {
-            case DATA_HEIGAN_ERUPT:
-                HeiganErupt(uiData);
+            /*case DATA_HEIGAN_ERUPT:
+                HeiganErupt(uiData); */
             case TYPE_ANUB_REKHAN:
                 m_auiEncounter[0] = uiData;
                 DoUseDoorOrButton(m_uiAnubDoorGUID);
@@ -460,7 +460,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         }
     }
 
-    void HeiganErupt(uint32 section)
+/*    void HeiganErupt(uint32 section)
     {
         for (uint32 i = 0; i < 4; ++i)
         {
@@ -470,12 +470,12 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             for (std::set<GameObject*>::iterator itr = HeiganEruption[i].begin(); itr != HeiganEruption[i].end(); ++itr)
             {
 
-                //(*itr)->SendCustomAnim();
-                (*itr)->SummonCreature(15384, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ(), 0, TEMPSUMMON_DEAD_DESPAWN, 0);
+                (*itr)->SendCustomAnim();
+                //(*itr)->SummonCreature(15384, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ(), 0, TEMPSUMMON_DEAD_DESPAWN, 0);
 
             }
         }
-    }
+    } */
 
     const char* Save()
     {
@@ -569,6 +569,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 return m_uiStalaggGUID;
             case NPC_FEUGEN:
                 return m_uiFeugenGUID;
+            case NPC_HEIGAN:
+                return m_uiHeiganGUID;
         }
         return 0;
     }
