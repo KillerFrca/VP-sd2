@@ -1,15 +1,15 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/gruuls_lair
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
 
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2009-11-18T14:05:17.225340Z
-52cc2fc401b169ad39e9b9fe3d3ec093
-2009-10-14T11:00:30.262368Z
-1473
+2009-11-23T16:22:29.865188Z
+3aa3f234a0faeef96bb6c0379459e2eb
+2009-11-22T23:07:10.832590Z
+1505
 nofantasy
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-9666
+9639
 
 boss_high_king_maulgar.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2009-11-18T14:05:17.245369Z
-5c3caafd36310b3f318f0324215cec9a
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-23T16:22:30.015404Z
+cbec0143c84dbdbb9ac7fede63e3c7c6
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-20085
+20046
 
 instance_gruuls_lair.cpp
 file

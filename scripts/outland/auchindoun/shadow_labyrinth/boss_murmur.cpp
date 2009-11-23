@@ -42,12 +42,12 @@ struct MANGOS_DLL_DECL boss_murmurAI : public ScriptedAI
     {
         SetCombatMovement(false);
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 SonicBoom_Timer;
     uint32 MurmursTouch_Timer;
@@ -79,8 +79,8 @@ struct MANGOS_DLL_DECL boss_murmurAI : public ScriptedAI
 
     void SonicBoomEffect()
     {
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
-        for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr)
+        ThreatList const& tList = m_creature->getThreatManager().getThreatList();
+        for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
         {
            Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
            if (target && target->GetTypeId() == TYPEID_PLAYER)
@@ -138,11 +138,11 @@ struct MANGOS_DLL_DECL boss_murmurAI : public ScriptedAI
             if (Resonance_Timer < diff)
             {
                 DoCast(m_creature->getVictim(), SPELL_RESONANCE);
-                Resonance_Timer = m_bIsHeroicMode ? 3000 : 5000;
+                Resonance_Timer = m_bIsRegularMode ? 5000 : 3000;
             }else Resonance_Timer -= diff;
         }
 
-        if (m_bIsHeroicMode)
+        if (!m_bIsRegularMode)
         {
             if (SonicShock_Timer < diff)
             {

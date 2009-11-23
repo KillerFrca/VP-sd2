@@ -1,15 +1,15 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/northrend/nexus/nexus
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2009-11-18T14:05:08.022107Z
-26090902ebd5317f52728df9af0e3b75
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:16.636166Z
+17801d980f915d9c048f9b45ed520846
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-5122
+5139
 
 boss_anomalus.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2009-11-18T14:05:08.042136Z
-07d63e55c10f3f5c595f5194d966f4d8
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:16.776368Z
+d34120fc820e20503096f154c66dd65d
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-7521
+7539
 
 instance_nexus.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2009-11-18T14:05:08.122251Z
-fade6b52dc13a720ee20a2aacdd9d88c
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:16.846468Z
+1a1d5dd2bfa7c666f125f3c21ec831c7
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-2815
+2828
 
 boss_telestra.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2009-11-18T14:05:08.172323Z
-fa2a97b4c350062a2293132d4ff2b28f
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:16.966641Z
+efd3817ca6a7df2331bae128c7135b58
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -228,5 +228,5 @@ has-props
 
 
 
-3204
+3217
 

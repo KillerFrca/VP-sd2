@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 80
-/svnroot/scriptdev2/!svn/ver/1473/scripts/outland/hellfire_citadel/blood_furnace
+/svnroot/scriptdev2/!svn/ver/1504/scripts/outland/hellfire_citadel/blood_furnace
 END
 boss_broggok.cpp
 K 25
@@ -31,5 +31,5 @@ boss_kelidan_the_breaker.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 109
-/svnroot/scriptdev2/!svn/ver/1473/scripts/outland/hellfire_citadel/blood_furnace/boss_kelidan_the_breaker.cpp
+/svnroot/scriptdev2/!svn/ver/1504/scripts/outland/hellfire_citadel/blood_furnace/boss_kelidan_the_breaker.cpp
 END

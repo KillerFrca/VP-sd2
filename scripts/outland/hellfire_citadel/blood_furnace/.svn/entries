@@ -1,15 +1,15 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/hellfire_citadel/blood_furnace
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 
 
 
@@ -168,11 +168,11 @@ file
 
 
 
-2009-11-18T14:05:09.674483Z
-50c3410478d167a28ad39c93ce4d0c13
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:19.760659Z
+6aeea2e2cd00bd602a7ba5be7710b475
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -194,5 +194,5 @@ has-props
 
 
 
-6940
+6972
 

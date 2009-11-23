@@ -1,15 +1,15 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/coilfang_reservoir/underbog
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 
 
 
@@ -66,11 +66,11 @@ file
 
 
 
-2009-11-18T14:05:13.550056Z
-430d991e8d94fb717708b0015f94a996
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-11-23T16:22:25.088320Z
+7ae7122d4743526a3dadbe1baf9ce7c3
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -92,5 +92,5 @@ has-props
 
 
 
-4707
+4720
 
