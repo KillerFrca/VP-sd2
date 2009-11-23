@@ -1,15 +1,15 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/magisters_terrace
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
 
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2009-11-18T14:05:47.999592Z
-5fbd0c2637ef7264abb3d235b8568e4b
-2009-08-04T10:19:32.239941Z
-1303
-nofantasy
+2009-11-23T16:22:50.745212Z
+d8cb19e44ba5da2aac38616d3934817e
+2009-11-19T15:51:26.501005Z
+1504
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-6129
+6141
 
 instance_magisters_terrace.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2009-11-18T14:05:48.049664Z
-31341eaffe0b76c74f9c84781a830639
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-23T16:22:50.805299Z
+31368c625b4354f49e1d4fbf0eb910d6
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-24701
+24321
 
 magisters_terrace.h
 file
@@ -168,78 +168,10 @@ file
 
 
 
-2009-11-18T14:05:48.099736Z
-93fe08303114a0d07f8c5c0e797ba6f3
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-14749
-
-boss_vexallus.cpp
-file
-
-
-
-
-2009-11-18T14:05:48.129779Z
-4d9b41f7325a618b2344f73a9f115460
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7512
-
-boss_priestess_delrissa.cpp
-file
-
-
-
-
-2009-11-18T14:05:48.159822Z
-111a0a625f192fcf5f63718a52ada80f
-2009-10-21T21:45:06.808800Z
-1478
+2009-11-23T16:22:50.865385Z
+d5b2d501d5ea7030b6eec36d4d15e227
+2009-11-19T15:51:26.501005Z
+1504
 deverend
 has-props
 
@@ -262,5 +194,73 @@ has-props
 
 
 
-39835
+14765
+
+boss_vexallus.cpp
+file
+
+
+
+
+2009-11-23T16:22:50.925472Z
+00e09332d394691f3a4272814b872976
+2009-11-19T15:51:26.501005Z
+1504
+deverend
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7530
+
+boss_priestess_delrissa.cpp
+file
+
+
+
+
+2009-11-23T16:22:50.995572Z
+c20552b90e6659d3f893ff66606ba29c
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+39798
 

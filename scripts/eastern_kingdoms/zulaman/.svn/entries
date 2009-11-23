@@ -1,14 +1,14 @@
 10
 
 dir
-1502
+1505
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/zulaman
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-30T11:40:36.183838Z
-1487
+2009-11-22T23:07:10.832590Z
+1505
 nofantasy
 
 
@@ -66,10 +66,10 @@ file
 
 
 
-2009-11-18T14:05:40.729137Z
-09badc171db4cbf92fde66e916317181
-2009-10-30T11:40:36.183838Z
-1487
+2009-11-23T16:22:49.383254Z
+ac5c4f8a3d5a9fe8f9207761a16ae3ba
+2009-11-22T23:07:10.832590Z
+1505
 nofantasy
 has-props
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-26306
+26281
 
 zulaman.cpp
 file
@@ -236,11 +236,11 @@ file
 
 
 
-2009-11-18T14:05:40.929425Z
-50b87a679685aaddc128b44c573bdcaa
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-23T16:22:49.493412Z
+a441d3d752e9ca024de68ecfe077e75a
+2009-11-22T23:07:10.832590Z
+1505
+nofantasy
 has-props
 
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-24099
+24055
 
 zulaman.h
 file
