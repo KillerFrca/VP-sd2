@@ -181,8 +181,9 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
     {
         if (Unit* pFaerlina = Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA)))
         {
+                error_log("Faerlina nalezena");
                 pFaerlina->RemoveAurasDueToSpell(m_bIsHeroicMode ? H_SPELL_ENRAGE : SPELL_ENRAGE);
-        }
+        }else error_log("Faerlina nenalezena");
     }
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
