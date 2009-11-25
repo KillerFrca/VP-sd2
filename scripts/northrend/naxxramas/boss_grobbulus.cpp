@@ -57,7 +57,7 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
         PoisonCloud_Timer = 15000;
         MutatingInjection_Timer = 20000;
         SlimeSpary_Timer = 15000+rand()%15000;
-        Enrage_Timer = 300000;
+        Enrage_Timer = 720000;
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GROBBULUS, NOT_STARTED);
