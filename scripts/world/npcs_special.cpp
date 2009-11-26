@@ -1622,9 +1622,13 @@ struct MANGOS_DLL_DECL npc_onyxian_whelplingAI : public ScriptedAI
     npc_onyxian_whelplingAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
 
     uint32 m_uiEmoteTimer;
+    Unit *owner;
 
     void Reset()
     {
+        owner = m_creature->GetOwner();
+        if(owner)
+            m_creature->GetMotionMaster()->MoveFollow(owner, 1, (M_PI/2)); 
         m_uiEmoteTimer = 5000;
     }
 
