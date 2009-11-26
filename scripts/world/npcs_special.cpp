@@ -42,6 +42,7 @@ npc_mount_vendor        100%    Regular mount vendors all over the world. Displa
 npc_rogue_trainer        80%    Scripted trainers, so they are able to offer item 17126 for class quest 6681
 npc_sayge               100%    Darkmoon event fortune teller, buff player based on answers given
 npc_tabard_vendor        50%    allow recovering quest related tabards, achievement related ones need core support
+npc_onyxian_whelpling   100%    non-combat pet emote
 EndContentData */
 
 /*########
@@ -1610,6 +1611,38 @@ bool GossipSelect_npc_tabard_vendor(Player* pPlayer, Creature* pCreature, uint32
     }
     return true;
 }
+/*#######################
+# npc_onyxian_whelpling #
+########################*/
+#define SAY_ONYX_WHELP    -1366071
+#define SPELL_DEEP_BREATH 69004
+
+struct MANGOS_DLL_DECL npc_onyxian_whelplingAI : public ScriptedAI
+{
+    npc_onyxian_whelplingAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    uint32 m_uiEmoteTimer;
+
+    void Reset()
+    {
+        m_uiEmoteTimer = 5000;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiEmoteTimer < uiDiff)
+        {
+            DoScriptText(SAY_ONYX_WHELP, m_creature);
+            m_creature->CastSpell(m_creature, SPELL_DEEP_BREATH, false);
+            m_uiEmoteTimer = 60000+rand()%300000;
+        }else m_uiEmoteTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_onyxian_whelpling(Creature* pCreature)
+{
+    return new npc_onyxian_whelplingAI(pCreature);
+}
 
 void AddSC_npcs_special()
 {
@@ -1693,5 +1726,10 @@ void AddSC_npcs_special()
     newscript->Name = "npc_tabard_vendor";
     newscript->pGossipHello =  &GossipHello_npc_tabard_vendor;
     newscript->pGossipSelect = &GossipSelect_npc_tabard_vendor;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_onyxian_whelpling";
+    newscript->GetAI = &GetAI_npc_onyxian_whelpling;
     newscript->RegisterSelf();
 }
