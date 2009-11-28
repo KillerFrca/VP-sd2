@@ -39,6 +39,7 @@ enum
 
     //spellId invalid
     SPELL_SUMMON_SPIDERLING = 29434,
+    NPC_SPIDERLING          = 17055
 };
 
 #define LOC_X1    3546.796
@@ -174,7 +175,20 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
             }
         }
     }
-
+    void SummonSpiderling()
+    {
+        uint8 number = rand()%10 + 8;
+        float x,y,z;
+        for(uint8 i = 0; number >= i; i++)
+        {
+            m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),5.0f,x,y,z);
+            if(Creature* spiderling = m_creature->SummonCreature(NPC_SPIDERLING, x, y, z,0, TEMPSUMMON_DEAD_DESPAWN, 0))
+            {
+                spiderling->AddThreat(m_creature->getVictim(), 0.0f);
+                spiderling->AI()->AttackStart(m_creature->getVictim());
+            }
+        }
+    }
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -219,7 +233,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         // Summon Spiderling
         if (m_uiSummonSpiderlingTimer < uiDiff)
         {
-            DoCast(m_creature, SPELL_SUMMON_SPIDERLING);
+            SummonSpiderling();
             m_uiSummonSpiderlingTimer = 40000;
         }
         else

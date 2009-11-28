@@ -282,7 +282,7 @@ extern void AddSC_boss_noth();
 extern void AddSC_boss_patchwerk();
 extern void AddSC_boss_razuvious();
 extern void AddSC_boss_sapphiron();
-extern void AddSC_boss_thaddius();
+//extern void AddSC_boss_thaddius(); not scripted yet
 extern void AddSC_instance_naxxramas();
 extern void AddSC_boss_anomalus();                          //nexus
 extern void AddSC_boss_keristrasza();
@@ -679,7 +679,7 @@ void AddScripts()
     AddSC_boss_patchwerk();
     AddSC_boss_razuvious();
     AddSC_boss_sapphiron();
-    AddSC_boss_thaddius();
+//    AddSC_boss_thaddius(); not scripted yet
     AddSC_instance_naxxramas();
     AddSC_boss_anomalus();                                  //nexus
     AddSC_boss_keristrasza();
