@@ -60,7 +60,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     boss_anubrekhanAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
         m_bHasTaunted = false;
         Reset();
     }
