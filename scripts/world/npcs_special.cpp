@@ -1631,11 +1631,6 @@ struct MANGOS_DLL_DECL npc_onyxian_whelplingAI : public ScriptedAI
             m_creature->GetMotionMaster()->MoveFollow(owner, 1, (M_PI/2)); 
         m_uiEmoteTimer = 5000;
     }
-    void EnterEvadeMode()
-    {
-        if(owner)
-           m_creature->GetMotionMaster()->MoveFollow(owner, 1, (M_PI/2)); 
-    }
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_uiEmoteTimer < uiDiff)
