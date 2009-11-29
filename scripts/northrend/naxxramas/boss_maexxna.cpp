@@ -177,15 +177,18 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
     }
     void SummonSpiderling()
     {
-        uint8 number = rand()%10 + 8;
+        uint8 number = 9;
         float x,y,z;
         for(uint8 i = 0; number >= i; i++)
         {
-            m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),5.0f,x,y,z);
-            if(Creature* spiderling = m_creature->SummonCreature(NPC_SPIDERLING, x, y, z,0, TEMPSUMMON_DEAD_DESPAWN, 0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
-                spiderling->AddThreat(m_creature->getVictim(), 0.0f);
-                spiderling->AI()->AttackStart(m_creature->getVictim());
+                m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),7.0f,x,y,z);
+                if(Creature* spiderling = m_creature->SummonCreature(NPC_SPIDERLING, x, y, z,0, TEMPSUMMON_DEAD_DESPAWN, 0))
+                {
+                    spiderling->AddThreat(pTarget, 0.0f);
+                    spiderling->AI()->AttackStart(pTarget);
+                }
             }
         }
     }
