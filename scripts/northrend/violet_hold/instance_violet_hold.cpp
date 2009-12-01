@@ -237,7 +237,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 m_auiEncounter[1] = uiData;
                 break;
             case TYPE_DOOR:
-                if (data == SPECIAL)
+                if (uiData == SPECIAL)
                 {
                     --m_uiShieldPercent;
                     if(m_uiShieldPercent > 0)

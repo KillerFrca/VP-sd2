@@ -22,7 +22,7 @@ enum
     TYPE_CYANIGOSA          = 17,
     TYPE_RIFT               = 18,
     TYPE_LASTBOSS           = 19,
-    TYPE_DOOR               = 21
+    TYPE_DOOR               = 21,
 
     DATA_EREKEM             = 22,
     DATA_MORAGG             = 23,
@@ -61,7 +61,7 @@ enum
     NPC_SINCLARI           = 30658,
     NPC_GUARD              = 30659,
     NPC_PORTAL             = 31011,
-    NPC_DOOR_SEAL          = 30868,
+    NPC_DOOR_SEAL          = 30896,
 
     GO_DOOR_SEAL           = 191723,
     GO_DOOR_EREKEM         = 191564,
