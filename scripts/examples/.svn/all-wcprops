@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 50
-/svnroot/scriptdev2/!svn/ver/1473/scripts/examples
+/svnroot/scriptdev2/!svn/ver/1513/scripts/examples
 END
 example_gossip_codebox.cpp
 K 25
@@ -25,5 +25,5 @@ example_escort.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 69
-/svnroot/scriptdev2/!svn/ver/1366/scripts/examples/example_escort.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/examples/example_escort.cpp
 END

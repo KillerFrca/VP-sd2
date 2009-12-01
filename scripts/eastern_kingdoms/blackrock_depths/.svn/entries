@@ -1,15 +1,15 @@
 10
 
 dir
-1505
+1513
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/blackrock_depths
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-12-01T13:48:41.589199Z
+1513
+nofantasy
 
 
 
@@ -338,10 +338,10 @@ file
 
 
 
-2009-11-18T14:05:30.294132Z
-820b1b208b02fd565618e6ceb16be384
-2009-10-14T11:00:30.262368Z
-1473
+2009-12-01T14:03:57.459796Z
+82a1d0e22aa8d423519bcc27b6352e11
+2009-12-01T13:48:41.589199Z
+1513
 nofantasy
 has-props
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-11174
+11184
 
 boss_emperor_dagran_thaurissan.cpp
 file

@@ -1,14 +1,14 @@
 10
 
 dir
-1505
+1513
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/zulaman
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-11-22T23:07:10.832590Z
-1505
+2009-12-01T13:48:41.589199Z
+1513
 nofantasy
 
 
@@ -100,10 +100,10 @@ file
 
 
 
-2009-11-18T14:05:40.809252Z
-248219c67e23ae2d10346e890aaf52fd
-2009-10-07T10:21:00.794807Z
-1448
+2009-12-01T14:03:57.670099Z
+b56afb87ec21ea55ce469c70656b73d9
+2009-12-01T13:48:41.589199Z
+1513
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-8171
+8181
 
 boss_halazzi.cpp
 file

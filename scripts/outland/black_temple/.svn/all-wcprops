@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 62
-/svnroot/scriptdev2/!svn/ver/1505/scripts/outland/black_temple
+/svnroot/scriptdev2/!svn/ver/1513/scripts/outland/black_temple
 END
 boss_teron_gorefiend.cpp
 K 25
@@ -13,7 +13,7 @@ black_temple.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 79
-/svnroot/scriptdev2/!svn/ver/1451/scripts/outland/black_temple/black_temple.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/outland/black_temple/black_temple.cpp
 END
 boss_illidan.cpp
 K 25

@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 75
-/svnroot/scriptdev2/!svn/ver/1478/scripts/eastern_kingdoms/blackrock_depths
+/svnroot/scriptdev2/!svn/ver/1513/scripts/eastern_kingdoms/blackrock_depths
 END
 boss_ambassador_flamelash.cpp
 K 25
@@ -61,7 +61,7 @@ boss_tomb_of_seven.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 98
-/svnroot/scriptdev2/!svn/ver/1473/scripts/eastern_kingdoms/blackrock_depths/boss_tomb_of_seven.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/eastern_kingdoms/blackrock_depths/boss_tomb_of_seven.cpp
 END
 boss_emperor_dagran_thaurissan.cpp
 K 25

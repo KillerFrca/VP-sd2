@@ -1,37 +1,37 @@
 K 25
 svn:wc:ra_dav:version-url
 V 50
-/svnroot/scriptdev2/!svn/ver/1494/scripts/kalimdor
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor
 END
 felwood.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 62
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/felwood.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/felwood.cpp
 END
 dustwallow_marsh.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 71
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/dustwallow_marsh.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/dustwallow_marsh.cpp
 END
 orgrimmar.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 64
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/orgrimmar.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/orgrimmar.cpp
 END
 tanaris.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 62
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/tanaris.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/tanaris.cpp
 END
 silithus.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 63
-/svnroot/scriptdev2/!svn/ver/1373/scripts/kalimdor/silithus.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/silithus.cpp
 END
 moonglade.cpp
 K 25
@@ -73,19 +73,19 @@ desolace.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 63
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/desolace.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/desolace.cpp
 END
 azuremyst_isle.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 69
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/azuremyst_isle.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/azuremyst_isle.cpp
 END
 darkshore.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 64
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/darkshore.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/darkshore.cpp
 END
 stonetalon_mountains.cpp
 K 25
@@ -103,7 +103,7 @@ boss_azuregos.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 68
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/boss_azuregos.cpp
+/svnroot/scriptdev2/!svn/ver/1505/scripts/kalimdor/boss_azuregos.cpp
 END
 thunder_bluff.cpp
 K 25
@@ -121,17 +121,17 @@ azshara.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 62
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/azshara.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/azshara.cpp
 END
 winterspring.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 67
-/svnroot/scriptdev2/!svn/ver/1286/scripts/kalimdor/winterspring.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/winterspring.cpp
 END
 the_barrens.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/the_barrens.cpp
+/svnroot/scriptdev2/!svn/ver/1513/scripts/kalimdor/the_barrens.cpp
 END

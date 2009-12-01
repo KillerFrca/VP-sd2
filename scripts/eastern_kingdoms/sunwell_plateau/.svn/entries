@@ -1,15 +1,15 @@
 10
 
 dir
-1505
+1513
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/sunwell_plateau
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-24T00:11:37.625685Z
+1507
+nofantasy
 
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2009-11-18T14:05:32.156811Z
-ac90af3e9859c157fc4470be6a4dba95
-2009-10-21T21:45:06.808800Z
-1478
-deverend
+2009-11-25T19:35:19.006024Z
+798a39b6fc5c24942ba87aa63fee72c6
+2009-11-24T00:11:37.625685Z
+1507
+nofantasy
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-19483
+19716
 
 boss_brutallus.cpp
 file

@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 76
-/svnroot/scriptdev2/!svn/ver/1476/scripts/eastern_kingdoms/scarlet_monastery
+/svnroot/scriptdev2/!svn/ver/1509/scripts/eastern_kingdoms/scarlet_monastery
 END
 boss_interrogator_vishas.cpp
 K 25
@@ -55,7 +55,7 @@ boss_mograine_and_whitemane.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 108
-/svnroot/scriptdev2/!svn/ver/1473/scripts/eastern_kingdoms/scarlet_monastery/boss_mograine_and_whitemane.cpp
+/svnroot/scriptdev2/!svn/ver/1509/scripts/eastern_kingdoms/scarlet_monastery/boss_mograine_and_whitemane.cpp
 END
 boss_scorn.cpp
 K 25

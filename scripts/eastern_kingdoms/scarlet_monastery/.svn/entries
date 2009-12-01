@@ -1,15 +1,15 @@
 10
 
 dir
-1505
+1513
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/scarlet_monastery
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-10-15T00:08:57.181528Z
-1476
-deverend
+2009-11-28T15:48:40.031013Z
+1509
+nofantasy
 
 
 
@@ -304,10 +304,10 @@ file
 
 
 
-2009-11-18T14:05:27.379942Z
-e7a1a32a9d78c3c29ff2a4cfaa43444c
-2009-10-14T11:00:30.262368Z
-1473
+2009-11-29T15:09:40.358534Z
+7e2b06be12c63ad31700ce163f7958e9
+2009-11-28T15:48:40.031013Z
+1509
 nofantasy
 has-props
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-12320
+12608
 
 boss_scorn.cpp
 file
