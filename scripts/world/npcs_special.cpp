@@ -1058,7 +1058,7 @@ bool GossipHello_npc_innkeeper(Player* pPlayer, Creature* pCreature)
     }
 
     pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
-    pPlayer->SendPreparedGossip(pCreature)
+    pPlayer->SendPreparedGossip(pCreature);
     return true;
 }
 
