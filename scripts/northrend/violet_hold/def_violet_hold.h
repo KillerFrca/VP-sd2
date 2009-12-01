@@ -10,7 +10,8 @@ enum
     MAX_ENCOUNTER           = 2,
 
     WORLD_STATE_VH          = 3816,
-    //WORLD_STATE_VH_RIFT     = 2784,
+    WORLD_STATE_VH_PRISON   = 3815,
+    WORLD_STATE_VH_PORTALS  = 3810,
 
     TYPE_EREKEM             = 11,
     TYPE_MORAGG             = 12,
@@ -21,23 +22,24 @@ enum
     TYPE_CYANIGOSA          = 17,
     TYPE_RIFT               = 18,
     TYPE_LASTBOSS           = 19,
+    TYPE_DOOR               = 21
 
-    DATA_EREKEM             = 20,
-    DATA_MORAGG             = 21,
-    DATA_ICHORON            = 22,
-    DATA_XEVOZZ             = 23,
-    DATA_LAVANTHOR          = 24,
-    DATA_ZURAMAT            = 25,
-    DATA_SINCLARI           = 26,
-    DATA_BOSSTIME           = 27,
+    DATA_EREKEM             = 22,
+    DATA_MORAGG             = 23,
+    DATA_ICHORON            = 24,
+    DATA_XEVOZZ             = 25,
+    DATA_LAVANTHOR          = 26,
+    DATA_ZURAMAT            = 27,
+    DATA_SINCLARI           = 28,
+    DATA_BOSSTIME           = 29,
 
-    DATA_SEAL_DOOR          = 30,
-    DATA_EREKEM_DOOR        = 31,
-    DATA_MORAGG_DOOR        = 32,
-    DATA_ICHORON_DOOR       = 33,
-    DATA_XEVOZZ_DOOR        = 34,
-    DATA_LAVANTHOR_DOOR     = 35,
-    DATA_ZURAMAT_DOOR       = 36,
+    DATA_SEAL_DOOR          = 31,
+    DATA_EREKEM_DOOR        = 32,
+    DATA_MORAGG_DOOR        = 33,
+    DATA_ICHORON_DOOR       = 34,
+    DATA_XEVOZZ_DOOR        = 35,
+    DATA_LAVANTHOR_DOOR     = 36,
+    DATA_ZURAMAT_DOOR       = 37,
 
     NPC_EREKEM             = 29315,
     NPC_EREKEM_GUARD       = 29395,
@@ -59,6 +61,7 @@ enum
     NPC_SINCLARI           = 30658,
     NPC_GUARD              = 30659,
     NPC_PORTAL             = 31011,
+    NPC_DOOR_SEAL          = 30868,
 
     GO_DOOR_SEAL           = 191723,
     GO_DOOR_EREKEM         = 191564,
@@ -71,6 +74,7 @@ enum
     GO_DOOR_ZURAMAT        = 191565,
 
     SPELL_PORTAL_CHANNEL   = 58012,
+    SPELL_CORRUPT          = 58040
 };
 
 #endif

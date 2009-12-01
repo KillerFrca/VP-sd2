@@ -67,6 +67,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     uint8 m_uiLastBossID;
     uint8 m_uiRiftPortalCount;
+    uint8 m_uiShieldPercent;
 
     uint64 m_uiSinclariGUID;
 
@@ -95,6 +96,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
         m_uiLastBossID = 0;
         m_uiRiftPortalCount = 0;
+        m_uiShieldPercent = 100;
 
         m_uiSinclariGUID = 0;
 
@@ -116,6 +118,18 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         m_uiZuramatDoorGUID     = 0;
     }
 
+    void InitWorldState(bool Enable = true)
+    {
+        DoUpdateWorldState(WORLD_STATE_VH,Enable ? 1 : 0);
+        DoUpdateWorldState(WORLD_STATE_VH_PRISON,100);
+        DoUpdateWorldState(WORLD_STATE_VH_PORTALS,0);
+    }
+
+    void OnPlayerEnter(Player* pPlayer)
+    {
+        pPlayer->SendUpdateWorldState(WORLD_STATE_VH,0);
+    }
+    
     bool IsEncounterInProgress() const
     {
         for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
@@ -211,8 +225,10 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 break;
 
             case TYPE_RIFT:
-                if (uiData == SPECIAL)
+                if (uiData == SPECIAL){
                     ++m_uiRiftPortalCount;
+                    DoUpdateWorldState(WORLD_STATE_VH_PORTALS, m_uiRiftPortalCount);
+                }
                 else if (uiData == IN_PROGRESS)
                     bIsInBoss = true;
                 else
@@ -220,6 +236,15 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
                 m_auiEncounter[1] = uiData;
                 break;
+            case TYPE_DOOR:
+                if (data == SPECIAL)
+                {
+                    --m_uiShieldPercent;
+                    if(m_uiShieldPercent > 0)
+                        DoUpdateWorldState(WORLD_STATE_VH_PRISON, m_uiShieldPercent);
+                    else
+                        m_auiEncounter[0] = FAIL;
+                }
         }
         if (uiData == DONE)
             bIsInBoss = false;

@@ -281,7 +281,7 @@ bool GossipHello_npc_sinclari(Player* pPlayer, Creature* pCreature)
         pPlayer->PrepareQuestMenu( pCreature->GetGUID() );
 
     pPlayer->ADD_GOSSIP_ITEM( 0, "I am ready.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    pPlayer->SEND_GOSSIP_MENU(pCreature->GetNpcTextId(), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
 }
@@ -355,7 +355,57 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
         m_creature->setDeathState(JUST_DIED);
     }
 };
+/*######
+## npc_door_seal_vh
+######*/
+struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
+{
+    npc_door_sealAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();   
+        Reset();
+    }
 
+    ScriptedInstance* m_pInstance;
+
+    uint32 CheckTimer;
+    uint32 SpellCorrupt_Timer;
+    uint8 lastPortal;
+
+   	void Reset()
+    {
+        CheckTimer = 0;
+        SpellCorrupt_Timer = 0;
+        lastPortal = 0;
+}
+    void SpellHit(Unit* caster, const SpellEntry* spell)
+    {
+        if (SpellCorrupt_Timer)
+            return;
+
+        if (spell->Id == SPELL_CORRUPT)
+            SpellCorrupt_Timer = 1500;
+    }
+    void JustDied(Unit* pKiller)
+    {
+        m_creature->Respawn();
+    }
+
+    void UpdateAI(const uint32 diff){
+        if (SpellCorrupt_Timer)
+        {
+            if (SpellCorrupt_Timer <= diff)
+            {
+                m_pInstance->SetData(TYPE_DOOR,SPECIAL);
+
+                if (m_creature->HasAura(SPELL_CORRUPT,0))
+                    SpellCorrupt_Timer = 3000;
+                else
+                    SpellCorrupt_Timer = 0;
+            }else SpellCorrupt_Timer -= diff;
+        }
+    }
+};
 CreatureAI* GetAI_npc_sinclari(Creature* pCreature)
 {
     return new npc_sinclariAI (pCreature);
@@ -370,7 +420,10 @@ CreatureAI* GetAI_npc_violet_portal(Creature* pCreature)
 {
     return new npc_violet_portalAI (pCreature);
 }
-
+CreatureAI* GetAI_npc_door_seal(Creature* pCreature)
+{
+    return new npc_door_sealAI(pCreature);
+}
 void AddSC_violet_hold()
 {
     Script *newscript;
@@ -392,4 +445,8 @@ void AddSC_violet_hold()
     newscript->GetAI = &GetAI_npc_violet_portal;
     newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "npc_door_seal_vh";
+    newscript->GetAI = &GetAI_npc_door_seal;
+    newscript->RegisterSelf();
 }
