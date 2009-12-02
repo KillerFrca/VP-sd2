@@ -1999,6 +1999,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\scripts\northrend\violet_hold\mob_vh_dragons.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\scripts\northrend\violet_hold\violet_hold.cpp"
 						>
 					</File>

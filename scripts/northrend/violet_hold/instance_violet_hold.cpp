@@ -67,7 +67,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     uint8 m_uiLastBossID;
     uint8 m_uiRiftPortalCount;
-    uint8 m_uiShieldPercent;
+    uint32 m_uiShieldPercent;
 
     uint64 m_uiSinclariGUID;
     uint64 m_uiNPCSealDoorGUID;
@@ -129,7 +129,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     void OnPlayerEnter(Player* pPlayer)
     {
-        pPlayer->SendUpdateWorldState(WORLD_STATE_VH,0);
+        if(m_auiEncounter[0] != NOT_STARTED)
+            pPlayer->SendUpdateWorldState(WORLD_STATE_VH,1);
     }
     
     bool IsEncounterInProgress() const
@@ -235,7 +236,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
             case TYPE_ZURAMAT:
                 m_auiEncounter[7] = uiData;
                 break;
-
             case TYPE_RIFT:
                 if (uiData == SPECIAL){
                     ++m_uiRiftPortalCount;

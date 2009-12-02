@@ -31,16 +31,6 @@ struct Locations
     uint32 id;
 };
 
-static Locations BossLoc[]=
-{
-    {1857.125, 763.295, 38.654}, // Lavanthor
-    {1925.480, 849.981, 47.174}, // Zuramat
-    {1892.737, 744.589, 47.666}, // Moragg
-    {1876.100, 857.079, 43.333}, // Erekem
-    {1908.863, 785.647, 37.435}, // Ichoron
-    {1905.364, 840.607, 38.670}, // Xevozz
-};
-
 static Locations PortalLoc[]=
 {
     {1888.271, 810.781, 38.441}, // 0 center
@@ -54,120 +44,9 @@ static Locations PortalLoc[]=
 
 enum
 {
-    SPELL_SHIELD_DISRUPTION               = 58291,
     SPELL_TELEPORT_INSIDE                 = 62139,
 };
-/*######
-## npc_azure_saboteur
-######*/
-struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
-{
-    npc_azure_saboteurAI(Creature *pCreature) : ScriptedAI(pCreature)
-    {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	Reset();
-    }
-    ScriptedInstance *m_pInstance;
 
-    bool m_bIsActiving;
-
-    uint32 m_uiDisruption_Timer;
-    uint32 m_uiDisruptionCounter;
-
-    uint8 m_uiBossID;
-    uint32 m_uiBossType;
-    uint64 m_uiBossGUID;
-    uint64 m_uiDoorGUID;
-
-    void AttackStart(Unit* pWho)
-    {
-        return;
-    }
-
-    void Reset()
-    {
-        m_bIsActiving = false;
-
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
-        m_uiDisruptionCounter = 0;
-        m_uiDisruption_Timer = 1000;
-
-        if (m_pInstance)
-        {
-            m_uiBossID = m_pInstance->GetData(TYPE_LASTBOSS);
-
-            switch (m_uiBossID)
-            {
-                case 0: // Lavanthor
-                    m_uiBossType = TYPE_LAVANTHOR;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_LAVANTHOR);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_LAVANTHOR_DOOR);
-                    break;
-                case 1: // Zuramat
-                    m_uiBossType = TYPE_ZURAMAT;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_ZURAMAT);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_ZURAMAT_DOOR);
-                    break;
-                case 2: // Moragg
-                    m_uiBossType = TYPE_MORAGG;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_MORAGG);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_MORAGG_DOOR);
-                    break;
-                case 3: // Erekem
-                    m_uiBossType = TYPE_EREKEM;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_EREKEM);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_EREKEM_DOOR);
-                    break;
-                case 4: // Ichoron
-                    m_uiBossType = TYPE_ICHORON;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_ICHORON);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_ICHORON_DOOR);
-                    break;
-                case 5: // Xevozz
-                    m_uiBossType = TYPE_XEVOZZ;
-                    m_uiBossGUID = m_pInstance->GetData64(DATA_XEVOZZ);
-                    m_uiDoorGUID = m_pInstance->GetData64(DATA_XEVOZZ_DOOR);
-                    break;
-            }
-            m_creature->GetMotionMaster()->MovePoint(0, BossLoc[m_uiBossID].x,  BossLoc[m_uiBossID].y,  BossLoc[m_uiBossID].z);
-        }
-    }
-
-    void MovementInform(uint32 uiType, uint32 uiPointId)
-    {
-        if(uiType != POINT_MOTION_TYPE)
-                return;
-
-        switch(uiPointId)
-        {
-            case 0:
-                m_bIsActiving = true;
-                break;
-        }
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (m_bIsActiving)
-            if (m_uiDisruption_Timer < uiDiff)
-            {
-                if (m_uiDisruptionCounter < 3)
-                    DoCast(m_creature, SPELL_SHIELD_DISRUPTION);
-                else if (m_uiDisruptionCounter == 3)
-                {
-                    m_pInstance->DoUseDoorOrButton(m_uiDoorGUID);
-                    m_pInstance->SetData(m_uiBossType, SPECIAL);
-                }
-                else
-                    m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-
-                ++m_uiDisruptionCounter;
-                m_uiDisruption_Timer = 1000;
-            }
-            else m_uiDisruption_Timer -= uiDiff;
-    }
-};
 /*######
 ## npc_sinclari
 ######*/
@@ -183,16 +62,12 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
     uint8 m_uiRiftPortalCount;
     uint32 m_uiNextPortal_Timer;
     uint32 m_uiBossCheck_Timer;
-    uint32 m_uiGuardsDespawn_Timer;
-    std::list<Creature*> Guards;
+
     void Reset()
     {
         m_uiRiftPortalCount = 0;
         m_uiNextPortal_Timer = 0;
         m_uiBossCheck_Timer = 0;
-        m_uiGuardsDespawn_Timer = 0;
-
-        GetCreatureListWithEntryInGrid(Guards,m_creature,NPC_GUARD,150.0f);
     }
 
     void SetEvent()
@@ -205,15 +80,14 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_SEAL_DOOR));
         }
 
+        std::list<Creature*> Guards;
+        GetCreatureListWithEntryInGrid(Guards,m_creature,NPC_GUARD,150.0f);
         for(std::list<Creature*>::iterator itr = Guards.begin(); itr != Guards.end(); ++itr)
         {
-            if(!(*itr))
-                continue;
             (*itr)->CombatStop(true);
-            (*itr)->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            (*itr)->GetMotionMaster()->MovePoint(0, 1815.571, 800.112, 44.364);
+            (*itr)->ForcedDespawn();
+            Guards.erase(itr);
         }
-        m_uiGuardsDespawn_Timer = 10000;
     }
 
     void DoSpawnPortal()
@@ -294,20 +168,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 
             return;
         }
-        if(m_uiGuardsDespawn_Timer)
-        {
-            if(m_uiGuardsDespawn_Timer <= uiDiff)
-            {
-                for(std::list<Creature*>::iterator itr = Guards.begin(); itr != Guards.end(); ++itr)
-                {
-                    if(!(*itr))
-                        continue;
-
-                    (*itr)->ForcedDespawn();
-                }
-                m_uiGuardsDespawn_Timer = 0;
-            }else m_uiGuardsDespawn_Timer -= uiDiff;
-        }
     }
 };
 
@@ -360,12 +220,14 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    uint8 portalType; // 0 = nothing, 1 = Guard & spawns, 2 = Group of elites
 
     uint32 TimeRiftWave_Timer;
 
     void Reset()
     {
         TimeRiftWave_Timer = 15000;
+        portalType = 0;
     }
 
     void UpdateAI(const uint32 diff)
@@ -388,7 +250,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 }
                 if (Creature* pTemp = m_creature->SummonCreature(uiSpawnEntry, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                 {
-                    if (Creature* pTarget = GetClosestCreatureWithEntry(m_creature, NPC_SINCLARI, 150.0f))
+                    if (Creature* pTarget = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f))
                     {
                         pTemp->AddThreat(pTarget);
                         pTemp->AI()->AttackStart(pTarget);
@@ -461,12 +323,6 @@ CreatureAI* GetAI_npc_sinclari(Creature* pCreature)
 {
     return new npc_sinclariAI (pCreature);
 }
-
-CreatureAI* GetAI_npc_azure_saboteur(Creature* pCreature)
-{
-    return new npc_azure_saboteurAI (pCreature);
-}
-
 CreatureAI* GetAI_npc_violet_portal(Creature* pCreature)
 {
     return new npc_violet_portalAI (pCreature);
@@ -484,11 +340,6 @@ void AddSC_violet_hold()
     newscript->GetAI = &GetAI_npc_sinclari;
     newscript->pGossipHello =  &GossipHello_npc_sinclari;
     newscript->pGossipSelect = &GossipSelect_npc_sinclari;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_azure_saboteur";
-    newscript->GetAI = &GetAI_npc_azure_saboteur;
     newscript->RegisterSelf();
 
     newscript = new Script;
