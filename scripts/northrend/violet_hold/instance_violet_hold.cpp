@@ -25,7 +25,7 @@ EndScriptData */
 #include "def_violet_hold.h"
 
 /* The Violet Hold encounters:
-0 Unused
+0 Whole Event
 1 Rift
 2 Erekem
 3 Moragg
@@ -70,6 +70,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     uint8 m_uiShieldPercent;
 
     uint64 m_uiSinclariGUID;
+    uint64 m_uiNPCSealDoorGUID;
 
     uint64 m_uiErekemGUID;
     uint64 m_uiMoraggGUID;
@@ -99,6 +100,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         m_uiShieldPercent = 100;
 
         m_uiSinclariGUID = 0;
+        m_uiNPCSealDoorGUID = 0;
 
         m_uiErekemGUID      = 0;
         m_uiMoraggGUID      = 0;
@@ -145,6 +147,9 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         {
             case NPC_SINCLARI:
                 m_uiSinclariGUID = pCreature->GetGUID();
+                break;
+            case NPC_DOOR_SEAL:
+                m_uiNPCSealDoorGUID = pCreature->GetGUID();
                 break;
             case NPC_EREKEM:
                 m_uiErekemGUID = pCreature->GetGUID();
@@ -205,6 +210,13 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     {
         switch(uiType)
         {
+            case TYPE_EVENT:
+                if (uiData == IN_PROGRESS)
+                    InitWorldState();
+                else if (uiData == FAIL)
+                    DoUseDoorOrButton(m_uiSealDoorGUID);
+                m_auiEncounter[0] = uiData;
+                break;
             case TYPE_EREKEM:
                 m_auiEncounter[2] = uiData;
                 break;
@@ -245,6 +257,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                     else
                         m_auiEncounter[0] = FAIL;
                 }
+                break;
         }
         if (uiData == DONE)
             bIsInBoss = false;
@@ -254,6 +267,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     {
         switch(uiType)
         {
+            case TYPE_EVENT:
+                return m_auiEncounter[0];
             case TYPE_EREKEM:
                 return m_auiEncounter[2];
             case TYPE_MORAGG:
@@ -307,6 +322,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 return m_uiZuramatGUID;
             case DATA_SINCLARI:
                 return m_uiSinclariGUID;
+            case DATA_NPC_SEAL_DOOR:
+                return m_uiNPCSealDoorGUID;
             case DATA_SEAL_DOOR:
                 return m_uiSealDoorGUID;
             case DATA_EREKEM_DOOR:

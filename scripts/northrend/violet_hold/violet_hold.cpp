@@ -55,8 +55,11 @@ static Locations PortalLoc[]=
 enum
 {
     SPELL_SHIELD_DISRUPTION               = 58291,
+    SPELL_TELEPORT_INSIDE                 = 62139,
 };
-
+/*######
+## npc_azure_saboteur
+######*/
 struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
 {
     npc_azure_saboteurAI(Creature *pCreature) : ScriptedAI(pCreature)
@@ -165,7 +168,9 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
             else m_uiDisruption_Timer -= uiDiff;
     }
 };
-
+/*######
+## npc_sinclari
+######*/
 struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 {
     npc_sinclariAI(Creature *pCreature) : ScriptedAI(pCreature)
@@ -178,20 +183,37 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
     uint8 m_uiRiftPortalCount;
     uint32 m_uiNextPortal_Timer;
     uint32 m_uiBossCheck_Timer;
-
+    uint32 m_uiGuardsDespawn_Timer;
+    std::list<Creature*> Guards;
     void Reset()
     {
         m_uiRiftPortalCount = 0;
         m_uiNextPortal_Timer = 0;
         m_uiBossCheck_Timer = 0;
+        m_uiGuardsDespawn_Timer = 0;
+
+        GetCreatureListWithEntryInGrid(Guards,m_creature,NPC_GUARD,150.0f);
     }
 
     void SetEvent()
     {
         m_creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
         m_uiNextPortal_Timer = 5000;
-        if (m_pInstance)
+        m_creature->GetMotionMaster()->MovePoint(0, 1815.571, 800.112, 44.364);
+        if (m_pInstance){
+            m_pInstance->SetData(TYPE_EVENT, IN_PROGRESS);           
             m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_SEAL_DOOR));
+        }
+
+        for(std::list<Creature*>::iterator itr = Guards.begin(); itr != Guards.end(); ++itr)
+        {
+            if(!(*itr))
+                continue;
+            (*itr)->CombatStop(true);
+            (*itr)->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            (*itr)->GetMotionMaster()->MovePoint(0, 1815.571, 800.112, 44.364);
+        }
+        m_uiGuardsDespawn_Timer = 10000;
     }
 
     void DoSpawnPortal()
@@ -228,9 +250,9 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                 {
                     DoSpawnPortal();
                     if (m_uiRiftPortalCount < 12)
-                        m_uiNextPortal_Timer = 140000;
+                        m_uiNextPortal_Timer = 30000;
                     else
-                        m_uiNextPortal_Timer = 120000;
+                        m_uiNextPortal_Timer = 15000;
                 }
                 else if (m_uiRiftPortalCount == 6 || m_uiRiftPortalCount == 12)
                 {
@@ -272,15 +294,39 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 
             return;
         }
+        if(m_uiGuardsDespawn_Timer)
+        {
+            if(m_uiGuardsDespawn_Timer <= uiDiff)
+            {
+                for(std::list<Creature*>::iterator itr = Guards.begin(); itr != Guards.end(); ++itr)
+                {
+                    if(!(*itr))
+                        continue;
+
+                    (*itr)->ForcedDespawn();
+                }
+                m_uiGuardsDespawn_Timer = 0;
+            }else m_uiGuardsDespawn_Timer -= uiDiff;
+        }
     }
 };
 
+#define GOSSIP_ITEM_START_EVENT   "Activate the crystals when we get in trouble, right."
+#define GOSSIP_ITEM_TELE_IN   "I need to go in!"
+
 bool GossipHello_npc_sinclari(Player* pPlayer, Creature* pCreature)
 {
+    ScriptedInstance* m_pInstance;
+    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
     if (pCreature->isQuestGiver())
         pPlayer->PrepareQuestMenu( pCreature->GetGUID() );
 
-    pPlayer->ADD_GOSSIP_ITEM( 0, "I am ready.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if(m_pInstance->GetData(TYPE_EVENT) == NOT_STARTED){
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_START_EVENT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }else{
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_IN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    }
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
@@ -294,10 +340,15 @@ bool GossipSelect_npc_sinclari(Player* pPlayer, Creature* pCreature, uint32 uiSe
             pPlayer->CLOSE_GOSSIP_MENU();
             ((npc_sinclariAI*)pCreature->AI())->SetEvent();
             break;
+        case GOSSIP_ACTION_INFO_DEF+2:
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->CastSpell(pPlayer, SPELL_TELEPORT_INSIDE, false);
     }
     return true;
 }
-
+/*######
+## npc_violet_portal
+######*/
 struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
 {
     npc_violet_portalAI(Creature* pCreature) : ScriptedAI(pCreature)
