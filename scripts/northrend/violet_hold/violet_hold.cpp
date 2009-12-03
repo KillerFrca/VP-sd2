@@ -229,7 +229,6 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
         TimeRiftWave_Timer = 15000;
         portalType = 0;
     }
-
     void UpdateAI(const uint32 diff)
     {
         if (!m_pInstance)
@@ -248,15 +247,9 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                     case 2: uiSpawnEntry = NPC_AZURE_SORCEROR; break;
                     case 3: uiSpawnEntry = NPC_AZURE_STALKER; break;
                 }
-                if (Creature* pTemp = m_creature->SummonCreature(uiSpawnEntry, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                {
-                    if (Creature* pTarget = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f))
-                    {
-                        pTemp->AddThreat(pTarget);
-                        pTemp->AI()->AttackStart(pTarget);
-                    }
-                }
-            }
+                
+                m_creature->SummonCreature(uiSpawnEntry, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0));
+        }
 
             TimeRiftWave_Timer = 15000;
         }else TimeRiftWave_Timer -= diff;
@@ -297,7 +290,7 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
             return;
 
         if (spell->Id == SPELL_CORRUPT)
-            SpellCorrupt_Timer = 1500;
+            SpellCorrupt_Timer = 1000;
     }
     void JustDied(Unit* pKiller)
     {
@@ -312,7 +305,7 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
                 m_pInstance->SetData(TYPE_DOOR,SPECIAL);
 
                 if (m_creature->HasAura(SPELL_CORRUPT,0))
-                    SpellCorrupt_Timer = 3000;
+                    SpellCorrupt_Timer = 1500;
                 else
                     SpellCorrupt_Timer = 0;
             }else SpellCorrupt_Timer -= diff;

@@ -67,7 +67,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     uint8 m_uiLastBossID;
     uint8 m_uiRiftPortalCount;
-    uint32 m_uiShieldPercent;
+    uint8 m_uiShieldPercent;
 
     uint64 m_uiSinclariGUID;
     uint64 m_uiNPCSealDoorGUID;
@@ -91,14 +91,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     void Initialize()
     {
-        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-
-        bIsInBoss = false;
-
-        m_uiLastBossID = 0;
-        m_uiRiftPortalCount = 0;
-        m_uiShieldPercent = 100;
-
         m_uiSinclariGUID = 0;
         m_uiNPCSealDoorGUID = 0;
 
@@ -118,6 +110,17 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         m_uiXevozzDoorGUID      = 0;
         m_uiLavanthorDoorGUID   = 0;
         m_uiZuramatDoorGUID     = 0;
+        Clear();
+    }
+
+    void Clear(){
+        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+
+        bIsInBoss = false;
+
+        m_uiLastBossID = 0;
+        m_uiRiftPortalCount = 0;
+        m_uiShieldPercent = 100;
     }
 
     void InitWorldState(bool Enable = true)
@@ -213,7 +216,10 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         {
             case TYPE_EVENT:
                 if (uiData == IN_PROGRESS)
+                {
+                    Clear();
                     InitWorldState();
+                }
                 else if (uiData == FAIL)
                     DoUseDoorOrButton(m_uiSealDoorGUID);
                 m_auiEncounter[0] = uiData;

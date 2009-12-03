@@ -40,6 +40,9 @@ static Locations BossLoc[]=
     {1908.863, 785.647, 37.435}, // Ichoron
     {1905.364, 840.607, 38.670}, // Xevozz
 };
+static Locations CenterLoc[]=
+{
+    {1905.364, 840.607, 38.670}, // Lavanthor
 enum
 {
     SPELL_SHIELD_DISRUPTION               = 58291,
@@ -193,7 +196,22 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         m_uiMortalStrike_Timer = 3000;
         m_uiWhirlwind_Timer = 5000;
     }
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if(uiType != POINT_MOTION_TYPE)
+                return;
 
+        switch(uiPointId)
+        {
+            case 0:
+                if(Unit* pDoorSeal	= Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
+                {
+                    m_creature->AddThreat(pDoorSeal);
+                    m_creature->AI()->AttackStart(pDoorSeal);
+                }
+                break;
+        }
+    }
     void UpdateAI(const uint32 uiDiff){
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -201,8 +219,9 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             if(Unit* pDoorSeal	= Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
             {
                 m_creature->AddThreat(pDoorSeal);
-                m_creature->AI()->AttackStart(pDoorSeal);
             }else return;
+
+            m_creature->GetMotionMaster()->MovePoint(0, CenterLoc[0].x,  CenterLoc[0].y,  CenterLoc[0].z);
         }
 
         //Corrupt seal door
