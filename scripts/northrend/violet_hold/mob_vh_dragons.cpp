@@ -180,12 +180,15 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    uint32 creatureEntry;
 
     //Azure Captain
     uint32 m_uiMortalStrike_Timer;
     uint32 m_uiWhirlwind_Timer;
 
     void Reset(){
+        creatureEntry = m_creature->GetEntry();
+
         //Azure Captain
         m_uiMortalStrike_Timer = 3000;
         m_uiWhirlwind_Timer = 5000;
@@ -199,11 +202,11 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             {
                 m_creature->AddThreat(pDoorSeal);
                 m_creature->AI()->AttackStart(pDoorSeal);
-            }
+            }else return;
         }
 
         //Corrupt seal door
-        if(m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
+        if(m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL && creatureEntry != NPC_GUARDIAN && creatureEntry != NPC_KEEPER)
         {
             if(m_creature->IsWithinDist(m_creature->getVictim(), 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
             {
@@ -212,7 +215,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             }
             return;
         }
-        switch(m_creature->GetEntry())
+        switch(creatureEntry)
         {
             case NPC_AZURE_CAPTAIN:
                 AzureCaptain_UpdateAI(uiDiff);

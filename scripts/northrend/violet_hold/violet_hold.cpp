@@ -80,14 +80,14 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_SEAL_DOOR));
         }
 
-        std::list<Creature*> Guards;
+        /*std::list<Creature*> Guards;
         GetCreatureListWithEntryInGrid(Guards,m_creature,NPC_GUARD,150.0f);
         for(std::list<Creature*>::iterator itr = Guards.begin(); itr != Guards.end(); ++itr)
         {
             (*itr)->CombatStop(true);
             (*itr)->ForcedDespawn();
             Guards.erase(itr);
-        }
+        } */
     }
 
     void DoSpawnPortal()
