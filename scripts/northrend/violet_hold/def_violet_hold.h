@@ -54,19 +54,16 @@ enum
 
     NPC_AZURE_SABOTEUR     = 31079, // Open boss's cell
 
-    // portal type 1
-    NPC_AZURE_CAPTAIN      = 30666, // 3 for 1-11, 4 for 13-17
-    NPC_AZURE_RAIDER       = 30668, 
-    NPC_AZURE_SORCEROR     = 30667, 
-    NPC_AZURE_STALKER      = 32191, 
+    NPC_AZURE_CAPTAIN      = 30666, //Melee, 40k - 60k hp, 3 for 1-11, 4 for 13-17
+    NPC_AZURE_RAIDER       = 30668, //Melee, 40k - 60k hp
+    NPC_AZURE_SORCEROR     = 30667, //Caster, 40k - 60k hp
+    NPC_AZURE_STALKER      = 32191, //Melee, 40k - 60k hp
     NPC_GUARDIAN           = 30660, 
     NPC_KEEPER             = 30695, 
-
-    // portal type 2
-    NPC_AZURE_BINDER       = 30663, 
-    NPC_AZURE_INVADER      = 30661,
-    NPC_AZURE_MAGE_SLAYER  = 30664,
-    NPC_AZURE_SPELLBREAKER = 30662,
+    NPC_AZURE_BINDER       = 30663, //Caster, 7k - 10k hp
+    NPC_AZURE_INVADER      = 30661, //Melee, 8k - 12k hp
+    NPC_AZURE_MAGE_SLAYER  = 30664, //Melee, 10k - 15k hp
+    NPC_AZURE_SPELLBREAKER = 30662, //Caster, 10k - 15k hp
 
     NPC_SINCLARI           = 30658,
     NPC_GUARD              = 30659,

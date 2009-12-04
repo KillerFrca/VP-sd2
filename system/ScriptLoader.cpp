@@ -318,7 +318,6 @@ extern void AddSC_boss_moragg();
 extern void AddSC_boss_xevozz();
 extern void AddSC_boss_zuramat();
 extern void AddSC_violet_hold();
-extern void AddSC_mob_vh_dragons();
 extern void AddSC_instance_violet_hold();
 
 extern void AddSC_borean_tundra();
@@ -725,7 +724,6 @@ void AddScripts()
     AddSC_boss_xevozz();
     AddSC_boss_zuramat();
     AddSC_violet_hold();
-    AddSC_mob_vh_dragons();
     AddSC_instance_violet_hold();
 
     AddSC_borean_tundra();
