@@ -134,8 +134,10 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         switch(uiPointId)
         {
             case 0:
-                if(Unit* pDoorSeal    = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
+                if(Creature* pDoorSeal = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f))
                 {
+                    if(creatureEntry == NPC_GUARDIAN || creatureEntry == NPC_KEEPER)
+                        return;
                     m_creature->AddThreat(pDoorSeal);
                     m_creature->AI()->AttackStart(pDoorSeal);
                 }
@@ -146,7 +148,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
         {
-            if(Unit* pDoorSeal    = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
+            if(Unit* pDoorSeal = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
             {
                 m_creature->AddThreat(pDoorSeal);
             }else return;
@@ -356,6 +358,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
 
                 if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
+                    m_pInstance->SetData(TYPE_PORTAL_TIME, 5000);
                     debug_log("SD2: npc_time_rift: not casting anylonger, i need to die.");
                     m_creature->setDeathState(JUST_DIED);
                 }
@@ -370,6 +373,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 {
                     if(!IsThereNearElite(150.0f))
                     {
+                        m_pInstance->SetData(TYPE_PORTAL_TIME, 5000);
                         debug_log("SD2: npc_time_rift: No elite, i need to die.");
                         m_creature->setDeathState(JUST_DIED);
                     }
@@ -514,7 +518,12 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 
         if(m_uiPortalCheck_Timer <= uiDiff)
         {
-            if(!m_lPortalIDs.empty())
+            if(m_pInstance->GetData(TYPE_PORTAL_TIME) != 0)
+            {
+                m_uiNextPortal_Timer = m_pInstance->GetData(TYPE_PORTAL_TIME);
+                m_pInstance->SetData(TYPE_PORTAL_TIME, 0);
+            }
+            /*if(!m_lPortalIDs.empty())
                 return;
 
             std::list<Creature*> m_lPortalList;
@@ -534,7 +543,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                     m_lPortalIDs.erase(it);
                     break;
                 }
-            }
+            }*/
             m_uiPortalCheck_Timer = 1000;
         }else m_uiPortalCheck_Timer -= uiDiff;
     }
