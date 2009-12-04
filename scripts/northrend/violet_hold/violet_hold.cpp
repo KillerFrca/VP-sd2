@@ -779,4 +779,14 @@ void AddSC_violet_hold()
     newscript->Name = "npc_door_seal_vh";
     newscript->GetAI = &GetAI_npc_door_seal;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_azure_saboteur";
+    newscript->GetAI = &GetAI_npc_azure_saboteur;
+    newscript->RegisterSelf();
+ 
+    newscript = new Script;
+    newscript->Name = "mob_vh_dragons";
+    newscript->GetAI = &GetAI_mob_vh_dragons;
+    newscript->RegisterSelf();
 }
