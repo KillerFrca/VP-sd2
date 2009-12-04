@@ -67,7 +67,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     uint8 m_uiLastBossID;
     uint8 m_uiRiftPortalCount;
-    uint8 m_uiShieldPercent;
+    uint32 m_uiShieldPercent;
     uint32 m_uiPortalTime;
 
     uint64 m_uiSinclariGUID;
@@ -266,9 +266,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                         m_auiEncounter[0] = FAIL;
                 }
                 break;
-            case TYPE_PORTAL_TIME:
-                m_uiPortalTime = uiData;
-                break;
         }
         if (uiData == DONE)
             bIsInBoss = false;
@@ -311,8 +308,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
             }
             case DATA_BOSSTIME:
                 return bIsInBoss;
-            case TYPE_PORTAL_TIME:
-                return m_uiPortalTime;
         }
         return 0;
     }
