@@ -140,6 +140,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                         return;
                     m_creature->AddThreat(pDoorSeal);
                     m_creature->AI()->AttackStart(pDoorSeal);
+                    m_creature->GetMotionMaster()->MoveChase(pDoorSeal);
                 }
                 break;
         }
