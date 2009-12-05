@@ -124,8 +124,8 @@ enum
     SPELL_MANA_DETONATION                 = 60182,
     SPELL_MANA_DETONATION_H               = 60205,
 
-	//Azure stalker
-	SPELL_BACKSTAB                        = 58471,
+    //Azure stalker
+    SPELL_BACKSTAB                        = 58471,
     SPELL_TACTICAL_BLINK                  = 58470,
 };
 
@@ -171,7 +171,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 m_uiArcaneStream_Timer;
     uint32 m_uiManaDetonation_Timer;
 
-	//Azure Stalker
+    //Azure Stalker
     uint32 m_uiBackstab_Timer;
     uint32 m_uiBlink_Timer;
 
@@ -195,7 +195,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         m_uiArcaneStream_Timer = 5000;
         m_uiManaDetonation_Timer = 3000;
 
-		//Azure Stalker
+        //Azure Stalker
         m_uiBackstab_Timer = 7100;
         m_uiBlink_Timer = 7000;
     }
@@ -292,7 +292,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         }
 
         //Return since we have no target
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
             return;
 
         switch(creatureEntry)
@@ -307,7 +307,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                 AzureSorceror_UpdateAI(uiDiff);
                 break;
             case NPC_AZURE_STALKER:
-				AzureStalker_UpdateAI(uiDiff);
+                AzureStalker_UpdateAI(uiDiff);
                 break;
             case NPC_GUARDIAN:
             case NPC_KEEPER:
@@ -374,7 +374,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             m_uiManaDetonation_Timer = 18000;
         }else m_uiManaDetonation_Timer -= uiDiff;
     }
-	//Azure Stalker
+    //Azure Stalker
     void AzureStalker_UpdateAI(const uint32 uiDiff)
     {
         //Backstab
