@@ -189,6 +189,9 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     }
     void StartMovement()
     {
+        if(!WayPointList.empty())
+            return;
+
         uint8 start = 0;
         uint8 end = 0;
         switch(portalLoc)
@@ -228,7 +231,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                 break;
         }
 
-        for(uint8 i = start; i < end; ++i)
+        for(uint8 i = start; i <= end; ++i)
             AddWaypoint(i, DragonsWP[i].x, DragonsWP[i].y, DragonsWP[i].z);
 
         WayPoint = WayPointList.begin();
@@ -246,12 +249,6 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     {
         if(uiType != POINT_MOTION_TYPE || WayPoint->id != uiPointId || creatureEntry == NPC_GUARDIAN || creatureEntry == NPC_KEEPER)
                 return;
-
-        switch(uiPointId)
-        {
-            case 0:
-                break;
-        }
 
         ++WayPoint;
         WalkTimer = 200;
@@ -276,6 +273,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         if(pDoorSeal){
             if(m_creature->IsWithinDist(pDoorSeal, 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
             {
+                IsWalking = false;
                 m_creature->StopMoving();
                 DoCast(pDoorSeal, SPELL_CORRUPT);
             }
@@ -468,7 +466,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if(m_pInstance->GetData(TYPE_EVENT) == NOT_STARTED)
+        if(m_pInstance->GetData(TYPE_EVENT) != IN_PROGRESS)
             return;
 
         switch(portalType)
