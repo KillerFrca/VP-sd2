@@ -93,7 +93,7 @@ static Locations DragonsWP[]=
     {1878.280, 843.267, 43.333}, // 17 
     {1872.311, 835.531, 38.780}, // 18 
     {1861.997, 818.766, 38.650}, // 19 
-    {1857.348, 881.230, 44.008}, // 20
+    {1857.348, 811.230, 44.008}, // 20
     {1827.960, 804.208, 44.364}, // 21 
 
     //From Highest platform
@@ -123,6 +123,10 @@ enum
     SPELL_ARCANE_STREAM_H                 = 60204,
     SPELL_MANA_DETONATION                 = 60182,
     SPELL_MANA_DETONATION_H               = 60205,
+
+	//Azure stalker
+	SPELL_BACKSTAB                        = 58471,
+    SPELL_TACTICAL_BLINK                  = 58470,
 };
 
 uint32 m_uiNextPortal_Timer;
@@ -167,6 +171,10 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 m_uiArcaneStream_Timer;
     uint32 m_uiManaDetonation_Timer;
 
+	//Azure Stalker
+    uint32 m_uiBackstab_Timer;
+    uint32 m_uiBlink_Timer;
+
     void Reset(){
         creatureEntry = m_creature->GetEntry();
         motherPortalID = 0;
@@ -186,6 +194,10 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         //Azure Sorceror
         m_uiArcaneStream_Timer = 5000;
         m_uiManaDetonation_Timer = 3000;
+
+		//Azure Stalker
+        m_uiBackstab_Timer = 7100;
+        m_uiBlink_Timer = 7000;
     }
     void StartMovement()
     {
@@ -280,7 +292,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         }
 
         //Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
             return;
 
         switch(creatureEntry)
@@ -295,6 +307,8 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                 AzureSorceror_UpdateAI(uiDiff);
                 break;
             case NPC_AZURE_STALKER:
+				AzureStalker_UpdateAI(uiDiff);
+                break;
             case NPC_GUARDIAN:
             case NPC_KEEPER:
             case NPC_AZURE_BINDER:
@@ -359,6 +373,23 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             DoCast(m_creature, m_bIsRegular ? SPELL_MANA_DETONATION : SPELL_MANA_DETONATION_H);
             m_uiManaDetonation_Timer = 18000;
         }else m_uiManaDetonation_Timer -= uiDiff;
+    }
+	//Azure Stalker
+    void AzureStalker_UpdateAI(const uint32 uiDiff)
+    {
+        //Backstab
+        if (m_uiBackstab_Timer <= uiDiff)
+        {
+            DoCast(m_creature->getVictim(), SPELL_BACKSTAB);
+            m_uiBackstab_Timer = 15100;
+        }else m_uiBackstab_Timer -= uiDiff;
+
+        //Tactical blink
+        if (m_uiBlink_Timer <= uiDiff)
+        {
+            DoCast(m_creature->getVictim(), SPELL_TACTICAL_BLINK);
+            m_uiBlink_Timer = 15000;
+        }else m_uiBlink_Timer -= uiDiff;
     }
 };
 
@@ -639,37 +670,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 
             return;
         }
-
-        if(m_uiPortalCheck_Timer <= uiDiff)
-        {/*
-            if(m_pInstance->GetData(TYPE_PORTAL_TIME) != 0)
-            {
-                m_uiNextPortal_Timer = m_pInstance->GetData(TYPE_PORTAL_TIME);
-                m_pInstance->SetData(TYPE_PORTAL_TIME, 0);
-            }
-            if(!m_lPortalIDs.empty())
-                return;
-
-            std::list<Creature*> m_lPortalList;
-            GetCreatureListWithEntryInGrid(m_lPortalList,m_creature, NPC_PORTAL, 150.0f);
-
-            for(std::list<uint32>::iterator it = m_lPortalIDs.begin(); it != m_lPortalIDs.end(); ++it)    
-            {
-                bool isThere = false;
-                for(std::list<Creature*>::iterator itr = m_lPortalList.begin(); itr != m_lPortalList.end(); ++itr)
-                {
-                    if(((npc_violet_portalAI*)(*itr)->AI())->portalID == (*it))
-                        isThere = true;
-                }
-                if(!isThere)
-                {
-                    m_uiNextPortal_Timer = 5000;
-                    m_lPortalIDs.erase(it);
-                    break;
-                }
-            }*/
-            m_uiPortalCheck_Timer = 1000;
-        }else m_uiPortalCheck_Timer -= uiDiff;
     }
 };
 
