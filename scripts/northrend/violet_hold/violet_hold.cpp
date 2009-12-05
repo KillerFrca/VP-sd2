@@ -150,6 +150,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 WalkTimer;
     int8 portalLoc;
     bool IsWalking;
+    Creature* pDoorSeal;
 
     std::list<WayPoints> WayPointList;
     std::list<WayPoints>::iterator WayPoint;
@@ -172,6 +173,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         WalkTimer = 200;
         portalLoc = -1;
         IsWalking = false;
+        pDoorSeal = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f);
        
         //Azure Captain
         m_uiMortalStrike_Timer = 3000;
@@ -270,25 +272,19 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             }else WalkTimer -= uiDiff;
         }
 
-        //Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-        {
-            if(Unit* pDoorSeal = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_NPC_SEAL_DOOR)))
-            {
-                m_creature->AddThreat(pDoorSeal);
-            }else return;
-        }
-
-        //Corrupt seal door
-        if(m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL && creatureEntry != NPC_GUARDIAN && creatureEntry != NPC_KEEPER)
-        {
-            if(m_creature->IsWithinDist(m_creature->getVictim(), 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
+        //Corrupt Seal
+        if(pDoorSeal){
+            if(m_creature->IsWithinDist(pDoorSeal, 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
             {
                 m_creature->StopMoving();
-                DoCast(m_creature->getVictim(), SPELL_CORRUPT);
+                DoCast(pDoorSeal, SPELL_CORRUPT);
             }
-            return;
         }
+
+        //Return since we have no target
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
         switch(creatureEntry)
         {
             case NPC_AZURE_CAPTAIN:
@@ -575,7 +571,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                 {
                     pSummoned->AddThreat(pTemp);
                     pTemp->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL,false);
-                    ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = tmp;
                     ((mob_vh_dragonsAI*)pSummoned->AI())->motherPortalID = portalID;
                 }
             }
@@ -648,13 +643,13 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
         }
 
         if(m_uiPortalCheck_Timer <= uiDiff)
-        {
+        {/*
             if(m_pInstance->GetData(TYPE_PORTAL_TIME) != 0)
             {
                 m_uiNextPortal_Timer = m_pInstance->GetData(TYPE_PORTAL_TIME);
                 m_pInstance->SetData(TYPE_PORTAL_TIME, 0);
             }
-            /*if(!m_lPortalIDs.empty())
+            if(!m_lPortalIDs.empty())
                 return;
 
             std::list<Creature*> m_lPortalList;
