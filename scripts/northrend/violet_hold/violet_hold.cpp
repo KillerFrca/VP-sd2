@@ -154,6 +154,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 WalkTimer;
     int8 portalLoc;
     bool IsWalking;
+    bool MovementStarted;
     Creature* pDoorSeal;
 
     std::list<WayPoints> WayPointList;
@@ -181,6 +182,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         WalkTimer = 200;
         portalLoc = -1;
         IsWalking = false;
+        MovementStarted = false;
         pDoorSeal = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f);
        
         //Azure Captain
@@ -201,7 +203,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     }
     void StartMovement()
     {
-        if(!WayPointList.empty())
+        if(!WayPointList.empty() || MovementStarted)
             return;
 
         uint8 start = 0;
@@ -239,7 +241,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             //From highest platform
             case 6:
                 start = 22;
-                end = 26;
+                end = 25;
                 break;
         }
 
@@ -250,7 +252,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
         m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y, WayPoint->z);
         IsWalking = true;
-        portalLoc = -1;
+        MovementStarted = true;
     }
     void AddWaypoint(uint32 id, float x, float y, float z)
     {
@@ -287,6 +289,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             {
                 IsWalking = false;
                 m_creature->StopMoving();
+                WayPointList.clear();
                 DoCast(pDoorSeal, SPELL_CORRUPT);
             }
         }
