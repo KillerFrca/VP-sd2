@@ -68,7 +68,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     uint8 m_uiLastBossID;
     uint8 m_uiRiftPortalCount;
     uint32 m_uiShieldPercent;
-    uint32 m_uiPortalTime;
+    int8 m_uiPortalTime;
 
     uint64 m_uiSinclariGUID;
     uint64 m_uiNPCSealDoorGUID;

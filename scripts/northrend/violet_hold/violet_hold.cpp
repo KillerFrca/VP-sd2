@@ -148,7 +148,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 creatureEntry;
     uint32 motherPortalID;
     uint32 WalkTimer;
-    uint32 portalLoc;
+    int8 portalLoc;
     bool IsWalking;
 
     std::list<WayPoints> WayPointList;
@@ -385,7 +385,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
     bool m_uiGroupSpawned;
     uint8 portalType; // 0 = nothing, 1 = Guard & spawns, 2 = Group of elites
     uint32 portalID; // To identify portal...
-    uint32 portalLoc;
+    int8 portalLoc;
 
     uint32 TimeRiftWave_Timer;
     uint32 Check_Timer;
@@ -488,7 +488,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
 
                 if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
-                   m_uiNextPortal_Timer = 5000;
+                    m_uiNextPortal_Timer = 5000;
                     debug_log("SD2: npc_time_rift: not casting anylonger, i need to die.");
                     m_creature->setDeathState(JUST_DIED);
                 }
@@ -575,6 +575,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                 {
                     pSummoned->AddThreat(pTemp);
                     pTemp->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL,false);
+                    ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = tmp;
                     ((mob_vh_dragonsAI*)pSummoned->AI())->motherPortalID = portalID;
                 }
             }
