@@ -88,27 +88,63 @@ enum
     H_SPELL_HOLY_WRATH      = 57466,
     SPELL_HOLY_BOLT         = 57376,
     H_SPELL_HOLY_BOLT       = 57465,
+    SPELL_CONDEMNATION      = 57377, 
 
     // horseman spirits
-    NPC_SPIRIT_OF_BLAUMEUX    = 16776,
-    NPC_SPIRIT_OF_RIVENDARE   = 0,                          //creature entry not known yet
-    NPC_SPIRIT_OF_KORTHAZZ    = 16778,
-    NPC_SPIRIT_OF_ZELIREK     = 16777
+    NPC_SPIRIT_OF_BLAUMEUX  = 16776,
+    NPC_SPIRIT_OF_RIVENDARE = 0,                          //creature entry not known yet
+    NPC_SPIRIT_OF_KORTHAZZ  = 16778,
+    NPC_SPIRIT_OF_ZELIREK   = 16777,
 };
+
+/*walk coords*/
+#define WALKX_BLAU              2462.112
+#define WALKY_BLAU              -2956.598
+#define WALKZ_BLAU              241.276
+
+#define WALKX_RIVE              2579.571
+#define WALKY_RIVE              -2960.945
+#define WALKZ_RIVE              241.32
+
+#define WALKX_KORT              2529.108
+#define WALKY_KORT              -3015.303
+#define WALKZ_KORT              241.32
+
+#define WALKX_ZELI              2521.039
+#define WALKY_ZELI              -2891.633
+#define WALKZ_ZELI              241.276
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
-    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+	boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsHeroicMode = false; //pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsHeroicMode;
 
     uint32 Mark_Timer;
     uint32 VoidZone_Timer;
+    uint32 ShadowBolt_Timer;
+    uint32 UnyieldingPain_Timer;
+    uint32 Move_Check;
+    uint32 Attack_Check;
+
     bool ShieldWall1;
     bool ShieldWall2;
 
     void Reset()
     {
+        ShadowBolt_Timer = 10000;
+        UnyieldingPain_Timer = 10000;
         Mark_Timer = 20000;                                 // First Horsemen Mark is applied at 20 sec.
         VoidZone_Timer = 12000;                             // right
+        Move_Check = 1;
+        Attack_Check = 1;
+
         ShieldWall1 = true;
         ShieldWall2 = true;
     }
@@ -116,6 +152,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         DoScriptText(SAY_BLAU_AGGRO, m_creature);
+        m_creature->CallForHelp(50.0f);
     }
 
     void KilledUnit(Unit* Victim)
@@ -126,12 +163,65 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_BLAU_DEATH, m_creature);
+        
+        if (m_pInstance)
+        {
+            bool HorsemenDead = true;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KORTHAZZ))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIVENDARE))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ZELIEK))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+
+            if (HorsemenDead)
+                m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+        
+        //run on aggro
+        if (m_creature->getVictim() && Move_Check == 1)
+        {
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MovePoint(0, WALKX_BLAU, WALKY_BLAU, WALKZ_BLAU);
+            Move_Check = 0;
+        }
+        
+        //when reach position, set possible to attack and disable move
+        if (m_creature->GetDistance2d(WALKX_BLAU, WALKY_BLAU) == 0 && Attack_Check == 1)
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            Attack_Check = 0;
+
+        }
+        // Shadow Bolt
+        if (m_creature->getVictim()->GetDistance2d(m_creature) <= 45)
+            if (ShadowBolt_Timer < uiDiff)
+            {
+                DoCast(m_creature->getVictim(), m_bIsHeroicMode ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
+                ShadowBolt_Timer = 2200;
+                UnyieldingPain_Timer = 500;
+                m_creature->GetMotionMaster()->MovePoint(0, WALKX_BLAU, WALKY_BLAU, WALKZ_BLAU);
+            }else ShadowBolt_Timer -= uiDiff;
+        
+        // Unyielding Pain
+        if (m_creature->getVictim()->GetDistance2d(m_creature) > 45)
+            if (UnyieldingPain_Timer < uiDiff)
+            {
+                DoCast(m_creature->getVictim(), SPELL_UNYILDING_PAIN);
+                UnyieldingPain_Timer = 2200;
+                ShadowBolt_Timer = 500;
+                m_creature->GetMotionMaster()->MovePoint(0, WALKX_BLAU, WALKY_BLAU, WALKZ_BLAU);
+            }else UnyieldingPain_Timer -= uiDiff;
 
         // Mark of Blaumeux
         if (Mark_Timer < uiDiff)
@@ -179,7 +269,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
     boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsHeroicMode = false; /*pCreature->GetMap()->IsRaidOrHeroicDungeon();*/
         Reset();
     }
 
@@ -188,6 +278,8 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 
     uint32 Mark_Timer;
     uint32 UnholyShadow_Timer;
+    uint32 Move_Check;
+    uint32 Attack_Check;
     bool ShieldWall1;
     bool ShieldWall2;
 
@@ -195,6 +287,8 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
     {
         Mark_Timer = 20000;
         UnholyShadow_Timer = 15000;
+        Move_Check = 1;
+        Attack_Check = 1;
         ShieldWall1 = true;
         ShieldWall2 = true;
 
@@ -224,7 +318,9 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
         }
 
         if (m_pInstance)
-            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
+            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);    
+
+        m_creature->CallForHelp(50.0f);
     }
 
     void KilledUnit(Unit* Victim)
@@ -263,7 +359,23 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        // Mark of Blaumeux
+        //run on aggro
+        if (m_creature->getVictim() && Move_Check == 1)
+        {
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MovePoint(0, WALKX_RIVE, WALKY_RIVE, WALKZ_RIVE);
+            Move_Check = 0;
+        }
+        
+        //when reach position, set possible to attack
+        if (m_creature->GetDistance2d(WALKX_RIVE, WALKY_RIVE) <= 2 && Attack_Check == 1)
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            Attack_Check = 0;
+        }
+
+        // Mark of Rivendare
         if (Mark_Timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_MARK_OF_RIVENDARE);
@@ -305,10 +417,21 @@ CreatureAI* GetAI_boss_rivendare_naxx(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 {
-    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsHeroicMode = false; /*pCreature->GetMap()->IsRaidOrHeroicDungeon();*/
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsHeroicMode;
 
     uint32 Mark_Timer;
     uint32 Meteor_Timer;
+    uint32 Move_Check;
+    uint32 Attack_Check;
+
     bool ShieldWall1;
     bool ShieldWall2;
 
@@ -316,6 +439,9 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
     {
         Mark_Timer = 20000;                                 // First Horsemen Mark is applied at 20 sec.
         Meteor_Timer = 30000;                               // wrong
+        Move_Check = 1;
+        Attack_Check = 1;
+
         ShieldWall1 = true;
         ShieldWall2 = true;
     }
@@ -323,6 +449,8 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         DoScriptText(SAY_KORT_AGGRO, m_creature);
+
+        m_creature->CallForHelp(50.0f);
     }
 
     void KilledUnit(Unit* Victim)
@@ -333,12 +461,45 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_KORT_DEATH, m_creature);
+
+                if (m_pInstance)
+        {
+            bool HorsemenDead = true;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_BLAUMEUX))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIVENDARE))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ZELIEK))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+
+            if (HorsemenDead)
+                m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        //run on aggro
+        if (m_creature->getVictim() && Move_Check == 1)
+        {
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MovePoint(0, WALKX_KORT, WALKY_KORT, WALKZ_KORT);
+            Move_Check = 0;
+        }
+        
+        //when reach position, set possible to attack
+        if (m_creature->GetDistance2d(WALKX_KORT, WALKY_KORT) == 0 && Attack_Check == 1)
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            Attack_Check = 0;
+        }
 
         // Mark of Korthazz
         if (Mark_Timer < uiDiff)
@@ -383,17 +544,35 @@ CreatureAI* GetAI_boss_thane_korthazz(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 {
-    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsHeroicMode = false; //pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Reset();
+    }
 
+    ScriptedInstance* m_pInstance;
+    bool m_bIsHeroicMode;
+
+    uint32 HolyBolt_Timer;
+    uint32 Condemnation_Timer;
     uint32 Mark_Timer;
     uint32 HolyWrath_Timer;
+    uint32 Move_Check;
+    uint32 Attack_Check;
+    
     bool ShieldWall1;
     bool ShieldWall2;
 
     void Reset()
     {
+        HolyBolt_Timer = 10000;
+        Condemnation_Timer = 10000;
         Mark_Timer = 20000;                                 // First Horsemen Mark is applied at 20 sec.
         HolyWrath_Timer = 12000;                            // right
+        Move_Check = 1;
+        Attack_Check = 1;
+        
         ShieldWall1 = true;
         ShieldWall2 = true;
     }
@@ -401,6 +580,8 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         DoScriptText(SAY_ZELI_AGGRO, m_creature);
+
+        m_creature->CallForHelp(50.0f);
     }
 
     void KilledUnit(Unit* Victim)
@@ -411,6 +592,23 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_ZELI_DEATH, m_creature);
+
+        if (m_pInstance)
+        {
+            bool HorsemenDead = true;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KORTHAZZ))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIVENDARE))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_BLAUMEUX))))
+                if (pTemp->isAlive())
+                    HorsemenDead = false;
+
+            if (HorsemenDead)
+                m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -418,6 +616,43 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+           //run on aggro
+        if (m_creature->getVictim() && Move_Check == 1)
+        {
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->GetMotionMaster()->MovePoint(0, WALKX_ZELI, WALKY_ZELI, WALKZ_ZELI);
+            Move_Check = 0;
+        }
+        
+        //when reach position, set possible to attack
+        if (m_creature->GetDistance2d(WALKX_ZELI, WALKY_ZELI) == 0 && Attack_Check == 1)
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            Attack_Check = 0;
+        }
+        
+        // Holy Bolt
+        if (m_creature->getVictim()->GetDistance2d(m_creature) <= 45)
+            if (HolyBolt_Timer < uiDiff)
+            {
+                DoCast(m_creature->getVictim(), m_bIsHeroicMode ? H_SPELL_HOLY_BOLT : SPELL_HOLY_BOLT);
+                HolyBolt_Timer = 2200;
+                Condemnation_Timer = 500;
+                m_creature->GetMotionMaster()->MovePoint(0, WALKX_ZELI, WALKY_ZELI, WALKZ_ZELI);
+            }else HolyBolt_Timer -= uiDiff;
+        
+        // Condemnation 
+        if (m_creature->getVictim()->GetDistance2d(m_creature) > 45)
+            if (Condemnation_Timer < uiDiff)
+            {
+                DoCast(m_creature->getVictim(), SPELL_CONDEMNATION);
+                Condemnation_Timer = 2200;
+                HolyBolt_Timer = 500;
+                m_creature->GetMotionMaster()->MovePoint(0, WALKX_ZELI, WALKY_ZELI, WALKZ_ZELI);
+            }else Condemnation_Timer -= uiDiff;
+        
 
         // Mark of Zeliek
         if (Mark_Timer < uiDiff)
