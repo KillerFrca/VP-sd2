@@ -241,16 +241,18 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             //From highest platform
             case 6:
                 start = 22;
-                end = 25;
+                end = 26;
                 break;
         }
-
-        for(uint8 i = start; i <= end; ++i)
-            AddWaypoint(i, DragonsWP[i].x, DragonsWP[i].y, DragonsWP[i].z);
+        uint8 wpId = 0;
+        for(uint8 i = start; i <= end; ++i){
+            error_log("AddWP: %u", i);
+            AddWaypoint(wpId, DragonsWP[i].x, DragonsWP[i].y, DragonsWP[i].z);
+            wpId++;
+        }
 
         WayPoint = WayPointList.begin();
         m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
-        m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y, WayPoint->z);
         IsWalking = true;
         MovementStarted = true;
     }
@@ -261,8 +263,11 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     }
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
-        if(uiType != POINT_MOTION_TYPE || WayPoint->id != uiPointId || creatureEntry == NPC_GUARDIAN || creatureEntry == NPC_KEEPER)
-                return;
+        if(uiType != POINT_MOTION_TYPE || creatureEntry == NPC_GUARDIAN || creatureEntry == NPC_KEEPER)
+            return;
+
+        if(WayPoint->id != uiPointId)
+            return;
 
         ++WayPoint;
         WalkTimer = 200;
@@ -275,11 +280,11 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         {
             if (WalkTimer <= uiDiff)
             {
-                if (WayPoint == WayPointList.end())
-                    return;
-
-                m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
-                WalkTimer = 0;
+                if (WayPoint != WayPointList.end())
+                {
+                    m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
+                    WalkTimer = 0;
+                }
             }else WalkTimer -= uiDiff;
         }
 
@@ -288,16 +293,20 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             if(m_creature->IsWithinDist(pDoorSeal, 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
             {
                 IsWalking = false;
-                m_creature->StopMoving();
                 WayPointList.clear();
+                m_creature->GetMotionMaster()->Clear(false);
+                m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
                 DoCast(pDoorSeal, SPELL_CORRUPT);
             }
         }
 
         //Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if(m_creature->getVictim())
+            if(m_creature->getVictim()->GetEntry() == NPC_DOOR_SEAL)
+                return;
         switch(creatureEntry)
         {
             case NPC_AZURE_CAPTAIN:
@@ -462,8 +471,9 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
             uint32 uiSpawnEntry = SelectRandSummon();
             if(Creature* pSummoned = m_creature->SummonCreature(uiSpawnEntry, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
             {
+                error_log("Spawnuje NPC %u, motherPortalID %u, portalLoc %u", uiSpawnEntry, portalID, portalLoc);
                 ((mob_vh_dragonsAI*)pSummoned->AI())->motherPortalID = portalID;
-                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;
+                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;		
             }
         }
     }
@@ -510,6 +520,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
             case 1:
                 if (TimeRiftWave_Timer < diff)
                 {
+                    error_log("SpawnGroup()");
                     SpawnGroup();
                     TimeRiftWave_Timer = 15000;
                 }else TimeRiftWave_Timer -= diff;
@@ -553,8 +564,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
     }
     ScriptedInstance *m_pInstance;
 
-    std::list<uint32> m_lPortalIDs;
-
     uint8 m_uiRiftPortalCount;
     uint32 m_uiBossCheck_Timer;
     uint32 m_uiPortalCheck_Timer;
@@ -565,8 +574,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
         m_uiNextPortal_Timer = 0;
         m_uiBossCheck_Timer = 0;
         m_uiPortalCheck_Timer = 1000;
-
-        m_lPortalIDs.clear();
     }
 
     void SetEvent()
@@ -594,7 +601,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             ((npc_violet_portalAI*)pTemp->AI())->portalType = portalType; 
             ((npc_violet_portalAI*)pTemp->AI())->portalID = portalID;
             ((npc_violet_portalAI*)pTemp->AI())->portalLoc = tmp;
-            m_lPortalIDs.push_back(portalID);
             
             if(portalType == 1)
             {
@@ -728,7 +734,7 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
     uint32 SpellCorrupt_Timer;
     uint8 lastPortal;
 
-       void Reset()
+    void Reset()
     {
         CheckTimer = 0;
         SpellCorrupt_Timer = 0;
