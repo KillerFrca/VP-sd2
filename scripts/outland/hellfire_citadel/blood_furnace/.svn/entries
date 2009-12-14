@@ -1,15 +1,15 @@
 10
 
 dir
-1513
+1515
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/hellfire_citadel/blood_furnace
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-11-19T15:51:26.501005Z
-1504
-deverend
+2009-12-10T14:32:27.911136Z
+1514
+nurri
 
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2009-11-18T14:05:09.504238Z
-8adfce1791e63b65b7a2070c57d6ea9a
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-12-14T10:17:46.201278Z
+1db6cec429a626a4798b3961f8dcedb5
+2009-12-10T14:32:27.911136Z
+1514
+nurri
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-4160
+4420
 
 boss_the_maker.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2009-11-18T14:05:09.534281Z
-e05f949d9a6a3842af1971f8e2c4d771
-2009-10-14T11:00:30.262368Z
-1473
-nofantasy
+2009-12-14T10:17:46.902286Z
+4bbf84c7aa873474d5bd09801dba7a83
+2009-12-10T14:32:27.911136Z
+1514
+nurri
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-4497
+4636
 
 instance_blood_furnace.cpp
 file

@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 83
-/svnroot/scriptdev2/!svn/ver/1505/scripts/outland/coilfang_reservoir/serpent_shrine
+/svnroot/scriptdev2/!svn/ver/1514/scripts/outland/coilfang_reservoir/serpent_shrine
 END
 boss_hydross_the_unstable.cpp
 K 25
@@ -31,7 +31,7 @@ boss_morogrim_tidewalker.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 112
-/svnroot/scriptdev2/!svn/ver/1473/scripts/outland/coilfang_reservoir/serpent_shrine/boss_morogrim_tidewalker.cpp
+/svnroot/scriptdev2/!svn/ver/1514/scripts/outland/coilfang_reservoir/serpent_shrine/boss_morogrim_tidewalker.cpp
 END
 instance_serpent_shrine.cpp
 K 25
