@@ -223,7 +223,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         }
         DespawnSummons();
 
-        Phase1_Timer = 310000;                              //Phase 1 lasts 5 minutes and 10 seconds
+        Phase1_Timer = 228000;                              //Phase 1 lasts 3 minutes and 48 seconds
         Phase1Encounter_Timer = 3000;
         SendSummon = false;
         Phase1 = false;
@@ -650,7 +650,7 @@ struct MANGOS_DLL_DECL mob_shadow_issureAI : public ScriptedAI
     {
         if (m_uiShadowIssure_Timer)
             if (m_uiShadowIssure_Timer < uiDiff)
-            {
+            {/*
                 Map *map = m_creature->GetMap();
                 if (map->IsDungeon())
                 {
@@ -664,7 +664,8 @@ struct MANGOS_DLL_DECL mob_shadow_issureAI : public ScriptedAI
                         if (i->getSource()->isAlive() && m_creature->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) < 2)
                             i->getSource()->DealDamage(i->getSource(), i->getSource()->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                     }
-                }
+                } */
+                m_creature->CastSpell(m_creature, 27812, true);
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_uiShadowIssure_Timer = 0;
             }
