@@ -154,7 +154,6 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
             case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
         }
     }
-
     void DespawnSpark()
     {
         if (m_lSparkGUIDList.empty())
@@ -268,8 +267,9 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
 
         if (m_uiStaticOverload_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H);
+            //Becuse this spell is targeting Ionar, too
+            //if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))	
+            //   DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H);
 
             m_uiStaticOverload_Timer = urand(5000, 6000);
         }
