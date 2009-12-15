@@ -205,7 +205,35 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
             pSummoned->CastSpell(pSummoned, m_bIsRegularMode ? SPELL_HEAT_N : SPELL_HEAT_H, false, NULL, NULL, m_creature->GetGUID());
         }
     }
+    void DoTemper()
+    {
+        Creature *pAnvil = GetClosestCreatureWithEntry(m_creature, NPC_VOLKHAN_ANVIL, 50.0f); 
 
+        if(!pAnvil)
+            return;
+
+        DoScriptText(EMOTE_TO_ANVIL, m_creature);
+
+        float fX, fY, fZ;
+        pAnvil->GetContactPoint(m_creature, fX, fY, fZ, INTERACTION_DISTANCE);
+
+        m_creature->AttackStop();
+
+        if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+            m_creature->GetMotionMaster()->MovementExpired();
+
+        m_creature->GetMap()->CreatureRelocation(m_creature, fX, fY, fZ, pAnvil->GetOrientation());
+        m_creature->SendMonsterMove(fX, fY, fZ, 0, m_creature->GetMonsterMoveFlags(), 1);
+        pAnvil->CastSpell(m_creature, SPELL_TEMPER_DUMMY, false);
+        m_bIsStriking = true;
+
+        for(uint8 i = 0; i < MAX_GOLEM; ++i)
+        {
+            m_creature->SummonCreature(NPC_MOLTEN_GOLEM,
+            pAnvil->GetPositionX(), pAnvil->GetPositionY(), pAnvil->GetPositionZ(), 0.0f,
+            TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);	
+        }
+    }
     void UpdateAI(const uint32 uiDiff)
     {
         //Return since we have no target
@@ -276,8 +304,7 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
             DoScriptText(urand(0, 1) ? SAY_FORGE_1 : SAY_FORGE_2, m_creature);
 
             m_bHasTemper = true;
-
-            m_creature->CastSpell(m_creature, SPELL_TEMPER, false);
+            DoTemper();
         }
 
         DoMeleeAttackIfReady();
@@ -338,7 +365,6 @@ bool EffectDummyCreature_npc_volkhan_anvil(Unit* pCaster, uint32 uiSpellId, uint
 
         ((Creature*)pCaster)->GetMap()->CreatureRelocation((Creature*)pCaster, fX, fY, fZ, pCreatureTarget->GetOrientation());
         ((Creature*)pCaster)->SendMonsterMove(fX, fY, fZ, 0, ((Creature*)pCaster)->GetMonsterMoveFlags(), 1);
-
         pCreatureTarget->CastSpell(pCaster, SPELL_TEMPER_DUMMY, false);
 
         //always return true when we are handling this spell and effect
@@ -346,6 +372,32 @@ bool EffectDummyCreature_npc_volkhan_anvil(Unit* pCaster, uint32 uiSpellId, uint
     }
 
     return false;
+}
+struct MANGOS_DLL_DECL npc_volkhan_anvilAI : public ScriptedAI
+{
+    npc_volkhan_anvilAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
+    void Reset()
+    {
+        SetCombatMovement(false);	
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        EnterEvadeMode();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        return;
+    }
+};
+
+CreatureAI* GetAI_npc_volkhan_anvil(Creature* pCreature)
+{
+    return new npc_volkhan_anvilAI(pCreature);
 }
 
 /*######
@@ -410,11 +462,12 @@ struct MANGOS_DLL_DECL mob_molten_golemAI : public ScriptedAI
 
             m_creature->RemoveAllAuras();
             m_creature->AttackStop();
+            SetCombatMovement(false);
 
             if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
                 m_creature->GetMotionMaster()->MovementExpired();
 
-            uiDamage = m_creature->GetHealth()-1;
+            uiDamage = 0;
 
             m_creature->UpdateEntry(NPC_BRITTLE_GOLEM);
             m_creature->SetHealth(1);
@@ -475,6 +528,7 @@ void AddSC_boss_volkhan()
     newscript = new Script;
     newscript->Name = "npc_volkhan_anvil";
     newscript->pEffectDummyCreature = &EffectDummyCreature_npc_volkhan_anvil;
+    newscript->GetAI = &GetAI_npc_volkhan_anvil;
     newscript->RegisterSelf();
 
     newscript = new Script;

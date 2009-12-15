@@ -234,6 +234,7 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
                 if (m_bIsSplitPhase)
                 {
                     CallBackSparks();
+                    m_uiSparkAtHomeCount = 5;
                     m_bIsSplitPhase = false;
                 }
                 // Lightning effect and restore Ionar
