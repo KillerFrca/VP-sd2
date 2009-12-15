@@ -299,7 +299,7 @@ bool EffectDummyCreature_boss_volkhan(Unit* pCaster, uint32 uiSpellId, uint32 ui
 
         for(uint8 i = 0; i < MAX_GOLEM; ++i)
         {
-            pCreatureTarget->CastSpell(pCaster, SPELL_SUMMON_MOLTEN_GOLEM, true);
+            //pCreatureTarget->CastSpell(pCaster, SPELL_SUMMON_MOLTEN_GOLEM, true);
 
             //TODO: remove this line of hack when summon effect implemented
             pCreatureTarget->SummonCreature(NPC_MOLTEN_GOLEM,

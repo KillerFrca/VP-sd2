@@ -318,7 +318,7 @@ bool EffectDummyCreature_boss_ionar(Unit* pCaster, uint32 uiSpellId, uint32 uiEf
             pCreatureTarget->CastSpell(pCreatureTarget, SPELL_SUMMON_SPARK, true);
 
             //TODO: remove this line of hack when summon implemented
-            pCreatureTarget->SummonCreature(NPC_SPARK_OF_IONAR, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+            //pCreatureTarget->SummonCreature(NPC_SPARK_OF_IONAR, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
         }
 
         pCreatureTarget->AttackStop();
