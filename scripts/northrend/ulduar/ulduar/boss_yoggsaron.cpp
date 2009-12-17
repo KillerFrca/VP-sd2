@@ -22,7 +22,7 @@ SDCategory: Ulduar
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_ulduar.h"
+#include "ulduar.h"
 
 /*
 #define SAY_AGGRO -1
@@ -57,7 +57,7 @@ struct MANGOS_DLL_DECL boss_yoggsaronAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
 
         if (m_pInstance)
-            m_pInstance->SetData(TYPE_FLAMELEVIATAN, IN_PROGRESS);
+            m_pInstance->SetData(TYPE_YOGGSARON, IN_PROGRESS);
     }
 
     void UpdateAI(const uint32 diff)
