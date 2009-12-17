@@ -24,6 +24,12 @@ EndScriptData */
 #include "precompiled.h"
 #include "ulduar.h"
 
+//Flame leviathan coordinates to summon - its vehicle 
+#define LEVIATHAN_X  458.518
+#define LEVIATHAN_Y  -11.585
+#define LEVIATHAN_Z  409.803
+#define LEVIATHAN_O  3.136
+
 struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
 {
     instance_ulduar(Map* pMap) : ScriptedInstance(pMap) { Initialize(); }
@@ -54,6 +60,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     uint64 m_uiSentryGUID3;
     uint64 m_uiSentryGUID4;
     uint64 m_uiFeralDefenderGUID;
+    uint64 m_uiLeviathanGateGUID;
 
     void Initialize()
     {
@@ -71,14 +78,15 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         m_uiYoggSaronGUID       = 0;
         m_uiAlgalonGUID         = 0;
         m_uiRightArmGUID        = 0;
-        m_uiLeftArmGUID            = 0;
+        m_uiLeftArmGUID         = 0;
         m_uiKologarnLootGUID    = 0;
-        m_uiKologarnBridgeGUID    = 0;
-        m_uiFeralDefenderGUID    = 0;
-        m_uiSentryGUID1            = 0;
-        m_uiSentryGUID2            = 0;
-        m_uiSentryGUID3            = 0;
-        m_uiSentryGUID4            = 0;
+        m_uiKologarnBridgeGUID  = 0;
+        m_uiFeralDefenderGUID   = 0;
+        m_uiSentryGUID1         = 0;
+        m_uiSentryGUID2         = 0;
+        m_uiSentryGUID3         = 0;
+        m_uiSentryGUID4         = 0;
+        m_uidLeviathanGateGUID  = 0;
 
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
         memset(&m_auiAssemblyGUIDs, 0, sizeof(m_auiAssemblyGUIDs));
@@ -185,6 +193,11 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 break;
             case GO_KOLOGARN_LOOT_H:
                 m_uiKologarnLootGUID = pGo->GetGUID();
+                break;
+            case GO_LEVIATHAN_GATE:
+                m_uiLeviathanGateGUID = pGo->GetGUID();
+                //Summon Flame leviathan - its vehicle
+                pGo->SummonVehicle(NPC_LEVIATHAN, LEVIATHAN_X, LEVIATHAN_Y, LEVIATHAN_Z, LEVIATHAN_O);
                 break;
         }
     }

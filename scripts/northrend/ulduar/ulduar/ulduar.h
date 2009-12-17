@@ -59,8 +59,8 @@ enum
     NPC_RIGHT_ARM               = 32934,
     NPC_LEFT_ARM                = 32933,
     NPC_AURIAYA                 = 33515,
-    NPC_SANCTUM_SENTRY            = 34014,
-    NPC_FERAL_DEFENDER            = 34035,
+    NPC_SANCTUM_SENTRY          = 34014,
+    NPC_FERAL_DEFENDER          = 34035,
     NPC_MIMIRON                 = 33350,
     NPC_HODIR                   = 32845,
     NPC_THORIM                  = 32865,
@@ -69,9 +69,10 @@ enum
     NPC_YOGGSARON               = 33288,
     NPC_ALGALON                 = 32871,
 
-    GO_KOLOGARN_BRIDGE            = 194232,
+    GO_KOLOGARN_BRIDGE          = 194232,
     GO_KOLOGARN_LOOT            = 195046,
-    GO_KOLOGARN_LOOT_H            = 195047
+    GO_KOLOGARN_LOOT_H          = 195047,
+    GO_LEVIATHAN_GATE           = 194630
 };
 
 #endif
