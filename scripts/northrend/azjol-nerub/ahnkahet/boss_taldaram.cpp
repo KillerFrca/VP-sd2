@@ -79,7 +79,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    bool m_bIsVanishPhase;
+    uint8 m_uiVanishPhase;
     uint32 m_uiDamageTaken;
     Unit* m_uEmbraceTarget;
 
@@ -91,30 +91,13 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
     void Reset()
     {
         m_uiBloodthirst_Timer = 4000;
-        m_uiSummonOrb_Timer = 17000;
-        m_uiVanish_Timer = 10000;
+        m_uiSummonOrb_Timer = 13000;
+        m_uiVanish_Timer = 17000;
         m_uiEmbrace_Timer = 0;
-        m_bIsVanishPhase = false;
+        m_uiVanishPhase = 0;
         m_uiDamageTaken = 0;
-
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-    void MoveInLineOfSight(Unit* who)
-    {
-        if (!who)
-            return;
-
-        if (who->isTargetableForAttack() && who->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (m_pInstance)
-            {
-                if (m_pInstance->GetData(TYPE_TALDARAM) == SPECIAL)
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                
-            }
-        }
-    }
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
@@ -147,7 +130,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
             uint32 m_uiMinDamage = m_bIsRegularMode ? 20000 : 40000;
             if(m_uiDamageTaken >= m_uiMinDamage)
             {
-                m_bIsVanishPhase = false;
+                m_uiVanishPhase = 0; 
                 m_creature->InterruptNonMeleeSpells(false);
             }
         }
@@ -157,14 +140,21 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if(m_bIsVanishPhase)
+        if(m_uiVanishPhase != 0)
         {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+            if(m_uiVanishPhase == 2)
+                return;
+
             // Embrace of the Vampyr
             if(m_uiEmbrace_Timer <= uiDiff)
             {
                 if(m_uEmbraceTarget)
                     DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
+                m_creature->SetVisibility(VISIBILITY_ON);
                 m_uiDamageTaken = 0;
+                m_uiVanishPhase = 2;
             }else m_uiEmbrace_Timer -= uiDiff;    
             return;
         }
@@ -185,6 +175,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
                 if(m_bIsRegularMode)
                     break;
             }
+            DoCast(m_creature, SPELL_CONJURE_FLAME_ORB);
             m_uiSummonOrb_Timer = 8000 + rand()%15000;
         }else m_uiSummonOrb_Timer -= uiDiff;
 
@@ -192,10 +183,11 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         if(m_uiVanish_Timer <= uiDiff)
         {
             DoCast(m_creature, SPELL_VANISH);
-            m_bIsVanishPhase = true;
+            m_uiVanishPhase = 1;
             if (m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
 
+            m_creature->SetVisibility(VISIBILITY_OFF);
             m_uiVanish_Timer = 10000 + rand()%10000;
             m_uiEmbrace_Timer = 2500;
             return;
