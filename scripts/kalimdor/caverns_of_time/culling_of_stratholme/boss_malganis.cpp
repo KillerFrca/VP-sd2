@@ -278,11 +278,11 @@ if(Outro == false)
                   }
              } else return;
 
- 	   if (Steptim <= diff)
-	   {
-		   ++Step;
-		   Steptim = 330000;
-	   } Steptim -= diff;
+        if (Steptim <= diff)
+       {
+           ++Step;
+           Steptim = 330000;
+       } Steptim -= diff;
   }
 };
 

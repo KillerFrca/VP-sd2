@@ -231,7 +231,7 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
         {
             m_creature->SummonCreature(NPC_MOLTEN_GOLEM,
             pAnvil->GetPositionX(), pAnvil->GetPositionY(), pAnvil->GetPositionZ(), 0.0f,
-            TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);	
+            TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);    
         }
     }
     void UpdateAI(const uint32 uiDiff)
@@ -381,7 +381,7 @@ struct MANGOS_DLL_DECL npc_volkhan_anvilAI : public ScriptedAI
     }
     void Reset()
     {
-        SetCombatMovement(false);	
+        SetCombatMovement(false);    
     }
 
     void AttackStart(Unit* pWho)

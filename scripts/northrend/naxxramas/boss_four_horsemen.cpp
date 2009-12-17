@@ -116,7 +116,7 @@ enum
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
-	boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsHeroicMode = false; //pCreature->GetMap()->IsRaidOrHeroicDungeon();

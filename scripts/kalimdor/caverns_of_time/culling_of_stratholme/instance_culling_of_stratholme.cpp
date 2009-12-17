@@ -18,7 +18,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
     uint64 m_uiMalGate1GUID;
     uint64 m_uiMalGate2GUID;
     uint64 m_uiMalChestGUID;
-	uint64 m_uiExitGUID;
+    uint64 m_uiExitGUID;
 
     void Initialize()
     {
@@ -26,7 +26,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
         m_uiMalGate1GUID = 0;
         m_uiMalGate2GUID = 0;
         m_uiMalChestGUID = 0;
-		m_uiExitGUID = 0;
+        m_uiExitGUID = 0;
     }
 
     void OnObjectCreate(GameObject* pGo)
@@ -42,7 +42,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
 
         if (pGo->GetEntry() == GO_MALGANIS_CHEST)
             m_uiMalChestGUID = pGo->GetGUID();
-		if (pGo->GetEntry() == GO_EXIT)
+        if (pGo->GetEntry() == GO_EXIT)
             m_uiExitGUID = pGo->GetGUID();
     }
 
@@ -52,9 +52,9 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
         {
             case TYPE_ARTHAS_EVENT:
                 m_auiEncounter[0] = uiData;
-				if(uiData == DONE){
-					DoUseDoorOrButton(m_uiExitGUID);
-				}
+                if(uiData == DONE){
+                    DoUseDoorOrButton(m_uiExitGUID);
+                }
                 break;
 
         }
@@ -79,7 +79,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
             case DATA_GO_MAL_GATE1: return m_uiMalGate1GUID;
             case DATA_GO_MAL_GATE2: return m_uiMalGate2GUID;
             case DATA_GO_MAL_CHEST: return m_uiMalChestGUID;
-			case DATA_EXIT: return m_uiExitGUID;
+            case DATA_EXIT: return m_uiExitGUID;
         }
 
         return 0;

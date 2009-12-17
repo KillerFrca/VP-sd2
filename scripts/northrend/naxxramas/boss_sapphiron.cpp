@@ -154,7 +154,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                         target->CastSpell(target, 62766, true);
                         target->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                     }
-            	}
+                }
             }
 */
             return;

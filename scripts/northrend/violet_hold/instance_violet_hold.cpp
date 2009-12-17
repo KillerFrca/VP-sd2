@@ -92,6 +92,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     void Initialize()
     {
+        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+
         m_uiSinclariGUID = 0;
         m_uiNPCSealDoorGUID = 0;
 
@@ -115,8 +117,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     }
 
     void Clear(){
-        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-
         bIsInBoss = false;
 
         m_uiLastBossID = 0;

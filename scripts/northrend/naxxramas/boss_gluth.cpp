@@ -201,7 +201,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
                 {
                     Unit *target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                     if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER &&
-                    	(target->GetHealth() > target->GetMaxHealth() * 0.05))
+                        (target->GetHealth() > target->GetMaxHealth() * 0.05))
                         target->SetHealth(target->GetMaxHealth() * 0.05);
                 }
             }

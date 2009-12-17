@@ -341,11 +341,11 @@ uint32 PatriciaEvent;
 
        if(FinalFight == 2)
           {
-	   if (phasetim <= diff)
-	   {
-		   ++phaseAI;
-		   phasetim = 330000;
-	   } phasetim -= diff;
+       if (phasetim <= diff)
+       {
+           ++phaseAI;
+           phasetim = 330000;
+       } phasetim -= diff;
            }
 
   if(arthas_event == 2)
@@ -686,11 +686,11 @@ uint32 PatriciaEvent;
 
           if(arthas_event == 1)
            {
-	   if (phasetim <= diff)
-	   {
-		   ++phase;
-		   phasetim = 330000;
-	   } phasetim -= diff;
+       if (phasetim <= diff)
+       {
+           ++phase;
+           phasetim = 330000;
+       } phasetim -= diff;
            }
 
     }
@@ -731,7 +731,7 @@ bool GossipSelect_npc_arthas(Player *player, Creature *mCreature, uint32 sender,
           }
 
         ((npc_arthasAI*)mCreature->AI())->culling_faction = player;
-       		
+               
         player->CLOSE_GOSSIP_MENU();
 
     }
@@ -857,11 +857,11 @@ DoMeleeAttackIfReady();
                   }
              } else return;
 
-	   if (Steptim <= diff)
-	   {
-		   ++Step;
-		   Steptim = 330000;
-	   } Steptim -= diff;
+       if (Steptim <= diff)
+       {
+           ++Step;
+           Steptim = 330000;
+       } Steptim -= diff;
 
     }
 };
@@ -944,11 +944,11 @@ uint32 Steptim;
                 }
             }else return;
 
- 	   if (Steptim <= diff)
-	   {
-		   ++Step;
-		   Steptim = 330000;
-	   } Steptim -= diff;
+        if (Steptim <= diff)
+       {
+           ++Step;
+           Steptim = 330000;
+       } Steptim -= diff;
 
     }
 };
@@ -1004,11 +1004,11 @@ uint32 Steptim;
                      break;  
                 }
 
- 	   if (Steptim <= diff)
-	   {
-		   ++Step;
-		   Steptim = 330000;
-	   } Steptim -= diff;
+        if (Steptim <= diff)
+       {
+           ++Step;
+           Steptim = 330000;
+       } Steptim -= diff;
 
     }
 };

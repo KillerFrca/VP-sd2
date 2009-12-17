@@ -87,11 +87,11 @@ uint32 Course_Timer;
                   }
               }else return;
 
-	   if (Steptim <= diff)
-	   {
-		   ++Step;
-		   Steptim = 330000;
-	   } Steptim -= diff;
+       if (Steptim <= diff)
+       {
+           ++Step;
+           Steptim = 330000;
+       } Steptim -= diff;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
