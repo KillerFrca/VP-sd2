@@ -86,6 +86,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
     uint32 m_uiBloodthirst_Timer;
     uint32 m_uiSummonOrb_Timer;
     uint32 m_uiVanish_Timer;
+    uint32 m_uiVanishPhase_Timer;
     uint32 m_uiEmbrace_Timer;
 
     void Reset()
@@ -93,6 +94,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         m_uiBloodthirst_Timer = 4000;
         m_uiSummonOrb_Timer = 13000;
         m_uiVanish_Timer = 17000;
+        m_uiVanishPhase_Timer = 0;
         m_uiEmbrace_Timer = 0;
         m_uiVanishPhase = 0;
         m_uiDamageTaken = 0;
@@ -144,7 +146,13 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         {
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-            if(m_uiVanishPhase == 2)
+            if(m_uiVanishPhase_Timer <= uiDiff)
+            {
+                m_creature->InterruptNonMeleeSpells(false);
+                m_uiVanishPhase = 0;
+            }else m_uiVanishPhase_Timer -= uiDiff;
+
+            if(m_uiVanishPhase != 1)
                 return;
 
             // Embrace of the Vampyr
@@ -171,7 +179,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         {
             for(int i = 0; i <= 3; i++)
             {
-                m_creature->SummonCreature(NPC_FLAME_ORB, 0, 0, FLAME_ORB_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                m_creature->SummonCreature(NPC_FLAME_ORB, m_creature->GetPositionX(), m_creature->GetPositionY(), FLAME_ORB_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if(m_bIsRegularMode)
                     break;
             }
@@ -190,6 +198,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_uiVanish_Timer = 10000 + rand()%10000;
             m_uiEmbrace_Timer = 2500;
+            m_uiVanishPhase_Timer = 22500;
             return;
         }else m_uiVanish_Timer -= uiDiff;
 
