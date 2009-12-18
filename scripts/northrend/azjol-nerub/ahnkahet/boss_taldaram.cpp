@@ -27,14 +27,17 @@ EndScriptData */
 
 enum
 {
-    SPELL_BEAM_VISUAL               = 60342,      //Used when taldram levitates before encounter
-    SPELL_CONJURE_FLAME_ORB         = 57753,
+    SPELL_BEAM_VISUAL               = 60342,      // Used when taldram levitates before encounter
+    SPELL_CONJURE_FLAME_ORB         = 55931,      // Dummy spell, dont do anything except cast
     SPELL_BLOODTHIRST               = 55968,
-    SPELL_VANISH                    = 55964,
+    SPELL_VANISH                    = 55964,      // Does not work...?
     SPELL_EMBRACE_OF_THE_VAMPYR     = 55959,
     SPELL_EMBRACE_OF_THE_VAMPYR_H   = 59513,
 
-    SPELL_FLAME_ORB                 = 57750,
+    SPELL_FLAME_ORB_SPAWN_EFFECT    = 55891, // Orb Grow up
+    SPELL_FLAME_ORB_VISUAL          = 55928, // Flame orb effect
+    SPELL_FLAME_ORB_DEATH           = 55947, // Despawn effect
+    SPELL_FLAME_ORB                 = 57750, // Flame orb damage    
     SPELL_FLAME_ORB_H               = 58937,
 
     NPC_FLAME_ORB                   = 30702,
@@ -49,7 +52,7 @@ enum
     SAY_SLAY_3                      = -1619015,
     SAY_DEATH                       = -1619016,
 
-    FLAME_ORB_Z                     = 16,
+    FLAME_ORB_Z                     = 17,
 
     FLAME_ORB_UP_X                  = 383,
     FLAME_ORB_UP_Y                  = -984,
@@ -158,6 +161,11 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
             // Embrace of the Vampyr
             if(m_uiEmbrace_Timer <= uiDiff)
             {
+                switch(urand(0, 1))
+                {
+                    case 0: DoScriptText(SAY_FEED_1, m_creature); break;
+                    case 1: DoScriptText(SAY_FEED_2, m_creature); break;
+                }
                 if(m_uEmbraceTarget)
                     DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
                 m_creature->SetVisibility(VISIBILITY_ON);
@@ -184,20 +192,27 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
                     break;
             }
             DoCast(m_creature, SPELL_CONJURE_FLAME_ORB);
-            m_uiSummonOrb_Timer = 8000 + rand()%15000;
+            m_uiSummonOrb_Timer = 16000 + rand()%10000;
+            m_uiVanish_Timer = 16000;
         }else m_uiSummonOrb_Timer -= uiDiff;
 
         // Vanish
         if(m_uiVanish_Timer <= uiDiff)
         {
-            DoCast(m_creature, SPELL_VANISH);
+            switch(urand(0, 1))
+            {
+                case 0: DoScriptText(SAY_VANISH_1, m_creature); break;
+                case 1: DoScriptText(SAY_VANISH_2, m_creature); break;
+            }
+
+            //DoCast(m_creature, SPELL_VANISH); We dont want to drop aggro
             m_uiVanishPhase = 1;
             if (m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
                 m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
 
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_uiVanish_Timer = 10000 + rand()%10000;
-            m_uiEmbrace_Timer = 2500;
+            m_uiEmbrace_Timer = 3500;
             m_uiVanishPhase_Timer = 22500;
             return;
         }else m_uiVanish_Timer -= uiDiff;
@@ -221,11 +236,12 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
-        SetCombatMovement(false);
     }
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    bool m_bIsFlying;
+    int8 direction;
     
     uint32 m_uiDespawn_Timer;
     uint32 m_uiCast_Timer;
@@ -234,17 +250,53 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
     {
         m_uiDespawn_Timer = 13000;
         m_uiCast_Timer = 3000;
-        DoCast(m_creature, m_bIsRegularMode ? SPELL_FLAME_ORB : SPELL_FLAME_ORB_H);
+        direction = -1;
+        m_bIsFlying = false;
+        DoCast(m_creature, SPELL_FLAME_ORB_VISUAL);
+        DoCast(m_creature, SPELL_FLAME_ORB_SPAWN_EFFECT);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
-
+    void Aggro(Unit* pWho){
+        if(direction != -1){
+            switch(direction)
+            {
+                case 0: // Up
+                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_UP_X, FLAME_ORB_UP_Y, FLAME_ORB_Z);
+                    break;
+                case 1: // Down
+                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_DOWN_X, FLAME_ORB_DOWN_Y, FLAME_ORB_Z);
+                    break;
+                case 2: // Right
+                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_RIGHT_X, FLAME_ORB_RIGHT_Y, FLAME_ORB_Z);
+                    break;
+                case 3: // Left
+                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_LEFT_X, FLAME_ORB_LEFT_Y, FLAME_ORB_Z);
+                    break;
+                default:
+                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_UP_X, FLAME_ORB_UP_Y, FLAME_ORB_Z);
+                    break;
+            }
+        }
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+    }
     void UpdateAI(const uint32 uiDiff)
     {
+        // Despawn Timer
+        if(m_uiDespawn_Timer <= uiDiff)
+        {
+            DoCast(m_creature, SPELL_FLAME_ORB_DEATH);
+            m_creature->ForcedDespawn();
+        }else m_uiDespawn_Timer -= uiDiff;
+
         // Fly timer
         if(m_uiCast_Timer <= uiDiff)
         {
-            int8 direction = rand()%3;
+            if(m_bIsFlying)
+                return;
+
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_FLAME_ORB : SPELL_FLAME_ORB_H);
+            direction = rand()%3;
             switch(direction)
             {
                 case 0: // Up
@@ -264,13 +316,9 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
                     break;
 
             }
+            m_bIsFlying = true;
+            m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
         }else m_uiCast_Timer -= uiDiff;
-
-        // Despawn Timer
-        if(m_uiDespawn_Timer <= uiDiff)
-        {
-            m_creature->ForcedDespawn();
-        }else m_uiDespawn_Timer -= uiDiff;
     }
 };
 
