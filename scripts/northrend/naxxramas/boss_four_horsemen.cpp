@@ -95,6 +95,9 @@ enum
     NPC_SPIRIT_OF_RIVENDARE = 0,                          //creature entry not known yet
     NPC_SPIRIT_OF_KORTHAZZ  = 16778,
     NPC_SPIRIT_OF_ZELIREK   = 16777,
+
+    ACHIEVEMENT_HORSEMEN    = 568,
+    ACHIEVEMENT_TOGETHER    = 2176,
 };
 
 /*walk coords*/
@@ -177,8 +180,24 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
                 if (pTemp->isAlive())
                     HorsemenDead = false;
 
-            if (HorsemenDead)
+            if (HorsemenDead){
                 m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+
+                Map* pMap = m_creature->GetMap();
+                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(ACHIEVEMENT_HORSEMEN);
+                if(AchievHorsemen && pMap)
+                {
+                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                     if (!lPlayers.isEmpty())
+                     {
+                         for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                         {
+                             if (Player* pPlayer = itr->getSource())
+                                 pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                         }
+                     }
+                }
+            }
         }
     }
 
@@ -349,8 +368,24 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
                 if (pTemp->isAlive())
                     HorsemenDead = false;
 
-            if (HorsemenDead)
+            if (HorsemenDead){
                 m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+                
+                Map* pMap = m_creature->GetMap();
+                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(ACHIEVEMENT_HORSEMEN);
+                if(AchievHorsemen && pMap)
+                {
+                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                     if (!lPlayers.isEmpty())
+                     {
+                         for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                         {
+                             if (Player* pPlayer = itr->getSource())
+                                 pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                         }
+                     }
+                }
+            }
         }
     }
 
@@ -475,8 +510,24 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
                 if (pTemp->isAlive())
                     HorsemenDead = false;
 
-            if (HorsemenDead)
+            if (HorsemenDead){
                 m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+                
+                Map* pMap = m_creature->GetMap();
+                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(ACHIEVEMENT_HORSEMEN);
+                if(AchievHorsemen && pMap)
+                {
+                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                     if (!lPlayers.isEmpty())
+                     {
+                         for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                         {
+                             if (Player* pPlayer = itr->getSource())
+                                 pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                         }
+                     }
+                }
+            }
         }
     }
 
@@ -606,8 +657,24 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
                 if (pTemp->isAlive())
                     HorsemenDead = false;
 
-            if (HorsemenDead)
+            if (HorsemenDead){
                 m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
+                
+                Map* pMap = m_creature->GetMap();
+                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(ACHIEVEMENT_HORSEMEN);
+                if(AchievHorsemen && pMap)
+                {
+                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                     if (!lPlayers.isEmpty())
+                     {
+                         for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                         {
+                             if (Player* pPlayer = itr->getSource())
+                                 pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                         }
+                     }
+                }
+            }
         }
     }
 
