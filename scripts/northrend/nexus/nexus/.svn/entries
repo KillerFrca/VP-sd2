@@ -1,15 +1,15 @@
 10
 
 dir
-1513
+1523
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/northrend/nexus/nexus
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2009-11-19T15:51:26.501005Z
-1504
-deverend
+2009-12-20T17:33:40.332620Z
+1522
+nofantasy
 
 
 
@@ -66,11 +66,11 @@ file
 
 
 
-2009-11-23T16:22:16.776368Z
-d34120fc820e20503096f154c66dd65d
-2009-11-19T15:51:26.501005Z
-1504
-deverend
+2009-12-21T12:06:00.206147Z
+5f441d7b28f1640afe5d6633516376cf
+2009-12-17T22:18:39.098873Z
+1520
+nofantasy
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-7539
+7357
 
 instance_nexus.cpp
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2009-11-18T14:05:08.072179Z
-5d801133a93a253f42083f1ee7637f15
-2009-10-07T12:16:50.056621Z
-1450
+2009-12-21T12:06:00.256219Z
+a762690102e63d60acdda5bf1a0dd1d7
+2009-12-17T22:18:39.098873Z
+1520
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-7552
+7973
 
 nexus.h
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2009-11-18T14:05:08.102222Z
-5e9116e3e7f687a9f8f924a7879ec6c2
-2009-10-07T12:16:50.056621Z
-1450
+2009-12-21T12:06:00.296276Z
+cc661f6484a86121e90b0821b3d038fe
+2009-12-17T22:18:39.098873Z
+1520
 nofantasy
 has-props
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-810
+902
 
 boss_keristrasza.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2009-11-23T16:22:16.846468Z
-1a1d5dd2bfa7c666f125f3c21ec831c7
-2009-11-19T15:51:26.501005Z
-1504
-deverend
+2009-12-21T12:06:00.336334Z
+ef9ffa8c4b5e62bf2db4349bec059e37
+2009-12-20T14:19:41.658943Z
+1521
+nofantasy
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-2828
+7016
 
 boss_telestra.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2009-11-23T16:22:16.966641Z
-efd3817ca6a7df2331bae128c7135b58
-2009-11-19T15:51:26.501005Z
-1504
-deverend
+2009-12-21T12:06:00.386406Z
+a4a9923a6591ffa9cdb354ca00333c88
+2009-12-20T17:33:40.332620Z
+1522
+nofantasy
 has-props
 
 
@@ -228,5 +228,5 @@ has-props
 
 
 
-3217
+5715
 
