@@ -1,13 +1,19 @@
 K 25
 svn:wc:ra_dav:version-url
 V 68
-/svnroot/scriptdev2/!svn/ver/1494/scripts/kalimdor/ruins_of_ahnqiraj
+/svnroot/scriptdev2/!svn/ver/1519/scripts/kalimdor/ruins_of_ahnqiraj
 END
 boss_moam.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 82
 /svnroot/scriptdev2/!svn/ver/1473/scripts/kalimdor/ruins_of_ahnqiraj/boss_moam.cpp
+END
+ruins_of_ahnqiraj.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/scriptdev2/!svn/ver/1519/scripts/kalimdor/ruins_of_ahnqiraj/ruins_of_ahnqiraj.cpp
 END
 boss_buru.cpp
 K 25
