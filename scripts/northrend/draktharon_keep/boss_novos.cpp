@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Novos
-SD%Complete: 20%
-SDComment:
+SD%Complete: 80%
+SDComment: Timers
 SDCategory: Drak'Tharon Keep
 EndScriptData */
 
@@ -86,6 +86,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     uint32 Cast_Timer;
     uint32 ArcaneCount;
     uint32 SpecialCast;
+    uint32 SummonMinion_Timer;
     
     void Reset()
     {
@@ -127,6 +128,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     {
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
+        SummonMinion_Timer = urand (15000,20000);
         Phase1 = false;
         Phase2 = true;
     }
@@ -176,6 +178,23 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
             Start_Check = 0;
         }
         
+        if(!m_bIsRegularMode)
+            if (SummonMinion_Timer < uiDiff )
+            {    
+                    uint8 SummonLoc = rand()%POS;
+                    if (Creature* pAdd1 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                        pAdd1->AI()->AttackStart(m_creature->getVictim());
+                    if (Creature* pAdd2 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                        pAdd2->AI()->AttackStart(m_creature->getVictim());
+                    if (Creature* pAdd3 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                        pAdd3->AI()->AttackStart(m_creature->getVictim());
+                    if (Creature* pAdd4 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                        pAdd4->AI()->AttackStart(m_creature->getVictim());
+                    if (Creature* pAdd5 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
+                        pAdd5->AI()->AttackStart(m_creature->getVictim());
+                    SummonMinion_Timer = urand (15000,20000);
+            }else SummonMinion_Timer -= uiDiff;
+        
         if (Handler_Spawn < uiDiff && Phase1 == true)
         {    
             Handler_Count ++;
@@ -191,7 +210,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
                     pAdd3->AI()->AttackStart(m_creature->getVictim());
                 if (Creature* pAdd4 = m_creature->SummonCreature(NPC_FETID_TROLL_CORPSE, PosSummonHandler[SummonLoc][0],PosSummonHandler[SummonLoc][1],PosSummonHandler[SummonLoc][2],0, TEMPSUMMON_TIMED_DESPAWN, 120000))
                     pAdd4->AI()->AttackStart(m_creature->getVictim());
-                Handler_Spawn = 10000;
+                Handler_Spawn = 20000;
             }
             if(Handler_Count == 5)
             {            

@@ -32,20 +32,20 @@ enum
     SAY_EXPLODE                     = -1600003,
     SAY_KILL                        = -1600004,
 
-    SPELL_CRUSH                        = 49639,
+    SPELL_CRUSH                     = 49639,
     SPELL_INFECTED_WOUND            = 49367,
     SPELL_CORPSE_EXPLODE            = 49555,
-    H_SPELL_CORPSE_EXPLODE            = 59087,
-    SPELL_CONSUME                    = 49380,
-    H_SPELL_CONSUME                    = 59803,
-    SPELL_CONSUME_BUFF                = 49381,
+    H_SPELL_CORPSE_EXPLODE          = 59087,
+    SPELL_CONSUME                   = 49380,
+    H_SPELL_CONSUME                 = 59803,
+    SPELL_CONSUME_BUFF              = 49381,
     H_SPELL_CONSUME_BUFF            = 59805,
 
     SPELL_CORPSE_EXPLODE_PROC        = 49618,
-    H_SPELL_CORPSE_EXPLODE_PROC        = 59809,
+    H_SPELL_CORPSE_EXPLODE_PROC      = 59809,
 
     NPC_DRAKKARI_INVADER            = 27753,
-    NPC_TROLLGORE                    = 26630
+    NPC_TROLLGORE                   = 26630
 };
 
 const float PosSummon1[3] = {-259.59, -652.49, 26.52};
