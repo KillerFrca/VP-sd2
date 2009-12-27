@@ -26,13 +26,50 @@ EndScriptData */
 //TODO: fill in texts in database. Also need to add text for whisper.
 enum
 {
+    SPELL_MIND_FLAY                 = 57941,
+    SPELL_MIND_FLAY_H               = 59974,
+    SPELL_SHADOW_BOLT               = 57942,
+    SPELL_SHADOW_BOLT_H             = 59975,
+
+    //Shiver - horrible ability
+    SPELL_SHIVER                    = 57949, //Jump Aura
+    SPELL_SHIVER_H                  = 59978,
+    SPELL_SHIVER_DMG                = 57952, //Damage
+    SPELL_SHIVER_DMG_H              = 59979,
+    SPELL_SHIVER_DUMMY              = 57951, //What is this? 
+
+    //This is little complicated:
+    //When volajz cast this, on every player is cast different invisibility spell,
+    //so they dont see together, but they see four Twisted Visages - images of other
+    //four party members, which cast spell like their class.
+    SPELL_INSANITY                  = 57496, //This is what volajz casts, it should spawn all Twisted Visage in all phases(see below)
+    SPELL_INSANITY_PHASE_1          = 57508, //invis spells
+    SPELL_INSANITY_PHASE_2          = 57509,
+    SPELL_INSANITY_PHASE_3          = 57510,
+    SPELL_INSANITY_PHASE_4          = 57511,
+    SPELL_INSANITY_PHASE_5          = 57512,
+
+    SPELL_TWISTED_VISAGE_MIRROR     = 57507, //Not implented in mangos, but I have patch :)
+
+    /*
+    http://www.wowhead.com/?spell=57507 Twisted visage visual
+    http://www.wowhead.com/?spells=0&filter=na=twisted+visage so many spells?!
+    */
+
+    NPC_TWISTED_VISAGE              = 30625,
+    
+
     SAY_AGGRO                       = -1619033,
     SAY_INSANITY                    = -1619034,
     SAY_SLAY_1                      = -1619035,
     SAY_SLAY_2                      = -1619036,
     SAY_SLAY_3                      = -1619037,
     SAY_DEATH_1                     = -1619038,
-    SAY_DEATH_2                     = -1619039
+    SAY_DEATH_2                     = -1619039,
+
+    PHASE_NOSTART                   = 0,
+    PHASE_FIGHT                     = 1,
+    PHASE_INSANITY                  = 2,
 };
 
 /*######
@@ -51,6 +88,9 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
+    uint32 m_uiMindFlayTimer;
+    uint32 m_uiShadowBoltTimer;
+    uint32 m_uiShiverTimer;
     void Reset()
     {
     }
