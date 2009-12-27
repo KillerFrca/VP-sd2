@@ -62,6 +62,8 @@ enum
     NPC_TWILIGHT_INITIATE               = 30114,
     NPC_TWILIGHT_VOLUNTEER              = 30385,
 
+    GO_CIRCLE                           = 194394,           // Propably wrong id
+
     //Jedoga Shadowseeker's phases
     PHASE_NOSTART                       = 0,
     PHASE_PREACHING                     = 1,
@@ -82,7 +84,6 @@ enum
 };
 #define CENTER_X                        367.800
 #define CENTER_Y                        -704.403
-#define AIR_Z                           -0.624
 #define GROUND_Z                        -16.17
 
 #define JEDOGA_X                        357.353
@@ -491,6 +492,9 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 m_creature->GetMap()->CreatureRelocation(m_creature, JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O);
                 m_creature->SendMonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O, MONSTER_MOVE_NONE, 0);
                 m_uiSubPhase = SUBPHASE_CALL_VOLUNTEER;
+                GameObject* pCircle = GetClosestGameObjectWithEntry(m_creature,GO_CIRCLE,50.0f);
+                if (pCircle && !pCircle->isSpawned())
+                    pCircle->SetRespawnTime(10000);
             }
             else if(m_uiSubPhase == SUBPHASE_CALL_VOLUNTEER)
             {
