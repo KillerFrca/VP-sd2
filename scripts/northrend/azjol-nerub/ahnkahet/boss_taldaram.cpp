@@ -257,28 +257,9 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
-    void Aggro(Unit* pWho){
-        if(direction != -1){
-            switch(direction)
-            {
-                case 0: // Up
-                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_UP_X, FLAME_ORB_UP_Y, FLAME_ORB_Z);
-                    break;
-                case 1: // Down
-                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_DOWN_X, FLAME_ORB_DOWN_Y, FLAME_ORB_Z);
-                    break;
-                case 2: // Right
-                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_RIGHT_X, FLAME_ORB_RIGHT_Y, FLAME_ORB_Z);
-                    break;
-                case 3: // Left
-                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_LEFT_X, FLAME_ORB_LEFT_Y, FLAME_ORB_Z);
-                    break;
-                default:
-                    m_creature->GetMotionMaster()->MovePoint(0, FLAME_ORB_UP_X, FLAME_ORB_UP_Y, FLAME_ORB_Z);
-                    break;
-            }
-        }
-        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+    void AttackStart(Unit* pWho)
+    {
+        return;
     }
     void UpdateAI(const uint32 uiDiff)
     {
