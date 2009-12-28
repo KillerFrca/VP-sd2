@@ -124,8 +124,22 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
-        
-    }
+ 
+                Map* pMap = m_creature->GetMap();
+                AchievementEntry const *AchieDraktharon = GetAchievementStore()->LookupEntry(m_bIsRegularMode ? ACHIEVEMENT_NORMAL : ACHIEVEMENT_HEROIC);
+                if(AchieDraktharon && pMap)
+                {
+                        Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                        if (!lPlayers.isEmpty())
+                        {
+                                for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                                {
+                                        if (Player* pPlayer = itr->getSource())
+                                                pPlayer->GetAchievementMgr().CompletedAchievement(AchieDraktharon);
+                                }
+                        }
+                }
+        }
 
     void UpdateAI(const uint32 uiDiff)
     {

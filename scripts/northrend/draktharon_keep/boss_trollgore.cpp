@@ -32,20 +32,20 @@ enum
     SAY_EXPLODE                     = -1600003,
     SAY_KILL                        = -1600004,
 
-    SPELL_CRUSH                     = 49639,
+    SPELL_CRUSH                        = 49639,
     SPELL_INFECTED_WOUND            = 49367,
     SPELL_CORPSE_EXPLODE            = 49555,
-    H_SPELL_CORPSE_EXPLODE          = 59087,
-    SPELL_CONSUME                   = 49380,
-    H_SPELL_CONSUME                 = 59803,
-    SPELL_CONSUME_BUFF              = 49381,
+    H_SPELL_CORPSE_EXPLODE            = 59087,
+    SPELL_CONSUME                    = 49380,
+    H_SPELL_CONSUME                    = 59803,
+    SPELL_CONSUME_BUFF                = 49381,
     H_SPELL_CONSUME_BUFF            = 59805,
 
     SPELL_CORPSE_EXPLODE_PROC        = 49618,
-    H_SPELL_CORPSE_EXPLODE_PROC      = 59809,
+    H_SPELL_CORPSE_EXPLODE_PROC        = 59809,
 
     NPC_DRAKKARI_INVADER            = 27753,
-    NPC_TROLLGORE                   = 26630
+    NPC_TROLLGORE                    = 26630
 };
 
 const float PosSummon1[3] = {-259.59, -652.49, 26.52};
@@ -147,8 +147,29 @@ struct MANGOS_DLL_DECL boss_trollgoreAI : public ScriptedAI
         //Corpse Explosion
         if (CorpseExplode_Timer < uiDiff)
         {
-            DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_CORPSE_EXPLODE : H_SPELL_CORPSE_EXPLODE);
-            CorpseExplode_Timer = 15000;
+            //DoCast(m_creature->getVictim(),  m_bIsRegularMode ? SPELL_CORPSE_EXPLODE : H_SPELL_CORPSE_EXPLODE);
+        
+            if (Creature* pCorpse = GetClosestCreatureWithEntry(m_creature, NPC_DRAKKARI_INVADER, 85.0f))
+            {
+                if (!pCorpse->isAlive())
+                {                    
+                    Map *map = pCorpse->GetMap();
+                    if (map->IsDungeon())
+                    {            
+                        Map::PlayerList const &PlayerList = map->GetPlayers();
+                         
+                        if (PlayerList.isEmpty())
+                            return;
+                             
+                        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                        {
+                            if (i->getSource()->isAlive() && pCorpse->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) <= 5)
+                                m_creature->DealDamage(i->getSource(), (m_bIsRegularMode ? urand(3770, 4230) : urand(9425, 10575)), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NATURE, NULL, false);
+                        }
+                    }
+                }
+            }
+           CorpseExplode_Timer = 15000;
         }else CorpseExplode_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
