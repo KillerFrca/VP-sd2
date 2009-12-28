@@ -101,12 +101,16 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         m_uiEmbrace_Timer = 0;
         m_uiVanishPhase = 0;
         m_uiDamageTaken = 0;
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_TALDARAM, NOT_STARTED);
     }
 
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
         m_creature->RemoveAurasDueToSpell(SPELL_BEAM_VISUAL);
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_TALDARAM, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
