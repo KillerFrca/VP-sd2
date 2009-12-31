@@ -59,8 +59,8 @@ enum
     http://www.wowhead.com/?spells=0&filter=na=twisted+visage so many spells?!
     */
 
-    //NPC_TWISTED_VISAGE              = 30625,
-    NPC_TWISTED_VISAGE              = 20058,
+    NPC_TWISTED_VISAGE              = 30621,
+    //NPC_TWISTED_VISAGE              = 20058, //Bloodmaul wolf, for testing
     
 
     SAY_AGGRO                       = -1619033,
@@ -98,13 +98,31 @@ struct MANGOS_DLL_DECL mob_twisted_visageAI : public ScriptedAI
 
     void Reset()
     {
+        if(m_pMirrorPlayer)
+            m_creature->CastSpell(m_creature, 57507, false);
 
     }
-
+    void Aggro(Unit *pWho)
+    {
+        if(m_pMirrorPlayer)
+            m_creature->CastSpell(m_creature, 57507, false);
+    }
+    void EnterEvadeMode()
+    {
+        if (m_creature->IsInEvadeMode() || !m_creature->isAlive())
+            return;
+    }
+    void JustDied(Unit *pWho)
+    {
+        pWho->RemoveAurasDueToSpell(SPELL_INSANITY_PHASE+m_uiMyPhase);
+    }
      
     void UpdateAI(const uint32 uiDiff)
     {
-        
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();       
     }
 };
 
@@ -173,7 +191,11 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
                 m_bIsDebugMode = true;
         }
     }
-
+    void EnterEvadeMode()
+    {
+        if(m_uiPhase != PHASE_FIGHT)
+            return;
+    }
     void KilledUnit(Unit* pVictim)
     {
         switch(urand(0, 2))
@@ -260,7 +282,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             //Shiver
             if(m_uiShiverTimer <= uiDiff)
             {
-                DoShiver();
+                //DoShiver();
                 m_uiShiverTimer = 5000;
             }else m_uiShiverTimer -= uiDiff;
 
@@ -268,10 +290,8 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             if(m_uiCheckTimer <= uiDiff)
             {
                 uint8 health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();                    
-                error_log("JEDNA %u, %u", health, m_uiLastSacrifaceHP);
                 if(m_uiLastSacrifaceHP == 0 && health <= 66)
                 {
-                    error_log("DVA");
                     m_creature->InterruptNonMeleeSpells(true);
                     SetCombatMovement(false);    
                     m_uiLastSacrifaceHP = 66;
@@ -281,7 +301,6 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
                 }
                 else if(m_uiLastSacrifaceHP == 66 && health <= 33)
                 {
-                    error_log("DVA");
                     m_creature->InterruptNonMeleeSpells(true);
                     SetCombatMovement(false);
                     DoCast(m_creature, SPELL_INSANITY, false);
@@ -299,11 +318,14 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             if(m_uiInsanityCastTimer <= uiDiff)
             {
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                DoCast(m_creature, SPELL_INSANITY_PHASE_1, true);
                 DoCast(m_creature, SPELL_INSANITY_CHANNEL);
                 DoInsanity();
                 m_uiInsanityCastTimer = 5000;
                 m_uiCheckTimer = 5000;
                 m_uiPhase = PHASE_INSANITY_2;
+                SetCombatMovement(false);
+                m_creature->GetMotionMaster()->MovementExpired(false);
             }else m_uiInsanityCastTimer -= uiDiff;
         }else if(m_uiPhase == PHASE_INSANITY_2)
         {
@@ -320,6 +342,8 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         {
             m_creature->RemoveAurasDueToSpell(SPELL_INSANITY_CHANNEL);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveAurasDueToSpell(SPELL_INSANITY_PHASE_1);
+            //RemoveInsanity();
             SetCombatMovement(true);
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
             m_uiPhase = PHASE_FIGHT;
@@ -335,25 +359,20 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         Map::PlayerList const &lPlayers = pMap->GetPlayers();
 
         if (lPlayers.isEmpty())
-                return;
+            return;
         int i = 1;
         for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
         {
             if(!itr->getSource()->isAlive())
                 continue;
-            error_log("TRI");
             //Phase players, so they dont see together
             DoPhasePlayer(i, itr->getSource());
-            error_log("CTYRY");
             //Spawn Visages and port them to phases
-            DoSpawnTwistedVisages(i, itr->getSource(), lPlayers.getSize()-1);
-            error_log("PET");
+            DoSpawnTwistedVisages(itr->getSource(), i);
             i++;
         }
-        error_log("CTRNACT");
         //Set mirror image to twisted visages
-        DoInitializeVisages();
-        error_log("PATNACT");
+        //DoInitializeVisages();
     }
     //Phase players, so they dont see together
     void DoPhasePlayer(uint8 count, Player *pPlayer)
@@ -362,7 +381,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             pPlayer->CastSpell(pPlayer, SPELL_INSANITY_PHASE+count, false);
     }
     //Spawn Visages and port them to phases
-    void DoSpawnTwistedVisages(uint8 phase, Player *pPlayer, uint8 count)
+    void DoSpawnTwistedVisages(Player *pPlayer, uint8 count)
     {
         if(!pPlayer)
             return;
@@ -370,87 +389,41 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             return;
         float x,y,z;
         m_creature->GetPosition(x, y, z);
-        error_log("SEST");
-        if(m_bIsDebugMode || count <= 1)
+        if(m_bIsDebugMode || count < 1)
         {
-            error_log("SEDUM");
             if(Creature *pTemp = pPlayer->SummonCreature(NPC_TWISTED_VISAGE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
             {
-                error_log("OSM");
-                if(!pTemp->isAlive())
+                 if(!pTemp->isAlive())
                     return;
-                error_log("DEVET");
-                pTemp->SetCreatorGUID(pPlayer->GetGUID());
-                error_log("DESET");
-                pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+phase, true);
-                error_log("JEDENACT");
-                ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = phase;
-                error_log("DVANACT");
-                ((mob_twisted_visageAI*)pTemp->AI())->m_pAttackPlayer = pPlayer;
-                error_log("TRINACT");
+
+                 pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+1, true);
+                 ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = 1;
+                 ((mob_twisted_visageAI*)pTemp->AI())->m_pMirrorPlayer = pPlayer;
+                 pTemp->SetUInt32Value(UNIT_CREATED_BY_SPELL, 57500);
+                 pTemp->SetCreatorGUID(pPlayer->GetGUID());
+                 pPlayer->CastSpell(pTemp, SPELL_TWISTED_VISAGE_MIRROR, true);
             }
             return;
         }
 
-        for(uint8 i = 1; i <= count; i++)
+        for(int i = 1; i <= 5; i++)
         {
-            if(Creature *pTemp = m_creature->SummonCreature(NPC_TWISTED_VISAGE, x, y, z,0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-            {
-                pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+phase, true);
-                ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = phase;
-                ((mob_twisted_visageAI*)pTemp->AI())->m_pAttackPlayer = pPlayer;
-            }
-        }
-    }
-    //Set mirror image to twisted visages
-    void DoInitializeVisages()
-    {
-        error_log("SESTNACT");
-        std::list<Creature* > lVisageList;
-        GetCreatureListWithEntryInGrid(lVisageList, m_creature, NPC_TWISTED_VISAGE, 80.0f);
-        error_log("SEDUMNACT");
-        if(lVisageList.empty())
-            return;
-        error_log("OSMNACT");
-        Map* pMap = m_creature->GetMap();
-        if(!pMap)
-            return;
-        Map::PlayerList const &lPlayers = pMap->GetPlayers();
-        error_log("DEVATENACT");
-        if (lPlayers.isEmpty())
-                return;
-        error_log("DVACET");
-        //If anybody know any beter way to do this, please, tell me - this is horrible :/
-        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-        {
-            error_log("DVACETJEDNA");
-            if(!itr->getSource()->isAlive())
+            if(i == count)
                 continue;
-           error_log("DVACETDVA");
-            bool m_bIsInPhase[5] = {false, false, false, false, false};
-             error_log("DVACETTRI");
-            for(std::list<Creature* >::iterator iter = lVisageList.begin(); iter != lVisageList.end(); iter++)
+
+            if(Creature *pTemp = pPlayer->SummonCreature(NPC_TWISTED_VISAGE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
             {
-                error_log("DVACETCTRYRI");
-                if(!((mob_twisted_visageAI*)(*iter)->AI())->m_pAttackPlayer)
-                    continue;
-                 error_log("DVACETPET");
-                if((((mob_twisted_visageAI*)(*iter)->AI())->m_pAttackPlayer != itr->getSource() &&
-                    !m_bIsInPhase[((mob_twisted_visageAI*)(*iter)->AI())->m_uiMyPhase]) || m_bIsDebugMode)
-                {
-                    error_log("DVACETSEST");
-                    ((mob_twisted_visageAI*)(*iter)->AI())->m_pMirrorPlayer = itr->getSource();
-                    error_log("DVACETSEDUM");
-                    itr->getSource()->CastSpell((*iter), SPELL_TWISTED_VISAGE_MIRROR, true);
-                    error_log("DAVACETOSUM");
-                    m_bIsInPhase[((mob_twisted_visageAI*)(*iter)->AI())->m_uiMyPhase] = true;
-                    error_log("DVACETDEVET");
-                }
-                
-                (*iter)->AI()->AttackStart(((mob_twisted_visageAI*)(*iter)->AI())->m_pAttackPlayer);
-                error_log("TRICET");
+                 if(!pTemp->isAlive())
+                    return;
+
+                 pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+i, true);
+                 ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = i;
+                 ((mob_twisted_visageAI*)pTemp->AI())->m_pMirrorPlayer = pPlayer;
+                 pTemp->SetUInt32Value(UNIT_CREATED_BY_SPELL, 57500);
+                 pTemp->SetCreatorGUID(pPlayer->GetGUID());
+                 pPlayer->CastSpell(pTemp, SPELL_TWISTED_VISAGE_MIRROR, true);
             }
-        }
+        }       
     }
 };
 
@@ -479,5 +452,5 @@ void AddSC_boss_volazj()
     newscript->RegisterSelf();
 }
 /* 
-UPDATE creature_template SET ScriptName = "mob_twisted_visage" WHERE entry =30625;
+UPDATE creature_template SET ScriptName = "mob_twisted_visage" WHERE entry =30621;
 */
