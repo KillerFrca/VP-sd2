@@ -44,7 +44,8 @@ npc_sayge               100%    Darkmoon event fortune teller, buff player based
 npc_tabard_vendor        50%    allow recovering quest related tabards, achievement related ones need core support
 npc_locksmith            75%    list of keys needs to be confirmed
 npc_onyxian_whelpling   100%    non-combat pet emote
-npc_wormhole            100%    ENG wormhole item 48933 
+npc_wormhole            100%    ENG wormhole item 48933
+npc_time_lost_drake_controller  controller for NPC 32491 (Time-lost Proto-drake) to make its spawns random.  
 EndContentData */
 
 /*########
@@ -1875,6 +1876,146 @@ bool GossipSelect_npc_wormhole(Player* pPlayer, Creature* pCreature, uint32 uiSe
     return true;
 }
 
+/*################################
+# npc_time_lost_drake_controller #
+#################################*/
+struct Locations
+{
+    float x, y, z, o;
+    uint32 id;
+};
+static Locations SpawnLoc[]=
+{
+    //13 locations in storm peaks
+    {7573.996, -131.688, 897.956, 1.899},
+    {8122.577, -732.081, 1006.656, 5.600},
+    {8610.194, -1041.021, 550.699, 3.056},
+    {8724.768, -1340.422, 870.166, 3.504},
+    {7336.514, -1006.855, 907.828, 4.471},
+    {7354.466, -1656.856, 1141.252, 2.795},
+    {6820.968, -1804.341, 942.078, 1.594},
+    {6453.129, -1544.845, 492.526, 2.932},
+    {7066.843, -1066.930, 893.788, 3.054},
+    {6630.028, -840.184, 673.220, 2.480},
+    {6903.040, -417.403, 996.679, 0.261},
+    {6541.038, -228.798, 816.373, 4.045},
+    {7076.384, 111.577, 1022.646, 0.848},
+};
+
+#define NPC_TIME_LOST_PROTO_DRAKE    32491
+#define GOSSIP_TELE_TO_DRAKE         "Teleport me to drake"
+struct MANGOS_DLL_DECL npc_time_lost_drake_controllerAI : public ScriptedAI
+{
+    npc_time_lost_drake_controllerAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    int8 m_uiLastSpawn;
+    Creature *pProtoDrake;
+
+    uint32 m_uiCheckTimer;
+    uint32 m_uiRelocationTimer;
+    void Reset()
+    {
+        m_uiLastSpawn = -1;
+
+        m_uiCheckTimer = 5000;
+        m_uiRelocationTimer = 60000;
+
+        SpawnDrake();
+
+        m_creature->SetVisibility(VISIBILITY_OFF);
+    }
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    bool IsDrakeAlive()
+    {
+        if(!pProtoDrake)
+            return false;
+
+        if(pProtoDrake->isAlive())
+            return true;
+
+        return false;
+    }
+    bool IsDrakeInCombat()
+    {
+        if(!pProtoDrake)
+            return false;
+
+        if(!pProtoDrake->isAlive())
+            return false;
+
+        if(pProtoDrake->isInCombat())
+            return true;
+        
+        return false;
+    }
+
+    void SpawnDrake(int8 spawnLoc = -1)
+    {
+
+        uint8 tmp = rand()%12;
+        while(tmp == m_uiLastSpawn)
+            tmp = rand()%12;
+
+        if(spawnLoc != -1)
+            tmp = spawnLoc;
+
+        if(Creature *pTemp = m_creature->SummonCreature(NPC_TIME_LOST_PROTO_DRAKE, SpawnLoc[tmp].x, SpawnLoc[tmp].y, SpawnLoc[tmp].z, SpawnLoc[tmp].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 50000))
+        {
+            pProtoDrake = pTemp;
+            m_uiLastSpawn = tmp;
+        }    
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+           if (m_uiRelocationTimer < uiDiff)
+        {
+            if(IsDrakeAlive() && !IsDrakeInCombat())
+            {
+                pProtoDrake->ForcedDespawn();
+                SpawnDrake();
+            }
+            else if(!IsDrakeAlive())
+            {
+                SpawnDrake();
+            }            
+            m_uiRelocationTimer = 60000;//3600000;
+        }else m_uiRelocationTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_time_lost_drake_controller(Creature* pCreature)
+{
+    return new npc_time_lost_drake_controllerAI(pCreature);
+}
+bool GossipHello_npc_time_lost_drake_controller(Player* pPlayer, Creature* pCreature)
+{
+
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TELE_TO_DRAKE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF +1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_time_lost_drake_controller(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    switch(uiAction)
+    {
+        
+        case GOSSIP_ACTION_INFO_DEF+1:
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->TeleportTo(571, SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].x, 
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].y,
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].z,
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].o);
+            break;
+
+    }
+    return true;
+}
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -1976,4 +2117,14 @@ void AddSC_npcs_special()
     newscript->pGossipSelect = &GossipSelect_npc_wormhole;
     newscript->GetAI = &GetAI_npc_wormhole;
     newscript->RegisterSelf();
+        
+    newscript = new Script;
+    newscript->Name = "npc_time_lost_drake_controller";
+    newscript->pGossipHello =  &GossipHello_npc_time_lost_drake_controller;
+    newscript->pGossipSelect = &GossipSelect_npc_time_lost_drake_controller;
+    newscript->GetAI = &GetAI_npc_time_lost_drake_controller;
+    newscript->RegisterSelf();
 }
+/*
+INSERT IGNORE INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entry_2`, `difficulty_entry_3`, `KillCredit1`, `KillCredit2`, `modelid_A`, `modelid_A2`, `modelid_H`, `modelid_H2`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `minhealth`, `maxhealth`, `minmana`, `maxmana`, `armor`, `faction_A`, `faction_H`, `npcflag`, `speed`, `scale`, `rank`, `mindmg`, `maxdmg`, `dmgschool`, `attackpower`, `dmg_multiplier`, `baseattacktime`, `rangeattacktime`, `unit_class`, `unit_flags`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_class`, `trainer_race`, `minrangedmg`, `maxrangedmg`, `rangedattackpower`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `spell1`, `spell2`, `spell3`, `spell4`, `PetSpellDataId`, `mingold`, `maxgold`, `AIName`, `MovementType`, `InhabitType`, `unk16`, `unk17`, `RacialLeader`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `movementId`, `RegenHealth`, `equipment_id`, `mechanic_immune_mask`, `flags_extra`, `ScriptName`) VALUES ('62491', '0', '0', '0', '0', '0', '10045', '0', '10045', '0', 'Time-Lost Proto-Drake spawn controller', 'To make its spawns random', NULL, '0', '80', '80', '1000', '1000', '0', '0', '0', '35', '35', '1', '1', '1', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '', '0', '3', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '128', 'npc_time_lost_drake_controller');
+*/
