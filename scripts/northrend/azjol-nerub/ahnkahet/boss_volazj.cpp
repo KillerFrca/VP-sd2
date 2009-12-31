@@ -16,8 +16,9 @@
 
 /* ScriptData
 SDName: Boss_Volazj
-SD%Complete: 20%
-SDComment:
+SD%Complete: 60%
+SDComment: Insanity does not work, timers
+SDAuthor: Tassadar
 SDCategory: Ahn'kahet
 EndScriptData */
 
@@ -214,8 +215,17 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
     }
     void DoShiver()
     {
-        if(m_pLastShiverTarget && m_pLastShiverTarget->isAlive())
+        if(m_pLastShiverTarget)
         {
+            if(!m_pLastShiverTarget->isAlive())
+            {
+                if(Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                {
+                    DoCast(pTarget, m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
+                    m_pLastShiverTarget = ((Player*)pTarget);
+                }
+                return;
+            }
             Map* pMap = m_creature->GetMap();
             if(!pMap)
                 return;
@@ -282,12 +292,12 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             //Shiver
             if(m_uiShiverTimer <= uiDiff)
             {
-                //DoShiver();
+                DoShiver();
                 m_uiShiverTimer = 5000;
             }else m_uiShiverTimer -= uiDiff;
 
             //Health check
-            if(m_uiCheckTimer <= uiDiff)
+          /*  if(m_uiCheckTimer <= uiDiff)
             {
                 uint8 health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();                    
                 if(m_uiLastSacrifaceHP == 0 && health <= 66)
@@ -309,7 +319,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
                     return;
                 }
                 m_uiCheckTimer = 1000;
-            }else m_uiCheckTimer -= uiDiff; 
+            }else m_uiCheckTimer -= uiDiff;  */
     
             DoMeleeAttackIfReady();
         }else if(m_uiPhase == PHASE_INSANITY_1)
