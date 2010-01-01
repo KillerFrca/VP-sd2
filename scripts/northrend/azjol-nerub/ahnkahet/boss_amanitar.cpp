@@ -151,39 +151,78 @@ struct MANGOS_DLL_DECL npc_amanitar_mushroomAI : public ScriptedAI
 
     uint8 m_uiMushroomType; //0 = healthy, 1 = poisinous
     bool m_bHasFightBegun;
+    bool m_bIsDead;
     uint32 m_uiCheckTimer;
+    uint32 m_uiRespawnTimer;
 
     void Reset()
     {
         m_bHasFightBegun = false;
-        m_uiMushroomType = rand()%1;
-
+        m_bIsDead = false;
         m_uiCheckTimer = 1000;
+        m_uiRespawnTimer = 30000;
 
         DoCast(m_creature,SPELL_PUTRID_MUSHROOM,true);
 
         if(m_pInstance->GetData(TYPE_AMANITAR) != IN_PROGRESS)
             m_creature->CastSpell(m_creature, SPELL_INVISIBILITY, false);
         
+        ResetMushroom();
+    }
+    void ResetMushroom()
+    {
+        m_uiMushroomType = urand(0, 1);
         if(m_uiMushroomType == 1)
         {
             m_creature->UpdateEntry(NPC_POISONOUS_MUSHROOM);
             m_creature->CastSpell(m_creature, SPELL_POISONOUS_MUSHROOM_VISUAL, false);
-        }
+        }else{
+            m_creature->RemoveAurasDueToSpell(SPELL_POISONOUS_MUSHROOM_VISUAL);
+            m_creature->UpdateEntry(NPC_HEALTHY_MUSHROOM);
+        }    
     }
     void AttackStart(Unit *pWho)
     {
         return;
     }
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (m_bIsDead)
+        {
+            uiDamage = 0;
+            return;
+        }
+
+        if (uiDamage > m_creature->GetHealth())
+        {
+            m_bIsDead = true;
+            uiDamage = 0;
+            if(m_uiMushroomType == 0)
+                m_creature->CastSpell(m_creature, SPELL_POTENT_FUNGUS, true);
+            else
+                m_creature->CastSpell(m_creature, SPELL_POISON_CLOUD, true);
+
+            m_creature->SetHealth(1);
+            m_creature->CastSpell(m_creature, SPELL_INVISIBILITY, false);
+        }
+    }
     void JustDied(Unit* pKiller)
     {
-        if(m_uiMushroomType == 0)
-            m_creature->CastSpell(m_creature, SPELL_POTENT_FUNGUS, true);
-        else
-            m_creature->CastSpell(m_creature, SPELL_POISON_CLOUD, true);
+        m_creature->Respawn();
     }
     void UpdateAI(const uint32 uiDiff)
     {
+        if(m_bIsDead)
+        {
+            if(m_uiRespawnTimer <= uiDiff)
+            {
+                ResetMushroom();
+                m_creature->SetHealth(m_creature->GetMaxHealth());
+                m_creature->RemoveAurasDueToSpell(SPELL_INVISIBILITY);
+                m_bIsDead = false;                
+            }else m_uiRespawnTimer -= uiDiff;
+        }
+
         if(m_uiCheckTimer <= uiDiff)
         {
             if(m_bHasFightBegun)
