@@ -1048,6 +1048,7 @@ UPDATE creature_template SET ScriptName='mob_spark_of_ionar' WHERE entry=28926;
 UPDATE creature_template SET ScriptName='boss_loken' WHERE entry=28923;
 
 /* HALLS OF STONE */
+UPDATE instance_template SET script='instance_halls_of_stone' WHERE map=599;
 UPDATE creature_template SET ScriptName='boss_maiden_of_grief' WHERE entry=27975;
 UPDATE creature_template SET ScriptName='boss_sjonnir' WHERE entry=27978;
 UPDATE creature_template SET ScriptName='npc_brann_hos' WHERE entry=28070;
@@ -1080,6 +1081,8 @@ UPDATE creature_template SET ScriptName='mob_vrykul_skeleton' WHERE entry=23970;
 
 /* UTGARDE PINNACLE */
 UPDATE creature_template SET ScriptName='boss_gortok' WHERE entry=26687;
+DELETE FROM areatrigger_scripts WHERE entry=4991;
+INSERT INTO areatrigger_scripts VALUES (4991,'at_skadi');
 UPDATE creature_template SET ScriptName='boss_skadi' WHERE entry=26693;
 UPDATE creature_template SET ScriptName='boss_svala' WHERE entry=29281;
 DELETE FROM areatrigger_scripts WHERE entry=5140;

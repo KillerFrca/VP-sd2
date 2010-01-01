@@ -154,6 +154,7 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
             case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
         }
     }
+
     void DespawnSpark()
     {
         if (m_lSparkGUIDList.empty())
@@ -219,7 +220,7 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
         // Splitted
         if (m_creature->GetVisibility() == VISIBILITY_OFF)
         {
-            if (!m_creature->getVictim())
+            if (!m_creature->isInCombat())
             {
                 Reset();
                 return;
@@ -233,7 +234,6 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
                 if (m_bIsSplitPhase)
                 {
                     CallBackSparks();
-                    m_uiSparkAtHomeCount = 5;
                     m_bIsSplitPhase = false;
                 }
                 // Lightning effect and restore Ionar
@@ -261,15 +261,13 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
             return;
         }
 
-        //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_uiStaticOverload_Timer < uiDiff)
         {
-            //Becuse this spell is targeting Ionar, too
-            //if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))    
-            //   DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H);
 
             m_uiStaticOverload_Timer = urand(5000, 6000);
         }
@@ -315,12 +313,7 @@ bool EffectDummyCreature_boss_ionar(Unit* pCaster, uint32 uiSpellId, uint32 uiEf
             return true;
 
         for(uint8 i = 0; i < MAX_SPARKS; ++i)
-        {
             pCreatureTarget->CastSpell(pCreatureTarget, SPELL_SUMMON_SPARK, true);
-
-            //TODO: remove this line of hack when summon implemented
-            //pCreatureTarget->SummonCreature(NPC_SPARK_OF_IONAR, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-        }
 
         pCreatureTarget->AttackStop();
         pCreatureTarget->SetVisibility(VISIBILITY_OFF);
