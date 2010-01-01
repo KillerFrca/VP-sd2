@@ -35,9 +35,8 @@ enum
 
     //Mushroom spells
     SPELL_POISON_CLOUD       = 57061,
-    SPELL_POISONOUS_MUSHROOM_VISUAL = 61566,
+    SPELL_POISONOUS_MUSHROOM_VISUAL = 56741,
     SPELL_POTENT_FUNGUS      = 56648, // this one and SPELL_MINI MUST stack!
-    SPELL_INVISIBILITY       = 49414, // I really dont wanna spawn all mushrooms by script, so make them invisible until fight begins
     SPELL_PUTRID_MUSHROOM    = 31690, // They should look like mushroom
 
     //Script thinks that all mushrooms which are spawned are only healthy, so change entry only for poisinous
@@ -79,18 +78,47 @@ struct MANGOS_DLL_DECL boss_amanitarAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_AMANITAR, IN_PROGRESS);
+        ShowMushrooms();
+
+        if(m_bIsRegularMode == true)
+            m_creature->ForcedDespawn();
+
+        m_pInstance->SetData(TYPE_AMANITAR, IN_PROGRESS);
     }
     void EnterEvadeMode()
     {
+        ShowMushrooms(false);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_AMANITAR, FAIL);
+
+        m_creature->GetMotionMaster()->MoveTargetedHome();
     }
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_AMANITAR, DONE);
+    }
+    void ShowMushrooms(bool show = true)
+    {
+        std::list<Creature*> lMushroomsHealthy;
+        GetCreatureListWithEntryInGrid(lMushroomsHealthy, m_creature, NPC_HEALTHY_MUSHROOM, 150.0f);
+        for(std::list<Creature*>::iterator itr1 = lMushroomsHealthy.begin(); itr1 != lMushroomsHealthy.end(); itr1++)
+        {
+            if(show)
+                (*itr1)->SetVisibility(VISIBILITY_ON);
+            else
+                (*itr1)->SetVisibility(VISIBILITY_OFF);
+        }
+        std::list<Creature*> lMushroomsPoison;
+        GetCreatureListWithEntryInGrid(lMushroomsPoison, m_creature, NPC_POISONOUS_MUSHROOM, 150.0f);
+        for(std::list<Creature*>::iterator itr2 = lMushroomsPoison.begin(); itr2 != lMushroomsPoison.end(); itr2++)
+        {
+            if(show)
+                (*itr2)->SetVisibility(VISIBILITY_ON);
+            else
+                (*itr2)->SetVisibility(VISIBILITY_OFF);
+        }
+        
     }
     void UpdateAI(const uint32 uiDiff)
     {
@@ -150,22 +178,16 @@ struct MANGOS_DLL_DECL npc_amanitar_mushroomAI : public ScriptedAI
     bool m_bIsRegularMode;
 
     uint8 m_uiMushroomType; //0 = healthy, 1 = poisinous
-    bool m_bHasFightBegun;
     bool m_bIsDead;
-    uint32 m_uiCheckTimer;
     uint32 m_uiRespawnTimer;
 
     void Reset()
     {
-        m_bHasFightBegun = false;
         m_bIsDead = false;
-        m_uiCheckTimer = 1000;
         m_uiRespawnTimer = 30000;
 
         DoCast(m_creature,SPELL_PUTRID_MUSHROOM,true);
-
-        if(m_pInstance->GetData(TYPE_AMANITAR) != IN_PROGRESS)
-            m_creature->CastSpell(m_creature, SPELL_INVISIBILITY, false);
+        m_creature->SetVisibility(VISIBILITY_OFF);
         
         ResetMushroom();
     }
@@ -175,11 +197,14 @@ struct MANGOS_DLL_DECL npc_amanitar_mushroomAI : public ScriptedAI
         if(m_uiMushroomType == 1)
         {
             m_creature->UpdateEntry(NPC_POISONOUS_MUSHROOM);
-            m_creature->CastSpell(m_creature, SPELL_POISONOUS_MUSHROOM_VISUAL, false);
+            m_creature->CastSpell(m_creature, SPELL_POISONOUS_MUSHROOM_VISUAL, true);
         }else{
             m_creature->RemoveAurasDueToSpell(SPELL_POISONOUS_MUSHROOM_VISUAL);
             m_creature->UpdateEntry(NPC_HEALTHY_MUSHROOM);
-        }    
+        }
+        DoCast(m_creature,SPELL_PUTRID_MUSHROOM,true);
+        if(m_bIsDead)
+            m_creature->SetVisibility(VISIBILITY_OFF);
     }
     void AttackStart(Unit *pWho)
     {
@@ -203,7 +228,7 @@ struct MANGOS_DLL_DECL npc_amanitar_mushroomAI : public ScriptedAI
                 m_creature->CastSpell(m_creature, SPELL_POISON_CLOUD, true);
 
             m_creature->SetHealth(1);
-            m_creature->CastSpell(m_creature, SPELL_INVISIBILITY, false);
+            m_creature->SetVisibility(VISIBILITY_OFF);
         }
     }
     void JustDied(Unit* pKiller)
@@ -216,33 +241,13 @@ struct MANGOS_DLL_DECL npc_amanitar_mushroomAI : public ScriptedAI
         {
             if(m_uiRespawnTimer <= uiDiff)
             {
+                m_bIsDead = false;
                 ResetMushroom();
                 m_creature->SetHealth(m_creature->GetMaxHealth());
-                m_creature->RemoveAurasDueToSpell(SPELL_INVISIBILITY);
-                m_bIsDead = false;                
+                m_creature->SetVisibility(VISIBILITY_ON);
+                m_uiRespawnTimer = 30000;                
             }else m_uiRespawnTimer -= uiDiff;
-        }
-
-        if(m_uiCheckTimer <= uiDiff)
-        {
-            if(m_bHasFightBegun)
-            {
-                if(m_pInstance->GetData(TYPE_AMANITAR) != IN_PROGRESS)
-                {
-                    m_bHasFightBegun = false;
-                    m_creature->CastSpell(m_creature, SPELL_INVISIBILITY, false);
-                    m_creature->CombatStop();
-                }
-                m_uiCheckTimer = 15000;
-            }else{
-                if(m_pInstance->GetData(TYPE_AMANITAR) == IN_PROGRESS)
-                {
-                    m_bHasFightBegun = true;
-                    m_creature->RemoveAurasDueToSpell(SPELL_INVISIBILITY);
-                }
-                m_uiCheckTimer = 5000;
-            }
-        }else m_uiCheckTimer -= uiDiff;
+        }       
     }
 };
 
