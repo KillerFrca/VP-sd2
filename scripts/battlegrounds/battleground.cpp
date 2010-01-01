@@ -52,7 +52,15 @@ struct MANGOS_DLL_DECL npc_spirit_guideAI : public ScriptedAI
     void Reset()
     {
     }
-
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    void JustDied(Unit *pWho)
+    {
+        m_creature->Respawn();
+        pWho->DealDamage(pWho, pWho->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+    }
     void UpdateAI(const uint32 uiDiff)
     {
         // auto cast the whole time this spell
