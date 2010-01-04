@@ -169,7 +169,7 @@ struct MANGOS_DLL_DECL boss_nadoxAI : public ScriptedAI
             {
                 // pGuardianEgg->CastSpell(pGuardianEgg, SPELL_SUMMON_SWARM_GUARDIAN, false);
                 if(Creature *pGuardian = pGuardianEgg->SummonCreature(NPC_AHNKAHAR_GUARDIAN, pGuardianEgg->GetPositionX(), pGuardianEgg->GetPositionY(), pGuardianEgg->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3*MINUTE*IN_MILISECONDS))
-                    pGuardian->AttackStart(m_creature->getVictim());
+                    pGuardian->AI()->AttackStart(m_creature->getVictim());
             }
 
             --m_uiGuardianCount;
@@ -182,11 +182,11 @@ struct MANGOS_DLL_DECL boss_nadoxAI : public ScriptedAI
             if (Creature* pSwarmerEgg = SelectRandomCreatureOfEntryInRange(NPC_AHNKAHAR_SWARM_EGG, 75.0))
             {
                 // pSwarmerEgg->CastSpell(pSwarmerEgg, SPELL_SUMMON_SWARMERS, false);
-                if(Crature *pSwarmer = pSwarmerEgg->SummonCreature(NPC_AHNKAHAR_SWARMER, pSwarmerEgg->GetPositionX(), pSwarmerEgg->GetPositionY(), pSwarmerEgg->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3*MINUTE*IN_MILISECONDS))
-                    pSwarmer->AttackStart(m_creature->getVictim());
+                if(Creature *pSwarmer = pSwarmerEgg->SummonCreature(NPC_AHNKAHAR_SWARMER, pSwarmerEgg->GetPositionX(), pSwarmerEgg->GetPositionY(), pSwarmerEgg->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3*MINUTE*IN_MILISECONDS))
+                    pSwarmer->AI()->AttackStart(m_creature->getVictim());
 
-                if(Crature *pSwarmer = pSwarmerEgg->SummonCreature(NPC_AHNKAHAR_SWARMER, pSwarmerEgg->GetPositionX(), pSwarmerEgg->GetPositionY(), pSwarmerEgg->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3*MINUTE*IN_MILISECONDS))
-                    pSwarmer->AttackStart(m_creature->getVictim());
+                if(Creature *pSwarmer = pSwarmerEgg->SummonCreature(NPC_AHNKAHAR_SWARMER, pSwarmerEgg->GetPositionX(), pSwarmerEgg->GetPositionY(), pSwarmerEgg->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 3*MINUTE*IN_MILISECONDS))
+                    pSwarmer->AI()->AttackStart(m_creature->getVictim());
             }
 
             m_uiSummonTimer = 10000;
