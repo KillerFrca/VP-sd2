@@ -535,11 +535,11 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     case 1: DoScriptText(SAY_SACRIFICE_2, m_creature); break;
                 }
                 
-                if(pVolunteer && pVolunteer->isAlive())
-                    ((npc_twilight_volunteerAI*)pVolunteer->AI())->Sacriface(SACRIFACE_DIE);
-                
                 if(!m_bVolunteerDied)
                     DoCast(m_creature, SPELL_GIFT_OF_THE_HERALD);
+                else if(pVolunteer && pVolunteer->isAlive())
+                    ((npc_twilight_volunteerAI*)pVolunteer->AI())->Sacriface(SACRIFACE_DIE);
+
                 m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
                 m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O, MONSTER_MOVE_NONE, 0);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

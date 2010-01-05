@@ -109,6 +109,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
         m_creature->RemoveAurasDueToSpell(SPELL_BEAM_VISUAL);
+        m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_TALDARAM, IN_PROGRESS);
     }
@@ -170,9 +171,9 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
                     case 0: DoScriptText(SAY_FEED_1, m_creature); break;
                     case 1: DoScriptText(SAY_FEED_2, m_creature); break;
                 }
-                if(m_uEmbraceTarget)
-                    DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
                 m_creature->SetVisibility(VISIBILITY_ON);
+                if(m_uEmbraceTarget && m_uEmbraceTarget->isAlive())
+                    DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
                 m_uiDamageTaken = 0;
                 m_uiVanishPhase = 2;
             }else m_uiEmbrace_Timer -= uiDiff;    
