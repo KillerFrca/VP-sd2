@@ -135,7 +135,7 @@ enum
     PHASE_FLOOR                    = 1,
     PHASE_ADDS                     = 2,
     PHASE_DRAGONS                  = 3,
-    PHASE_NOSTART                  = 4,
+    PHASE_OUTRO                    = 4,
 
 };
 struct Locations
@@ -145,9 +145,11 @@ struct Locations
 };
 static Locations MalygosLoc[]=
 {
-    {754.346, 1300.87, 266.249),  //Center of platform
+	{754.346, 1300.87, 297.249},  //Center of platform
 
 };
+#define FLOOR_Z                 266.17
+#define AIR_Z                   297.24   
 /*######
 ## boss_malygos
 ######*/
@@ -164,10 +166,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
     
-    m_uiPhase; //Fight Phase
-    m_uiSubPhase; //Subphase if needed
+    uint8 m_uiPhase; //Fight Phase
+    uint8 m_uiSubPhase; //Subphase if needed
 
-    m_uiEnrageTimer;
+    uint32 m_uiEnrageTimer;
     
     void Reset()
     {
@@ -200,21 +202,30 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        //DoScriptText(SAY_AGGRO, m_creature);
     }
 
     void JustDied(Unit* pKiller)
     {
-        DoScriptText(SAY_DEATH, m_creature);
+        //DoScriptText(SAY_DEATH, m_creature);
 
     }
 
     void KilledUnit(Unit* pVictim)
     {
-        if (urand(0, 1))
-            DoScriptText(SAY_KILL, m_creature);
+     //   if (urand(0, 1))
+       //     DoScriptText(SAY_KILL, m_creature);
     }
-     void MovementInform(uint32 uiType, uint32 uiPointId)
+    void LandOrLiftOff(bool land = true)
+    {
+        if(land == true)
+        {
+            m_creature->GetMap()->CreatureRelocation(m_creature, MalygosLoc[0].x, MalygosLoc[0].y, FLOOR_Z, m_creature->GetOrientation());
+            m_creature->SendMonsterMove(MalygosLoc[0].x, MalygosLoc[0].y, FLOOR_Z, m_creature->GetOrientation(), MONSTER_MOVE_TELEPORT, 0);
+            m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+        }
+    }
+    void MovementInform(uint32 uiType, uint32 uiPointId)
     {
         if(uiType != POINT_MOTION_TYPE)
                 return;
@@ -222,15 +233,27 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         switch(uiPointId)
         {
             case 0:
+                //m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+                //m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+                //LandOrLiftOff();
                 break;
         }
     }
     void UpdateAI(const uint32 uiDiff)
     {
-        if(m_uiPhase == NOSTART)
+        if(m_uiPhase == PHASE_NOSTART)
         {
-            if(m_uiSubPhase == SUBPHASE_FLY_DOWN)
-                m_creature->GetMotionMaster()->MovePoint(0, MalygosLoc[0].x, MalygosLoc[0].y, MalygosLoc[0].z);  
+            if(m_uiSubPhase == SUBPHASE_FLY_DOWN){
+                float x, y, z;
+                m_creature->GetPosition(x, y, z);
+                m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z + 20, m_creature->GetOrientation()); 
+                m_creature->SendMonsterMove(x, y, z + 40, 0, MONSTER_MOVE_FLY, 10);
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+                WorldPacket data;
+                m_creature->BuildHeartBeatMsg(&data);
+                m_creature->SendMessageToSet(&data, false);
+                m_uiSubPhase = 0;
+            }
         }
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -267,7 +290,7 @@ bool GOHello_go_focusing_iris(Player* pPlayer, GameObject* pGo)
     if(!hasItem)        
         return false;
 
-    if(Creature *pMalygos = GetClosestCreatureWithEntry(pGo, NPC_MALYGOS, 150.0f);
+    if(Creature *pMalygos = GetClosestCreatureWithEntry(pGo, NPC_MALYGOS, 150.0f))
     {
         ((boss_malygosAI*)pMalygos->AI())->m_uiSubPhase = SUBPHASE_FLY_DOWN;
     }
@@ -290,7 +313,7 @@ void AddSC_boss_malygos()
 
     newscript = new Script;
     newscript->Name = "go_focusing_iris";
-    newscript->pGOHello = &GOHello_go_focusing_irisr;
+    newscript->pGOHello = &GOHello_go_focusing_iris;
     newscript->RegisterSelf();
 }
 /*
@@ -324,4 +347,10 @@ VALUES (
 
 UPDATE gameobject_template SET ScriptName="go_focusing_iris" WHERE entry IN (193960, 193958);
 UPDATE creature_template SET ScriptName="boss_malygos" WHERE entry=28859;
+
+SELECT * FROM creature_addon WHERE guid IN (SELECT guid FROM creature WHERE id=28859)
+SELECT * FROM creature_template WHERE entry=28859;
+UPDATE `creature_template` SET `InhabitType` = '3' WHERE `entry` =28859 LIMIT 1 ;
+UPDATE `mangostest`.`creature` SET `spawndist` = '0',
+`MovementType` = '0' WHERE `creature`.`guid` =132313 LIMIT 1 ;
 */

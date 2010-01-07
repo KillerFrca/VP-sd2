@@ -1837,6 +1837,10 @@
 					<Filter
 						Name="eye_of_eternity"
 						>
+						<File
+							RelativePath="..\scripts\northrend\nexus\eye_of_eternity\boss_malygos.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="nexus"
