@@ -112,6 +112,15 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
     uint64 m_uiKelthuzadDoorGUID;
 
+    bool BlaumeuxDead;
+    bool RivendareDead;
+    bool ZeliekDead;
+    bool KorthazzDead;
+
+    int32 DeadTimer;
+    uint32 HorsemanDeadCount;
+    bool UpdateCheck;
+
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
@@ -163,6 +172,14 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         m_uiLoathebDoorGUID     = 0;
 
         m_uiKelthuzadDoorGUID   = 0;
+
+        BlaumeuxDead  = false;
+        RivendareDead = false; 
+        ZeliekDead    = false; 
+        KorthazzDead  = false;
+        
+        HorsemanDeadCount = 0;
+        UpdateCheck          = true;
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -397,9 +414,30 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                      DoUseDoorOrButton(m_uiHorsemenDoorGUID);
                 }
                 break;
+            case TYPE_BLAUMEUX:
+                if (uiData == DONE)
+                    BlaumeuxDead = true;
+                    Horseman();
+                break;
+            case TYPE_RIVENDARE:
+                if (uiData == DONE)
+                    RivendareDead = true;
+                    Horseman();
+                break;
+            case TYPE_ZELIEK:
+                if (uiData == DONE)
+                    ZeliekDead = true;
+                    Horseman();
+                break;
+            case TYPE_KORTHAZZ:
+                if (uiData == DONE)
+                    KorthazzDead = true;
+                    Horseman();
+                break;
             case TYPE_FOUR_HORSEMEN:
                 m_auiEncounter[8] = uiData;
-                DoUseDoorOrButton(m_uiHorsemenDoorGUID);
+                if (uiData == DONE)
+                    DoUseDoorOrButton(IN_PROGRESS);
                 if (uiData == DONE)
                 {
                     DoUseDoorOrButton(m_uiMiliEyeRampGUID);
@@ -407,7 +445,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                     DoRespawnGameObject(m_uiHorsemenChestGUID, 30*MINUTE);
                 }
                 break;
-        case TYPE_PATCHWERK:
+            case TYPE_PATCHWERK:
                 m_auiEncounter[9] = uiData;
                 if (uiData == DONE)
                     DoUseDoorOrButton(m_uiPathExitDoorGUID);
@@ -459,6 +497,33 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             OUT_SAVE_INST_DATA_COMPLETE;
         }
     }
+
+    void Horseman()
+    {
+        if (HorsemanDeadCount = 0)
+            DeadTimer = 15000;
+            HorsemanDeadCount ++;
+
+        if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
+        {
+            SetData(TYPE_FOUR_HORSEMEN, DONE);
+    
+            AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_HORSEMEN : H_ACHIEVEMENT_HORSEMEN);
+            if(AchievHorsemen && this)
+            {
+                Map::PlayerList const &lPlayers = instance->GetPlayers();
+                if (!lPlayers.isEmpty())
+                {
+                    for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                    {
+                        if (Player* pPlayer = itr->getSource())
+                            pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                    }
+                }
+            }
+        }
+    }
+    
 
 /*    void HeiganErupt(uint32 section)
     {
@@ -573,6 +638,30 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 return m_uiHeiganGUID;
         }
         return 0;
+    }
+
+    void Update(uint32 uiDiff)
+    {
+        if (DeadTimer > uiDiff && UpdateCheck)
+        {
+            if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
+            {
+                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_TOGETHER : H_ACHIEVEMENT_TOGETHER);
+                if(AchievHorsemen && this)
+                {
+                    Map::PlayerList const &lPlayers = instance->GetPlayers();
+                    if (!lPlayers.isEmpty())
+                    {
+                        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                        {
+                            if (Player* pPlayer = itr->getSource())
+                                pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                        }
+                    }
+                }
+                UpdateCheck = false;
+            }
+        }else DeadTimer -= uiDiff;
     }
 };
 
