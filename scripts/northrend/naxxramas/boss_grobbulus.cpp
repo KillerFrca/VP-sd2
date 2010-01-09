@@ -40,12 +40,12 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
     boss_grobbulusAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 PoisonCloud_Timer;
     uint32 MutatingInjection_Timer;
@@ -109,7 +109,7 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
 
         if (SlimeSpary_Timer < diff)
         {
-            DoCast(m_creature, m_bIsHeroicMode ? H_SPELL_SLIME_SPRAY : SPELL_SLIME_SPRAY);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_SLIME_SPRAY : H_SPELL_SLIME_SPRAY);
             SlimeSpary_Timer = 15000+rand()%15000;
         }else SlimeSpary_Timer -= diff;
 

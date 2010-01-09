@@ -118,12 +118,12 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
     boss_gluthAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 m_uiMortalWoundTimer;
     uint32 m_uiDecimateTimer;
@@ -218,13 +218,13 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
                             pTemp->AddThreat(m_creature, 1000000000.0f); // force move toward to Gluth
                         }
             }
-            m_uiDecimateTimer = (m_bIsHeroicMode ? 120000 : 100000);
+            m_uiDecimateTimer = (m_bIsRegularMode ? 100000 : 120000);
         }else m_uiDecimateTimer -= uiDiff;
 
         // Enrage
         if (m_uiEnrageTimer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroicMode?SPELL_ENRAGE_H:SPELL_ENRAGE);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : SPELL_ENRAGE_H);
             m_uiEnrageTimer = 60000;
         }
         else m_uiEnrageTimer -= uiDiff;
@@ -248,7 +248,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         //Summon_Timer
         if (Summon_Timer < uiDiff)
         {
-            for(uint8 i = 0; i < (m_bIsHeroicMode ? 2 : 1); i++)
+            for(uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); i++)
             {
                 if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000))
                 {

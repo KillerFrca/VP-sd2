@@ -48,7 +48,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
     boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsRegularMode = true;//pCreature->GetMap()->IsRegularDifficulty();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
@@ -121,10 +121,8 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
                     pTarget = pTempTarget;
                 }
             }
-
             --uiTargets;
         }
-
         if (pTarget)
             DoCast(pTarget, m_bIsRegularMode ? SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE_H);
     }

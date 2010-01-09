@@ -129,12 +129,12 @@ struct MANGOS_DLL_DECL boss_gothikAI : public Scripted_NoMovementAI
     boss_gothikAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
     bool SummonPhase;
     bool BlinkPhase;
 
@@ -218,7 +218,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public Scripted_NoMovementAI
 
             if (ShadowBolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), m_bIsHeroicMode ? H_SPELL_SHADOWBOLT : SPELL_SHADOWBOLT);
+                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_SHADOWBOLT : H_SPELL_SHADOWBOLT);
                 ShadowBolt_Timer = 1000 + rand()%500;
             }else ShadowBolt_Timer -= diff;
 

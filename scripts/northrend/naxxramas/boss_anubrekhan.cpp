@@ -52,7 +52,8 @@ enum
     SPELL_CLEAVE                = 40504,
     SPELL_FRENZY                = 8269,
 
-    NPC_CRYPT_GUARD             = 16573
+    NPC_CRYPT_GUARD             = 16573,
+    NPC_SMALL_SPAWN             = 16698
 };
 
 struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
@@ -60,24 +61,26 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     boss_anubrekhanAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         m_bHasTaunted = false;
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 m_uiImpaleTimer;
     uint32 m_uiLocustSwarmTimer;
     uint32 m_uiSummonTimer;
-    bool   m_bHasTaunted;
+    bool m_bHasTaunted;
 
     void Reset()
     {
         m_uiImpaleTimer = 15000;                            // 15 seconds
         m_uiLocustSwarmTimer = urand(80000, 120000);        // Random time between 80 seconds and 2 minutes for initial cast
         m_uiSummonTimer = 25000;                            // 15 seconds after initial locust swarm
+        Despawnall();
+        StartSummonGuard();
     }
 
     void KilledUnit(Unit* pVictim)
@@ -103,12 +106,15 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ANUB_REKHAN, IN_PROGRESS);
+
+        m_creature->CallForHelp(50.0f);
     }
 
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ANUB_REKHAN, DONE);
+        Despawnall();
     }
 
     void JustReachedHome()
@@ -135,6 +141,41 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         ScriptedAI::MoveInLineOfSight(pWho);
     }
 
+    void Despawnall()
+    {
+        std::list<Creature*> m_pSmall;
+        GetCreatureListWithEntryInGrid(m_pSmall, m_creature, NPC_SMALL_SPAWN, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!m_pSmall.empty())
+            for(std::list<Creature*>::iterator itr = m_pSmall.begin(); itr != m_pSmall.end(); ++itr)
+            {
+                (*itr)->ForcedDespawn();
+            }
+
+        std::list<Creature*> m_pGuard;
+        GetCreatureListWithEntryInGrid(m_pGuard, m_creature, NPC_CRYPT_GUARD, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!m_pGuard.empty())
+            for(std::list<Creature*>::iterator iter = m_pGuard.begin(); iter != m_pGuard.end(); ++iter)
+            {
+                (*iter)->ForcedDespawn();
+            }
+    }
+    void StartSummonGuard()
+    {
+        m_creature->SummonCreature(NPC_CRYPT_GUARD, 3307, -3465, 287, 3.5, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+        if(!m_bIsRegularMode)
+            m_creature->SummonCreature(NPC_CRYPT_GUARD, 3304, -3490, 287, 2.5, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+        
+    }
+    
+    void SummonGuard()
+    {
+        //DoCast(m_creature, SPELL_SUMMONGUARD);
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            m_creature->SummonCreature(NPC_CRYPT_GUARD, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -148,7 +189,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             if (!m_creature->HasAura(SPELL_LOCUSTSWARM) || !m_creature->HasAura(SPELL_LOCUSTSWARM_H))
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, m_bIsHeroicMode ? SPELL_IMPALE_H : SPELL_IMPALE);
+                    DoCast(target, m_bIsRegularMode ? SPELL_IMPALE : SPELL_IMPALE_H);
             }
 
             m_uiImpaleTimer = 15000;
@@ -159,7 +200,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         // Locust Swarm
         if (m_uiLocustSwarmTimer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroicMode?SPELL_LOCUSTSWARM_H:SPELL_LOCUSTSWARM);
+            DoCast(m_creature, m_bIsRegularMode?SPELL_LOCUSTSWARM_H:SPELL_LOCUSTSWARM);
             m_uiLocustSwarmTimer = 90000;
             m_uiSummonTimer = 15000;
         }
@@ -168,13 +209,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 
         if (m_uiSummonTimer < uiDiff)
         {
-            //DoCast(m_creature, SPELL_SUMMONGUARD);
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                if (Creature* pTemp = m_creature->SummonCreature(NPC_CRYPT_GUARD, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
-                {
-                    pTemp->AddThreat(pTarget, 0.0f);
-                    pTemp->AI()->AttackStart(pTarget);
-                }
+            SummonGuard();
             m_uiSummonTimer = 240000;
         }else m_uiSummonTimer -= uiDiff;
 
@@ -187,12 +222,12 @@ struct MANGOS_DLL_DECL mob_crypt_guardAI : public ScriptedAI
     mob_crypt_guardAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 AcidSpit_Timer;
     uint32 Cleave_Timer;
@@ -241,7 +276,7 @@ struct MANGOS_DLL_DECL mob_crypt_guardAI : public ScriptedAI
 
         if (AcidSpit_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_ACID_SPIT_H : SPELL_ACID_SPIT);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_ACID_SPIT : SPELL_ACID_SPIT_H);
             AcidSpit_Timer = 10000 + rand()%1000;
         }else AcidSpit_Timer -= diff;
 

@@ -53,13 +53,13 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
     boss_faerlinaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         m_bHasTaunted = false;
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 m_uiPoisonBoltVolleyTimer;
     uint32 m_uiRainOfFireTimer;
@@ -125,7 +125,7 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         // Poison Bolt Volley
         if (m_uiPoisonBoltVolleyTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_POSIONBOLT_VOLLEY);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_POSIONBOLT_VOLLEY : H_SPELL_POSIONBOLT_VOLLEY);
             m_uiPoisonBoltVolleyTimer = 11000;
         }
         else
@@ -145,7 +145,7 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         //Enrage_Timer
         if (m_uiEnrageTimer < uiDiff)
         {
-            DoCast(m_creature, SPELL_ENRAGE);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : H_SPELL_ENRAGE );
             m_uiEnrageTimer = 61000;
         }
         else 
@@ -160,12 +160,12 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
     mob_worshippersAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
     bool m_bIsDead;
 
     uint32 m_uiFireball_Timer;
@@ -181,8 +181,7 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
     {
         if (Unit* pFaerlina = Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA)))
         {
-            if(pFaerlina->HasAura(SPELL_ENRAGE))
-                pFaerlina->RemoveAurasDueToSpell(SPELL_ENRAGE);
+            pFaerlina->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_ENRAGE : H_SPELL_ENRAGE);
         }
     }
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -225,7 +224,7 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
 
         if (m_uiFireball_Timer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_FIREBALL_H : SPELL_FIREBALL);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FIREBALL : SPELL_FIREBALL_H);
             m_uiFireball_Timer = 7000 + rand()%4000;
         }
         else m_uiFireball_Timer -= uiDiff;

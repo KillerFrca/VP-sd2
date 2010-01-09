@@ -26,12 +26,15 @@ EndScriptData */
 
 enum
 {
-    SPELL_CORRUPTED_MIND  = 29198,
-    SPELL_POISON_AURA     = 29865,
-    SPELL_INEVITABLE_DOOM = 29204,
-    SPELL_REMOVE_CURSE    = 30281,
+    SAY_NECROTIC_AURA_FADE    = -1533130,
+    
+    SPELL_DEATHBLOOM        = 29865,
+    H_SPELL_DEATHBLOOM      = 55053,
+    SPELL_INEVITABLE_DOOM   = 29204,
+    H_SPELL_INEVITABLE_DOOM = 55052,
+    SPELL_NECROTIC_AURA     = 55593,
 
-    SPELL_FUNGAL_CREEP    = 29232
+    SPELL_FUNGAL_CREEP      = 29232
 };
 
 #define ADD_1X 2957.040
@@ -51,28 +54,32 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
     boss_loathebAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
-    uint32 m_uiCorruptedMindTimer;
-    uint32 m_uiPoisonAuraTimer;
-    uint32 m_uiInevitableDoomTimer;
-    uint32 m_uiInevitableDoom5minsTimer;
-    uint32 m_uiRemoveCurseTimer;
-    uint32 m_uiSummonTimer;
+    uint32 DeathbloomTimer;
+    uint32 InevitableDoomTimer;
+    uint32 IDoomTimeShortage;
+    uint32 IDoomCount;
+    uint32 IDoom7minsTimer;
+    uint32 SummonTimer;
+    uint32 NecroticAuraTimer;
+    uint32 NecroticAuraFadeWarning;
 
     void Reset()
     {
-        m_uiCorruptedMindTimer = 4000;
-        m_uiPoisonAuraTimer = 2500;
-        m_uiInevitableDoomTimer = 120000;
-        m_uiInevitableDoom5minsTimer = 300000;
-        m_uiRemoveCurseTimer = 30000;
-        m_uiSummonTimer = 8000;
+        DeathbloomTimer = 2500;
+        InevitableDoomTimer = 120000;
+        IDoomTimeShortage = 15000;
+        IDoomCount = 1;
+        IDoom7minsTimer = 300000;
+        SummonTimer = 8000;
+        NecroticAuraTimer = 1000;
+        NecroticAuraFadeWarning = 15000;
     }
 
     void Aggro(Unit* pWho)
@@ -104,53 +111,44 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        // Corrupted Mind
-        if (m_uiCorruptedMindTimer < uiDiff)
+        // Necrotic Aura
+        if ( NecroticAuraTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CORRUPTED_MIND);
-            m_uiCorruptedMindTimer = 62000;
-        }
-        else
-            m_uiCorruptedMindTimer -= uiDiff;
+            DoCast(m_creature->getVictim(),SPELL_NECROTIC_AURA);
+            NecroticAuraTimer = 20000;
+        }else NecroticAuraTimer -= uiDiff;
 
-        // Poison Aura
-        if (m_uiPoisonAuraTimer < uiDiff)
+        // Necrotic Aura fade warning
+        if ( NecroticAuraFadeWarning < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_POISON_AURA);
-            m_uiPoisonAuraTimer = 60000;
-        }
-        else
-            m_uiPoisonAuraTimer -= uiDiff;
+            DoScriptText(SAY_NECROTIC_AURA_FADE, m_creature);
+            NecroticAuraFadeWarning = 20000;
+        }else NecroticAuraFadeWarning -= uiDiff;
+
+        // Deathbloom
+        if ( DeathbloomTimer < uiDiff)
+        {
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_DEATHBLOOM: H_SPELL_DEATHBLOOM);
+            DeathbloomTimer = 30000;
+        }else DeathbloomTimer -= uiDiff;
 
         // Inevitable Doom
-        if (m_uiInevitableDoomTimer < uiDiff)
+        if ( InevitableDoomTimer < uiDiff)
+        {
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_INEVITABLE_DOOM : H_SPELL_INEVITABLE_DOOM);
+            InevitableDoomTimer = 120000 - ( IDoomCount* IDoomTimeShortage);
+            IDoomCount ++;
+        }else InevitableDoomTimer -= uiDiff;
+
+        // Inevitable Doom 7mins
+        if ( IDoom7minsTimer < uiDiff)
         {
             DoCast(m_creature->getVictim(), SPELL_INEVITABLE_DOOM);
-            m_uiInevitableDoomTimer = 120000;
-        }
-        else
-            m_uiInevitableDoomTimer -= uiDiff;
-
-        // Inevitable Doom 5mins
-        if (m_uiInevitableDoom5minsTimer < uiDiff)
-        {
-            DoCast(m_creature->getVictim(), SPELL_INEVITABLE_DOOM);
-            m_uiInevitableDoom5minsTimer = 15000;
-        }
-        else
-            m_uiInevitableDoom5minsTimer -= uiDiff;
-
-        // Remove Curse
-        if (m_uiRemoveCurseTimer < uiDiff)
-        {
-            DoCast(m_creature, SPELL_REMOVE_CURSE);
-            m_uiRemoveCurseTimer = 30000;
-        }
-        else
-            m_uiRemoveCurseTimer -= uiDiff;
+            IDoom7minsTimer = 15000;
+        }else IDoom7minsTimer -= uiDiff;
 
         // Summon
-        if (m_uiSummonTimer < uiDiff)
+        if ( SummonTimer < uiDiff)
         {
             Unit* pSummonedSpores = NULL;
 
@@ -163,10 +161,10 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
                     pSummonedSpores->AddThreat(pTarget);
             }
 
-            m_uiSummonTimer = 28000;
+             SummonTimer = 28000;
         }
         else
-            m_uiSummonTimer -= uiDiff;
+             SummonTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }

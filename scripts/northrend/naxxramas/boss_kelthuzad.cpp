@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     boss_kelthuzadAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroic = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         GuardiansOfIcecrown[0] = 0;
         GuardiansOfIcecrown[1] = 0;
         GuardiansOfIcecrown[2] = 0;
@@ -174,7 +174,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         Reset();
     }
     ScriptedInstance *m_pInstance;
-    bool m_bIsHeroic;
+    bool m_bIsRegularMode;
 
     std::list<uint64> m_lSummonsGUIDList;
     std::list<uint64>::iterator m_uiSendSummon;
@@ -252,12 +252,11 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         {
             if (GuardiansOfIcecrown[i])
             {
-                Creature* pGuardian = (Creature*)Unit::GetUnit(*m_creature, GuardiansOfIcecrown[i]);
+                Creature*  pGuardian = (Creature*)Unit::GetUnit(*m_creature, GuardiansOfIcecrown[i]);
 
-                if (!pGuardian || !pGuardian->isAlive())
+                if (! pGuardian || ! pGuardian->isAlive())
                     continue;
-
-                pGuardian->setFaction(35);
+/*              pGuardian->setFaction(35);
                 pGuardian->CombatStop();
 
                 float Walk_Pos_X = 0.0f;
@@ -289,7 +288,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                     case 4:
                         Walk_Pos_X = ADDX_RIGHT_MIDDLE;
                         Walk_Pos_Y = ADDY_RIGHT_MIDDLE;
-                        Walk_Pos_Z = ADDZ_RIGHT_MIDDLE;
+                        Walk_Pos_Z = ADDZ_RIGHT_MIDDLE;    
                         break;
                     case 5:
                         Walk_Pos_X = ADDX_RIGHT_NEAR;
@@ -299,7 +298,8 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 }
 
                 //pGuardian->SendMonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z);
-                pGuardian->GetMotionMaster()->MovePoint(0, Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z);
+                 pGuardian->GetMotionMaster()->MovePoint(0, Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z);*/
+                 pGuardian->ForcedDespawn();
             }
         }
         if (m_pInstance)
@@ -419,10 +419,8 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         for(std::list<uint64>::iterator itr = m_lSummonsGUIDList.begin(); itr != m_lSummonsGUIDList.end(); ++itr)
         {
             if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
-            {
                 if (pTemp->isAlive())
-                    pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            }
+                    pTemp->ForcedDespawn();
         }
 
         m_lSummonsGUIDList.clear();
@@ -472,14 +470,14 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         if (FrostBolt_Timer < diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget, m_bIsHeroic ? H_SPELL_FROST_BOLT : SPELL_FROST_BOLT);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_FROST_BOLT : H_SPELL_FROST_BOLT);
             FrostBolt_Timer = (rand()%60)*1000;
         }else FrostBolt_Timer -= diff;
 
         //Check for Frost Bolt Nova
         if (FrostBoltNova_Timer < diff)
         {
-            DoCast(m_creature, m_bIsHeroic ? H_SPELL_FROST_BOLT_NOVA : SPELL_FROST_BOLT_NOVA);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_FROST_BOLT_NOVA : H_SPELL_FROST_BOLT_NOVA);
             FrostBoltNova_Timer = 15000;
         }else FrostBoltNova_Timer -= diff;
 
@@ -500,7 +498,8 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         if (ManaDetonation_Timer < diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(pTarget,SPELL_MANA_DETONATION);
+                if (pTarget->getPowerType() == POWER_MANA)
+                    DoCast(pTarget,SPELL_MANA_DETONATION);
 
             if (rand()%2)
                 DoScriptText(SAY_SPECIAL1_MANA_DET, m_creature);
@@ -542,7 +541,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             DoScriptText(SAY_ANSWER_REQUEST, m_creature);
         }
 
-        if (Phase3 && (GuardiansOfIcecrown_Count < (m_bIsHeroic ? 4 : 2)))
+        if (Phase3 && (GuardiansOfIcecrown_Count < (m_bIsRegularMode ? 2 : 4)))
         {
             if (GuardiansOfIcecrown_Timer < diff)
             {
@@ -604,9 +603,11 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 {
                     //if we find no one to figth walk to the center
                     if (!pGuardian->getVictim())
-                        //pGuardian->SendMonsterMoveWithSpeed(Walk_Pos_X,Walk_Pos_Y,Walk_Pos_Z);
-                        pGuardian->GetMotionMaster()->MovePoint(0, Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z);
-
+                    {
+                        pGuardian->Attack(m_creature->getVictim(),true);
+                        pGuardian->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    }
+            
                     //Safe storing of creatures
                     GuardiansOfIcecrown[GuardiansOfIcecrown_Count] = pGuardian->GetGUID();
 
@@ -618,7 +619,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 GuardiansOfIcecrown_Timer = 5000;
             }else GuardiansOfIcecrown_Timer -= diff;
         }
-
+        
         if (m_creature->GetDistance2d(HOME_X, HOME_Y) > 80)
             EnterEvadeMode();
 
@@ -640,6 +641,7 @@ struct MANGOS_DLL_DECL mob_shadow_issureAI : public ScriptedAI
 
     uint32 m_uiShadowIssure_Timer;
 
+    void AttackStart(){}
     void Reset()
     {
         m_uiShadowIssure_Timer = 4000;
@@ -650,7 +652,7 @@ struct MANGOS_DLL_DECL mob_shadow_issureAI : public ScriptedAI
     {
         if (m_uiShadowIssure_Timer)
             if (m_uiShadowIssure_Timer < uiDiff)
-            {/*
+            {
                 Map *map = m_creature->GetMap();
                 if (map->IsDungeon())
                 {
@@ -664,8 +666,8 @@ struct MANGOS_DLL_DECL mob_shadow_issureAI : public ScriptedAI
                         if (i->getSource()->isAlive() && m_creature->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) < 2)
                             i->getSource()->DealDamage(i->getSource(), i->getSource()->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                     }
-                } */
-                m_creature->CastSpell(m_creature, 27812, true);
+                } 
+                /*m_creature->CastSpell(m_creature, 27812, true);*/
                 m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_uiShadowIssure_Timer = 0;
             }

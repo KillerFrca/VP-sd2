@@ -62,12 +62,12 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     boss_heiganAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 Disruption_Timer;
     uint32 Feaver_Timer;
@@ -212,7 +212,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
         if (Feaver_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? H_SPELL_FEAVER : SPELL_FEAVER);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FEAVER : H_SPELL_FEAVER);
             Feaver_Timer = 30000+rand()%10000;
         }else Feaver_Timer -= diff;
 

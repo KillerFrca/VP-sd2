@@ -103,6 +103,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
     uint64 m_uiGothikExitDoorGUID;
     uint64 m_uiHorsemenDoorGUID;
     uint64 m_uiHorsemenChestGUID;
+    uint64 m_uiHorsemenChestHeroGUID;
 
     uint64 m_uiNothEntryDoorGUID;
     uint64 m_uiNothExitDoorGUID;
@@ -164,6 +165,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         m_uiGothikExitDoorGUID  = 0;
         m_uiHorsemenDoorGUID    = 0;
         m_uiHorsemenChestGUID   = 0;
+        m_uiHorsemenChestHeroGUID = 0;
 
         m_uiNothEntryDoorGUID   = 0;
         m_uiNothExitDoorGUID    = 0;
@@ -277,6 +279,10 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
             case GO_CHEST_HORSEMEN_NORM:
                 m_uiHorsemenChestGUID = pGo->GetGUID();
+                break;
+
+            case GO_CHEST_HORSEMEN_HERO:
+                m_uiHorsemenChestHeroGUID = pGo->GetGUID();
                 break;
 
             case GO_CONS_PATH_EXIT_DOOR:
@@ -443,6 +449,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                     DoUseDoorOrButton(m_uiMiliEyeRampGUID);
                     DoRespawnGameObject(m_uiMiliPortalGUID, 30*MINUTE);
                     DoRespawnGameObject(m_uiHorsemenChestGUID, 30*MINUTE);
+                    DoRespawnGameObject(m_uiHorsemenChestHeroGUID, 30*MINUTE);
                 }
                 break;
             case TYPE_PATCHWERK:

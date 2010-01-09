@@ -53,12 +53,12 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     boss_sapphironAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 Icebolt_Count;
     uint32 Icebolt_Timer;
@@ -139,11 +139,11 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     {
         if(spell->Id == SPELL_ICEBOLT)
         {
-                    if (target->isAlive() && target->HasAura(SPELL_ICEBOLT))
-                    {
-                        target->CastSpell(target, 62766, true);
-                        target->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                    }
+            if (target->isAlive() && target->HasAura(SPELL_ICEBOLT))
+            {
+                target->CastSpell(target, 62766, true);
+                target->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
+            }
 
 /*            for(std::vector<Unit*>::iterator itr = targets.begin(); itr!= targets.end(); ++itr)
             {
@@ -160,7 +160,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             return;
         }
 
-        if(spell->Id == SPELL_FROST_BREATH)
+        if(spell->Id == SPELL_FROST_BREATH || spell->Id == SPELL_FROST_BREATH_H)
         {
             if (target->GetTypeId() != TYPEID_PLAYER)
                 return;
@@ -199,7 +199,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             if (LifeDrain_Timer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, m_bIsHeroicMode ? SPELL_LIFE_DRAIN_H : SPELL_LIFE_DRAIN);
+                    DoCast(target, m_bIsRegularMode ? SPELL_LIFE_DRAIN : SPELL_LIFE_DRAIN_H);
 
                 LifeDrain_Timer = 24000;
             }else LifeDrain_Timer -= diff;
@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             // Tail Sweep
             if (m_uiTailSweepTimer < diff)
             {
-                DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_TAIL_LASH_H : SPELL_TAIL_LASH);
+                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_TAIL_LASH : SPELL_TAIL_LASH_H);
                 m_uiTailSweepTimer = 15000 + rand()%5000;
             }
             else
@@ -294,7 +294,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     }
 
                     DoScriptText(EMOTE_BREATH, m_creature);
-                    DoCast(m_creature->getVictim(),SPELL_FROST_BREATH);
+                    DoCast(m_creature->getVictim(),m_bIsRegularMode ? SPELL_FROST_BREATH : SPELL_FROST_BREATH_H);
                     land_Timer = 2000;
                     landoff = true;
                     FrostBreath_Timer = 6000;

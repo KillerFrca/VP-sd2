@@ -79,12 +79,12 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
     boss_nothAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = false;//pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     bool isTeleported;
 
@@ -202,14 +202,14 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
                 switch (SecondPhaseCounter)
                 {
                     case 0:
-                        for(uint8 i = 0; i < (m_bIsHeroicMode ? 4 : 2); i++)
+                        for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4); i++)
                             m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
                         break;
                     case 1:
                     case 2:
-                        for(uint8 i = 0; i < (m_bIsHeroicMode ? 4 : 2) - (m_bIsHeroicMode ? 2 : 1); i++)
+                        for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4) - (m_bIsRegularMode ? 2 : 1); i++)
                             m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-                        for(uint8 i = 0; i < (m_bIsHeroicMode ? 2 : 1); i++)
+                        for(uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); i++)
                             m_creature->SummonCreature(NPC_PLAGUED_GUARDIANS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
                         break;
                 }
@@ -225,7 +225,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
         //Blink_Timer
         if (Blink_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_CRIPPLE_H : SPELL_CRIPPLE);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_CRIPPLE : SPELL_CRIPPLE_H);
             //DoCast(m_creature, SPELL_BLINK);
             m_creature->GetMap()->CreatureRelocation(m_creature, 2670.804 + rand()%30, -3517.517 + rand()%30, 261.313, m_creature->GetOrientation());
             DoResetThreat();
@@ -237,7 +237,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
         //Curse_Timer
         if (Curse_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CURSE_PLAGUEBRINGER);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode? SPELL_CURSE_PLAGUEBRINGER : SPELL_CURSE_PLAGUEBRINGER_H);
             Curse_Timer = 28000;
         }else Curse_Timer -= diff;
 
@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
         {
             DoScriptText(SAY_SUMMON, m_creature);
 
-            for(uint8 i = 0; i < (m_bIsHeroicMode ? 3 : 2); ++i)
+            for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 3); ++i)
                 m_creature->SummonCreature(NPC_PLAGUED_WARRIOR, 2672.804 + rand()%15,-3509.517 + rand()%15, 261.313, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000);
 
             Summon_Timer = 30000;
