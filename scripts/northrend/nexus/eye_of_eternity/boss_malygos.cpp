@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Malygos
-SD%Complete: 0%
+SD%Complete: 40%
 SDComment: 
 SDAuthor: Tassadar
 SDCategory: Nexus, Eye of Eternity
@@ -78,7 +78,8 @@ enum
     SPELL_VORTEX                   = 56266, // Cast on trigger in middle of the room, this interrupt their cast and deal dmg
     SPELL_VORTEX_AOE_VISUAL        = 55873,    // visual effect around platform
     SPELL_POWER_SPARK              = 56152, // If spark reach malygos then buff him, if killed then to players
-    SPELL_POWER_SPARK_PLAYERS      = 55849, // This one is propably for players
+    SPELL_POWER_SPARK_PLAYERS      = 55852, // This one is propably for players
+    SPELL_POWER_SPARK_VISUAL       = 55845,
 
     //////////////// PHASE 2 ////////////////
     SPELL_ARCANE_PULSE             = 57432, // Malygos takes a deep breath...
@@ -137,6 +138,14 @@ enum
     SAY_INTRO4                     = -1616003,
     SAY_INTRO5                     = -1616004,
     SAY_AGGRO1                     = -1616005,
+    SAY_AGGRO2                     = -1616013, 
+    SAY_VORTEX                     = -1616006,
+    SAY_POWER_SPARK                = -1616007,
+    SAY_DEATH                      = -1616011,
+    SAY_KILL1_1                    = -1616008,
+    SAY_KILL1_2                    = -1616009,
+    SAY_KILL1_3                    = -1616010,
+    SAY_END_PHASE1                 = -1616012,  
 
     PHASE_NOSTART                  = 0,
         SUBPHASE_FLY_UP            = 01,
@@ -146,6 +155,7 @@ enum
     PHASE_FLOOR                    = 1,
         SUBPHASE_VORTEX            = 11,
     PHASE_ADDS                     = 2,
+        SUBPHASE_TALK              = 21,
     PHASE_DRAGONS                  = 3,
     PHASE_OUTRO                    = 4,
 
@@ -155,28 +165,46 @@ struct Locations
     float x, y, z;
     uint32 id;
 };
-static Locations MalygosLoc[]=
+struct LocationsXY
 {
-    {754.346, 1300.87, 297.249},  //Center of platform
-
+    float x, y;
+    uint32 id;
 };
-static Locations VortexLoc[]=
+static LocationsXY SparkLoc[]=
 {
-    {754, 1311, 330},
-    {701, 1288, 330},
-    {747, 1249, 325},
-    {795, 1291, 320},
-    {781, 1321, 315},
-    {752, 1329, 310},
-    {719, 1325, 305},
-    {720, 1297, 300},
-    {743, 1273, 295},
-    {764, 1290, 290},
-    {754, 1311, 287},
+    {652.417, 1200.52},
+    {847.67, 1408.05},
+    {647.675, 1403.8},
+    {843.182, 1215.42},
 };
-#define MAX_VORTEX              13
+static LocationsXY VortexLoc[]=
+{
+    {754, 1311},
+    {734, 1334},
+    {756, 1339},
+    {781, 1329},
+    {791, 1311},
+    {790, 1283},
+    {768, 1264},
+    {739, 1261},
+    {720, 1280},
+    {714, 1299},
+    {716, 1318},
+    {734, 1334},
+    {756, 1339},
+    {781, 1329},
+    {791, 1311},
+    {790, 1283},
+    {768, 1264},
+    {739, 1261},
+    {720, 1280},
+    {714, 1299},
+    {716, 1318},
+};
+#define MAX_VORTEX              21
+#define VORTEX_Z                270
 
-#define FLOOR_Z                 266.17
+#define FLOOR_Z                 269.17
 #define AIR_Z                   297.24   
 /*######
 ## boss_malygos
@@ -198,11 +226,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     uint8 m_uiSubPhase; //Subphase if needed
     uint8 m_uiSpeechCount;
     uint8 m_uiVortexPhase;
+    std::list<uint64> m_lSparkGUIDList;
 
     uint32 m_uiEnrageTimer;
     uint32 m_uiSpeechTimer[5];
     uint32 m_uiTimer;
     uint32 m_uiVortexTimer;
+    uint32 m_uiArcaneBreathTimer;
+    uint32 m_uiPowerSparkTimer;
     
     void Reset()
     {
@@ -219,19 +250,23 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiSpeechTimer[4] = 10000;
         m_uiSpeechTimer[5] = 7000;
         m_uiTimer = 7000;
-        m_uiVortexTimer = 10000;
+        m_uiVortexTimer = 60000;
+        m_uiArcaneBreathTimer = 15000;
+        m_uiPowerSparkTimer = 20000;
         
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void JustReachedHome()
     {
+        Reset();
+        m_uiPhase = PHASE_FLOOR;
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void AttackStart(Unit* pWho)
     {
-        if(m_uiPhase == PHASE_NOSTART)
+        if(m_uiPhase != PHASE_FLOOR && m_uiPhase != PHASE_DRAGONS)
             return;
 
         if (m_creature->Attack(pWho, true))
@@ -251,14 +286,36 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        //DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, m_creature);
 
     }
-
     void KilledUnit(Unit* pVictim)
     {
-     //   if (urand(0, 1))
-       //     DoScriptText(SAY_KILL, m_creature);
+        uint8 text = 0;
+        switch(m_uiPhase)
+        {
+            case PHASE_FLOOR:
+                text = urand(0, 2);
+                break;
+            case PHASE_ADDS:
+                text = urand(3, 5);
+                break;
+            case PHASE_DRAGONS:
+                text = urand(6, 8);
+                break;
+        }
+        switch(text)
+        {
+            case 0: DoScriptText(SAY_KILL1_1, m_creature); break;
+            case 1: DoScriptText(SAY_KILL1_2, m_creature); break;
+            case 2: DoScriptText(SAY_KILL1_3, m_creature); break;
+        }
+            
+    }
+    void SpellHit(Unit* pCaster, const SpellEntry* pSpell)
+    {
+        if(pSpell->Id == SPELL_POWER_SPARK)
+            DoScriptText(SAY_POWER_SPARK, m_creature);
     }
     void DoMovement(float x, float y, float z, uint32 time, bool tofly = false)
     {        
@@ -280,16 +337,15 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             SetCombatMovement(false);
             float x, y, z;
             m_creature->GetPosition(x, y, z);
-            z = z + 40;
-            DoMovement(x, y, z, 3000, true);
-            if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                pTrigger->CastSpell(pTrigger, SPELL_VORTEX_AOE_VISUAL, false);
-            
+            z = z + 20;
+            DoMovement(x, y, z, 0, true);
         }
         else if(phase == 1)
         {
             if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                pTrigger->CastSpell(pTrigger, SPELL_VORTEX, false);    
+            {
+                pTrigger->CastSpell(pTrigger, SPELL_VORTEX_AOE_VISUAL, false);
+            }
 
             Map* pMap = m_creature->GetMap();
             if(!pMap)
@@ -300,18 +356,15 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             {
                 if(!itr->getSource()->isAlive())
                     continue;
-                itr->getSource()->NearTeleportTo(VortexLoc[0].x, VortexLoc[0].y, VortexLoc[0].z, 0); 
+                itr->getSource()->NearTeleportTo(VortexLoc[0].x, VortexLoc[0].y, VORTEX_Z, 0); 
                 itr->getSource()->CastSpell(itr->getSource(), SPELL_VORTEX, true);    
             }        
         }
-        else if(phase > 1 && phase < 20){
+        else if(phase > 1 && phase < 26){
             Map* pMap = m_creature->GetMap();
             if(!pMap)
                 return;
-            
-            
-
-            if(Creature *pVortex = m_creature->SummonCreature(NPC_VORTEX, VortexLoc[phase-1].x, VortexLoc[phase-1].y, VortexLoc[phase-1].z, 0, TEMPSUMMON_TIMED_DESPAWN, 10000))
+            if(Creature *pVortex = m_creature->SummonCreature(NPC_VORTEX, VortexLoc[phase-1].x, VortexLoc[phase-1].y, VORTEX_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 10000))
             {
                 pVortex->SetVisibility(VISIBILITY_OFF);
                 Map::PlayerList const &lPlayers = pMap->GetPlayers();
@@ -320,26 +373,63 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     if(!itr->getSource()->isAlive())
                         continue;
 
-                    
-                    float z = itr->getSource()->GetPositionZ() - VortexLoc[phase-1].z;
-                    itr->getSource()->KnockBackFrom(pVortex,-float(pVortex->GetDistance2d(itr->getSource())),-z);
-                    if(VortexLoc[phase-1].z == 287)
-                        itr->getSource()->NearTeleportTo(VortexLoc[10].x, VortexLoc[10].y, VortexLoc[10].z, 0);
+                    float z = itr->getSource()->GetPositionZ() - VORTEX_Z;
+                    itr->getSource()->KnockBackFrom(pVortex,-float(pVortex->GetDistance2d(itr->getSource())),7);
                 }
             }
-        }else if (phase == 20)
+        }else if (phase == 30 || phase == 31)
         {    
+            if(phase == 31)
+            {
+                if(m_creature->getVictim())
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                
+                m_uiSubPhase = 0;
+                return;
+            }
             m_creature->GetMotionMaster()->Clear(false);
             SetCombatMovement(true);
             float x, y, z;
             m_creature->GetPosition(x, y, z);
-            z = z - 40;
-            DoMovement(x, y, z, 2000);
-
-            if(m_creature->getVictim())
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            z = z - 20;
+            DoMovement(x, y, z, 0);
         }
         
+    }
+    void PowerSpark(uint8 action)
+    {
+        if(action == 1) //Summon
+        {
+            uint8 random = urand(0, 3);
+            if(Creature *pSpark = m_creature->SummonCreature(NPC_POWER_SPARK, SparkLoc[random].x, SparkLoc[random].y, FLOOR_Z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 40000))
+            {
+                pSpark->CastSpell(pSpark, SPELL_POWER_SPARK_VISUAL, false);
+                pSpark->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+                m_lSparkGUIDList.push_back(pSpark->GetGUID());
+            }
+        }else if(action == 2 || action == 3) // Start/stop movement
+        {
+            if(action == 2)
+                m_creature->RemoveAurasDueToSpell(SPELL_POWER_SPARK);
+
+            if (m_lSparkGUIDList.empty())
+                return;
+
+            for(std::list<uint64>::iterator itr = m_lSparkGUIDList.begin(); itr != m_lSparkGUIDList.end(); ++itr)
+            {
+                if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                {
+                    if (pTemp->isAlive())
+                    {
+                        if(action == 2)
+                            pTemp->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
+                        else
+                            pTemp->GetMotionMaster()->MovementExpired(false);
+                    }
+                }
+            }
+        }
     }
     void UpdateAI(const uint32 uiDiff)
     {
@@ -405,12 +495,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                             DoCast(m_creature, SPELL_VORTEX_DUMMY);
                         m_uiTimer = 300;
                     }else
-                        m_uiTimer = 1000;
+                        m_uiTimer = 500;
 
-                    if(m_uiVortexPhase >= MAX_VORTEX)
+                    if(m_uiVortexPhase >= MAX_VORTEX && m_uiVortexPhase < 29)
                     {
-                        m_uiSubPhase = 0;
-                        DoVortex(20);
+                        m_uiVortexPhase = 30;
+                        DoVortex(m_uiVortexPhase);
+                        PowerSpark(2);
+                        m_uiTimer = 1000;
                         return;
                     }
                     m_uiVortexPhase++;
@@ -418,21 +510,139 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 return;
             }
 
+            
+            //Vortex
             if(m_uiVortexTimer <= uiDiff)
             {
+                PowerSpark(3);
                 DoVortex(0);
                 m_uiVortexPhase = 1;
                 m_uiSubPhase = SUBPHASE_VORTEX;
                 m_uiVortexTimer = 50000;
-                m_uiTimer = 3000;
+                m_uiTimer = 1000;
+                DoScriptText(SAY_VORTEX, m_creature);
+                return;
             }else m_uiVortexTimer -= uiDiff;
+
+            //Arcane Breath
+            if(m_uiArcaneBreathTimer <= uiDiff)
+            {
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_ARCANE_BREATH : SPELL_ARCANE_BREATH_H);
+                m_uiArcaneBreathTimer = 15000 + urand(3000, 8000);
+            }else m_uiArcaneBreathTimer -= uiDiff;
+
+            //PowerSpark
+            if(m_uiPowerSparkTimer<= uiDiff)
+            {
+                PowerSpark(1);
+                m_uiPowerSparkTimer = 40000;
+            }else m_uiPowerSparkTimer -= uiDiff;
+
+            //Health check
+            if(m_uiTimer<= uiDiff)
+            {
+                uint8 health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();                    
+                if(health <= 50)
+                {
+                    m_creature->InterruptNonMeleeSpells(true);
+                    SetCombatMovement(false);
+                    m_creature->GetMotionMaster()->MovementExpired(false);
+                    DoScriptText(SAY_END_PHASE1, m_creature);
+                    m_uiPhase = PHASE_ADDS;
+                    m_uiSubPhase = SUBPHASE_TALK;
+                    return;
+                }
+                m_uiTimer = 1500;
+            }else m_uiTimer -= uiDiff;  
 
             DoMeleeAttackIfReady();
         }
 
     }
 };
+/*######
+## mob_power_spark
+######*/
+struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
+{
+    mob_power_sparkAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
 
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+    bool isDead;
+    uint32 m_uiCheckTimer;
+    Creature *pMalygos;
+
+    void Reset()
+    {
+        isDead = false;
+        pMalygos = GetClosestCreatureWithEntry(m_creature, NPC_MALYGOS, 150.0f);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
+        m_uiCheckTimer = 2500;
+    }
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (isDead)
+        {
+            uiDamage = 0;
+            return;
+        }
+
+        if (uiDamage > m_creature->GetHealth())
+        {
+            isDead = true;
+
+            if (m_creature->IsNonMeleeSpellCasted(false))
+                m_creature->InterruptNonMeleeSpells(false);
+
+            m_creature->RemoveAllAuras();
+            m_creature->AttackStop();
+            SetCombatMovement(false);
+
+            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+                m_creature->GetMotionMaster()->MovementExpired();
+
+            uiDamage = 0;
+            m_creature->SetHealth(1);
+            m_creature->CastSpell(m_creature, SPELL_POWER_SPARK_PLAYERS, false);
+            m_uiCheckTimer = 10000;
+            if(pMalygos && pMalygos->isAlive())
+                ((boss_malygosAI*)pMalygos->AI())->m_lSparkGUIDList.clear();
+        }
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if(m_uiCheckTimer <= uiDiff)
+        {
+            if(isDead)
+            {
+                m_creature->ForcedDespawn();
+                return;
+            }
+            if(pMalygos && pMalygos->isAlive() && m_creature->GetVisibility() == VISIBILITY_ON)
+            {
+                if(m_creature->IsWithinDist(pMalygos, 3.0f, false))
+                {
+                    
+                    ((boss_malygosAI*)pMalygos->AI())->m_lSparkGUIDList.clear();
+                    m_creature->CastSpell(pMalygos, SPELL_POWER_SPARK, true);
+                    m_creature->SetVisibility(VISIBILITY_OFF);
+                }
+            }
+            m_uiCheckTimer = 2500;
+        }else m_uiCheckTimer -= uiDiff;
+    }
+};
 /*######
 ## go_focusing_iris
 ######*/
@@ -463,6 +673,10 @@ CreatureAI* GetAI_boss_malygos(Creature* pCreature)
 {
     return new boss_malygosAI(pCreature);
 }
+CreatureAI* GetAI_mob_power_spark(Creature* pCreature)
+{
+    return new mob_power_sparkAI(pCreature);
+}
 
 void AddSC_boss_malygos()
 {
@@ -471,6 +685,11 @@ void AddSC_boss_malygos()
     newscript = new Script;
     newscript->Name = "boss_malygos";
     newscript->GetAI = &GetAI_boss_malygos;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_power_spark";
+    newscript->GetAI = &GetAI_mob_power_spark;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -509,12 +728,14 @@ VALUES (
 
 UPDATE gameobject_template SET ScriptName="go_focusing_iris" WHERE entry IN (193960, 193958);
 UPDATE creature_template SET ScriptName="boss_malygos" WHERE entry=28859;
+UPDATE creature_template SET ScriptName="mob_power_spark", faction_A = 16, faction_H = 16, `InhabitType` = '3', speed ='0.7' WHERE entry=30084;
 
 SELECT * FROM creature_addon WHERE guid IN (SELECT guid FROM creature WHERE id=28859)
 SELECT * FROM creature_template WHERE entry=28859;
 UPDATE `creature_template` SET `InhabitType` = '3' WHERE `entry` =28859 LIMIT 1 ;
 UPDATE `mangostest`.`creature` SET `spawndist` = '0',
 `MovementType` = '0' WHERE `creature`.`guid` =132313 LIMIT 1 ;
+INSERT INTO creature_template_addon (entry, vehicle_id) VALUES (30161, 264);
 
 INSERT INTO `scriptdev2`.`script_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`) VALUES
 ('-1616000', 'Lesser beings, intruding here! A shame that your excess courage does not compensate for your stupidity!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14512', '1', '0', '457', NULL),
@@ -522,7 +743,15 @@ INSERT INTO `scriptdev2`.`script_texts` (`entry`, `content_default`, `content_lo
 ('-1616002', 'What could you hope to accomplish, to storm brazenly into my domain? To employ MAGIC? Against ME? <Laughs>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14514', '1', '0', '457', NULL),
 ('-1616003', 'I am without limits here... the rules of your cherished reality do not apply... In this realm, I am in control...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14515', '1', '0', '457', NULL),
 ('-1616004', 'I give you one chance. Pledge fealty to me, and perhaps I won''t slaughter you for your insolence!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14516', '1', '0', '457', NULL),
-('-1616005', 'My patience has reached its limit, I WILL BE RID OF YOU!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14517', '1', '0', '1', NULL);
+('-1616005', 'My patience has reached its limit, I WILL BE RID OF YOU!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14517', '1', '0', '1', NULL),
+('-1616006', 'Watch helplessly as your hopes are swept away...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14525', '1', '0', '1', NULL),
+('-1616007', 'I AM UNSTOPPABLE!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14533', '1', '0', '1', NULL),
+('-1616008', 'Your stupidity has finally caught up to you!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14519', '1', '0', '1', NULL),
+('-1616009', 'More artifacts to confiscate...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14520', '1', '0', '1', NULL),
+('-1616010', '<Laughs> How very... naive...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14521', '1', '0', '1', NULL),
+('-1616011', 'UNTHINKABLE! The mortals will destroy... e-everything... my sister... what have you-', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14540', '1', '0', '1', NULL),
+('-1616012', 'I had hoped to end your lives quickly, but you have proven more...resilient then I had anticipated. Nonetheless, your efforts are in vain, it is you reckless, careless mortals who are to blame for this war! I do what I must...And if it means your...extinction...THEN SO BE IT!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14522', '1', '0', '1', NULL),
+('-1616013', 'Few have experienced the pain I will now inflict upon you!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL);
 
 UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
 
@@ -545,5 +774,7 @@ UPDATE `mangostest`.`creature_template` SET `modelid_A` = '11686',
 `maxhealth` = '44120',
 `AIName` = '',
 `flags_extra` = '2' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
+
+INSERT INTO `mangostest`.`spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('56152', '1', '28859');
 
 */
