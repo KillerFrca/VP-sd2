@@ -237,7 +237,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         // Summon Spiderling
         if (m_uiSummonSpiderlingTimer < uiDiff)
         {
-            DoCast(m_creature, SPELL_SUMMON_SPIDERLING);
+            SummonSpiderling();
             m_uiSummonSpiderlingTimer = 40000;
         }
         else
