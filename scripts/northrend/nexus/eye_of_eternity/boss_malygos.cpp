@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Malygos
-SD%Complete: 40%
+SD%Complete: 45%
 SDComment: 
 SDAuthor: Tassadar
 SDCategory: Nexus, Eye of Eternity
@@ -82,7 +82,7 @@ enum
     SPELL_POWER_SPARK_VISUAL       = 55845,
 
     //////////////// PHASE 2 ////////////////
-    SPELL_ARCANE_PULSE             = 57432, // Malygos takes a deep breath...
+    SPELL_ARCANE_PULSE             = 57432, // Malygos takes a deep breath... cast on trigger
     SPELL_ARCANE_STORM             = 61693, // AOE
     SPELL_ARCANE_STORM_H           = 61694,
     SPELL_ARCANE_OVERLOAD          = 56432, // Cast this on arcane overload NPCs 
@@ -145,7 +145,9 @@ enum
     SAY_KILL1_1                    = -1616008,
     SAY_KILL1_2                    = -1616009,
     SAY_KILL1_3                    = -1616010,
-    SAY_END_PHASE1                 = -1616012,  
+    SAY_END_PHASE1                 = -1616012,
+    SAY_ARCANE_PULSE               = -1616014,
+    SAY_ARCANE_PULSE_WARN          = -1616015,
 
     PHASE_NOSTART                  = 0,
         SUBPHASE_FLY_UP            = 01,
@@ -234,6 +236,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     uint32 m_uiVortexTimer;
     uint32 m_uiArcaneBreathTimer;
     uint32 m_uiPowerSparkTimer;
+    uint32 m_uiDeepBreathTimer;
+    uint32 m_uiShellTimer;
+    uint32 m_uiArcaneStormTimer;
     
     void Reset()
     {
@@ -253,6 +258,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiVortexTimer = 60000;
         m_uiArcaneBreathTimer = 15000;
         m_uiPowerSparkTimer = 20000;
+        m_uiDeepBreathTimer = 60000;
+        m_uiShellTimer = 0;
+        m_uiArcaneStormTimer = 15000;
         
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
@@ -343,9 +351,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         else if(phase == 1)
         {
             if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-            {
                 pTrigger->CastSpell(pTrigger, SPELL_VORTEX_AOE_VISUAL, false);
-            }
 
             Map* pMap = m_creature->GetMap();
             if(!pMap)
@@ -431,6 +437,17 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             }
         }
     }
+    void DoSpawnAdds()
+    {
+        
+    }
+    void DoSpawnShell()
+    {
+        uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
+        uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
+        if(Creature *pShell = m_creature->SummonCreature(NPC_ARCANE_OVERLOAD, x, y, FLOOR_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 45000))
+            pShell->CastSpell(pShell, SPELL_ARCANE_OVERLOAD, false);
+    }
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_uiPhase == PHASE_NOSTART)
@@ -474,13 +491,6 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         }
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        //Enrage timer.....
-        if(m_uiEnrageTimer <= uiDiff)
-        {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiEnrageTimer = 600000;
-        }else m_uiEnrageTimer -= uiDiff;
 
         if(m_uiPhase == PHASE_FLOOR)
         {
@@ -550,14 +560,63 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     DoScriptText(SAY_END_PHASE1, m_creature);
                     m_uiPhase = PHASE_ADDS;
                     m_uiSubPhase = SUBPHASE_TALK;
+                    m_uiTimer = 20000;
                     return;
                 }
                 m_uiTimer = 1500;
             }else m_uiTimer -= uiDiff;  
 
             DoMeleeAttackIfReady();
+        }else if(m_uiPhase == PHASE_ADDS)
+        {
+            if(m_uiSubPhase == SUBPHASE_TALK)
+            {
+                if(m_uiTimer <= uiDiff)
+                {
+                    float x, y, z;
+                    if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
+                    {
+                        pTrigger->GetPosition(x, y, z);
+                        DoMovement(x, y, z+40, 0, true);
+                    }
+                    DoScriptText(SAY_AGGRO2, m_creature);
+                    DoSpawnAdds();
+                    m_uiSubPhase = 0;
+                }else m_uiTimer -= uiDiff;
+            }
+            
+            //Arcane overload (bubble)
+            if(m_uiShellTimer <= uiDiff)
+            {
+                DoSpawnShell();
+                m_uiShellTimer = 20000;
+            }else m_uiShellTimer -= uiDiff;
+
+            // Arcane Pulse
+            if(m_uiDeepBreathTimer <= uiDiff)
+            {
+                DoScriptText(SAY_ARCANE_PULSE, m_creature);
+                DoScriptText(SAY_ARCANE_PULSE_WARN, m_creature);
+                if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
+                    pTrigger->CastSpell(pTrigger, SPELL_ARCANE_PULSE, false);
+
+                m_uiDeepBreathTimer = 60000;
+            }else m_uiDeepBreathTimer -= uiDiff;
+
+            // Arcane Storm
+            if(m_uiArcaneStormTimer <= uiDiff)
+            {
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_ARCANE_STORM : SPELL_ARCANE_STORM_H);
+                m_uiArcaneStormTimer = 20000;
+            }else m_uiArcaneStormTimer -= uiDiff;
         }
 
+        //Enrage timer.....
+        if(m_uiEnrageTimer <= uiDiff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiEnrageTimer = 600000;
+        }else m_uiEnrageTimer -= uiDiff;
     }
 };
 /*######
@@ -700,7 +759,7 @@ void AddSC_boss_malygos()
 /*
 INSERT INTO npc_spellclick_spells VALUES (30161, 60968, 0, 0, 0, 1);
 
-INSERT INTO `mangostest`.`vehicle_data` (
+INSERT INTO `vehicle_data` (
 `entry` ,
 `flags` ,
 `Spell1` ,
@@ -718,7 +777,7 @@ INSERT INTO `mangostest`.`vehicle_data` (
 VALUES (
 '264', '24', '56091', '56092', '57090', '57143', '57108', '57092', '0', '0', '0', '0', '0'
 )
-INSERT INTO `mangostest`.`vehicle_seat_data` (
+INSERT INTO `vehicle_seat_data` (
 `seat` ,
 `flags` 
 )
@@ -751,7 +810,9 @@ INSERT INTO `scriptdev2`.`script_texts` (`entry`, `content_default`, `content_lo
 ('-1616010', '<Laughs> How very... naive...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14521', '1', '0', '1', NULL),
 ('-1616011', 'UNTHINKABLE! The mortals will destroy... e-everything... my sister... what have you-', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14540', '1', '0', '1', NULL),
 ('-1616012', 'I had hoped to end your lives quickly, but you have proven more...resilient then I had anticipated. Nonetheless, your efforts are in vain, it is you reckless, careless mortals who are to blame for this war! I do what I must...And if it means your...extinction...THEN SO BE IT!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14522', '1', '0', '1', NULL),
-('-1616013', 'Few have experienced the pain I will now inflict upon you!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL);
+('-1616013', 'Few have experienced the pain I will now inflict upon you!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL),
+('-1616014', 'YOU WILL NOT SUCCEED WHILE I DRAW BREATH!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL),
+('-1616015', 'Malygos takes a deep breath...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL);
 
 UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
 
