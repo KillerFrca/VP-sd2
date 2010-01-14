@@ -120,6 +120,7 @@ enum
     NPC_HOVER_DISC                 = 30248, // Maybe wrong, two following NPC flying on them (vehicle)
     NPC_NEXUS_LORD                 = 30245, // two (?) of them are spawned on beginning of phase 2
     NPC_SCION_OF_ETERNITY          = 30249, // same, but unknow count
+    NPC_ARCANE_OVERLOAD            = 30282, // Bubles
     GO_PLATFORM                    = 193070,
 
     //////////////// PHASE 3 ////////////////
@@ -148,6 +149,11 @@ enum
     SAY_END_PHASE1                 = -1616012,
     SAY_ARCANE_PULSE               = -1616014,
     SAY_ARCANE_PULSE_WARN          = -1616015,
+
+    SHELL_MIN_X                    = 0,
+    SHELL_MAX_X                    = 0,
+    SHELL_MIN_Y                    = 0,
+    SHELL_MAX_Y                    = 0,
 
     PHASE_NOSTART                  = 0,
         SUBPHASE_FLY_UP            = 01,
