@@ -77,6 +77,7 @@ UPDATE item_template SET ScriptName='item_flying_machine' WHERE entry IN (34060,
 UPDATE item_template SET ScriptName='item_gor_dreks_ointment' WHERE entry=30175;
 UPDATE item_template SET ScriptName='item_nether_wraith_beacon' WHERE entry=31742;
 UPDATE item_template SET ScriptName='item_tainted_core' WHERE entry=31088;
+UPDATE item_template SET ScriptName='item_petrov_cluster_bombs' WHERE entry=33098;
 
 /* NPC (usually creatures to be found in more than one specific zone) */
 UPDATE creature_template SET ScriptName='npc_air_force_bots' WHERE entry IN (2614, 2615, 21974, 21993, 21996, 21997, 21999, 22001, 22002, 22003, 22063, 22065, 22066, 22068, 22069, 22070, 22071, 22078, 22079, 22080, 22086, 22087, 22088, 22090, 22124, 22125, 22126);
@@ -426,8 +427,10 @@ UPDATE creature_template SET ScriptName='npc_aged_dying_ancient_kodo' WHERE entr
 /* DRAGONBLIGHT */
 UPDATE creature_template SET ScriptName='npc_afrasastrasz' WHERE entry=27575;
 UPDATE creature_template SET ScriptName='npc_alexstrasza_wr_gate' WHERE entry=31333;
+UPDATE creature_template SET ScriptName='npc_liquid_fire_of_elune' WHERE entry IN (26616,26643);
 UPDATE creature_template SET ScriptName='npc_tariolstrasz' WHERE entry=26443;
 UPDATE creature_template SET ScriptName='npc_torastrasza' WHERE entry=26949;
+UPDATE creature_template SET ScriptName='npc_woodlands_walker' WHERE entry=26421;
 
 /* DRAK'THARON KEEP */
 UPDATE creature_template SET ScriptName='boss_novos' WHERE entry=26631;
