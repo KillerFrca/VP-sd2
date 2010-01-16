@@ -150,10 +150,10 @@ enum
     SAY_ARCANE_PULSE               = -1616014,
     SAY_ARCANE_PULSE_WARN          = -1616015,
 
-    SHELL_MIN_X                    = 0,
-    SHELL_MAX_X                    = 0,
-    SHELL_MIN_Y                    = 0,
-    SHELL_MAX_Y                    = 0,
+    SHELL_MIN_X                    = 722,
+    SHELL_MAX_X                    = 768,
+    SHELL_MIN_Y                    = 1290,
+    SHELL_MAX_Y                    = 1339,
 
     PHASE_NOSTART                  = 0,
         SUBPHASE_FLY_UP            = 01,
@@ -445,6 +445,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     }
     void DoSpawnAdds()
     {
+        if(Vehicle *pDisc = m_creature->SummonVehicle(NPC_HOVER_DISC, 0, 0, 0, 0))
+        {
+            if(Creature *pTemp = m_creature->SummonCreature(NPC_NEXUS_LORD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 900000))
+            {
+                pTemp->EnterVehicle(pDisc, 0, true);
+                pTemp->GetMotionMaster()->MoveFollow(m_creature, 20, 0); 
+            }
+        }
         
     }
     void DoSpawnShell()
@@ -586,6 +594,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         DoMovement(x, y, z+40, 0, true);
                     }
                     DoScriptText(SAY_AGGRO2, m_creature);
+                    m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     DoSpawnAdds();
                     m_uiSubPhase = 0;
                 }else m_uiTimer -= uiDiff;
@@ -763,7 +772,7 @@ void AddSC_boss_malygos()
     newscript->RegisterSelf();
 }
 /*
-INSERT INTO npc_spellclick_spells VALUES (30161, 60968, 0, 0, 0, 1);
+INSERT IGNORE INTO npc_spellclick_spells VALUES (30161, 60968, 0, 0, 0, 1), (30248, 60968, 0, 0, 0, 1);
 
 INSERT INTO `vehicle_data` (
 `entry` ,
@@ -790,6 +799,7 @@ INSERT INTO `vehicle_seat_data` (
 VALUES (
 '2449', '1'
 );
+
 
 UPDATE gameobject_template SET ScriptName="go_focusing_iris" WHERE entry IN (193960, 193958);
 UPDATE creature_template SET ScriptName="boss_malygos" WHERE entry=28859;
@@ -839,6 +849,8 @@ UPDATE `mangostest`.`creature_template` SET `modelid_A` = '11686',
 `modelid_H2` = '11686',
 `minhealth` = '44120',
 `maxhealth` = '44120',
+minlevel=80,
+maxlevel=80,
 `AIName` = '',
 `flags_extra` = '2' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
 

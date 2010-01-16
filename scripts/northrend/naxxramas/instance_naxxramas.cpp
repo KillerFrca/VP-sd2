@@ -327,7 +327,6 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 if (m_auiEncounter[12] == DONE)
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 break;
-
             case GO_ARAC_PORTAL:
                 m_uiAracPortalGUID = pGo->GetGUID();
                 break;
@@ -388,7 +387,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 if (uiData == DONE)
                 {
                      DoUseDoorOrButton(m_uiNothExitDoorGUID);
-                     DoUseDoorOrButton(m_uiHeigEntryDoorGUID);
+                     //DoUseDoorOrButton(m_uiHeigEntryDoorGUID);
                 }
                 break;
             case TYPE_HEIGAN:
