@@ -61,6 +61,7 @@ enum
 
     NPC_TWILIGHT_INITIATE               = 30114,
     NPC_TWILIGHT_VOLUNTEER              = 30385,
+    NPC_JEDOGA                          = 29310,
 
     GO_CIRCLE                           = 194394,           // Propably wrong id
 
@@ -147,15 +148,35 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
     uint8 m_uiPhase;
     bool m_bIsVulunteerNear;
     uint32 m_uiCheckTimer;
+    bool m_bIsDead;
     void Reset()
     {
         m_uiPhase = 0;
         m_bIsVulunteerNear = false;
         m_uiCheckTimer = 1000;
+        m_bIsDead = false;
     }
     void AttackStart(Unit* pWho)
     {
         return;
+    }
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (m_bIsDead)
+        {
+            uiDamage = 0;
+            return;
+        }
+
+        if (uiDamage > m_creature->GetHealth())
+        {
+            m_creature->ForcedDespawn(10000);
+            m_bIsDead = true;
+            uiDamage = 0;
+            
+            m_creature->SetHealth(1);
+            m_creature->SetVisibility(VISIBILITY_OFF);
+        }
     }
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
@@ -166,11 +187,17 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
         {
             case 0:
                 m_bIsVulunteerNear = true;
+                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_creature->ForcedDespawn(10000);
+                m_creature->SetVisibility(VISIBILITY_OFF);
                 break;
         }
     }
     void Sacriface(uint8 phase)
     {
+        if(m_bIsDead)
+            return;
+
         m_uiPhase = phase;
         switch(m_uiPhase)
         {
@@ -191,6 +218,9 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
     }
     void UpdateAI(const uint32 uiDiff)
     {
+        if(m_bIsDead)
+            return;
+
         //Despawn if no Jedoga or if she is not in combat
         // I hope this will not take too CPU time
         if (m_uiCheckTimer <= uiDiff)
@@ -275,7 +305,6 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
          if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, IN_PROGRESS);
     }
-
     void KilledUnit(Unit* pVictim)
     {
         switch(urand(0, 2))
@@ -361,8 +390,9 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 return;
             }
 
-            if(m_pInstance->GetData(TYPE_TALDARAM) != DONE)
-                return;
+            if (m_pInstance)
+                if(m_pInstance->GetData(TYPE_TALDARAM) != DONE)
+                    return;
 
             switch(m_uiPreachingText)
             {
@@ -515,9 +545,14 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 if(m_uiCheckTimer <= uiDiff)
                 {
                     if(pVolunteer && pVolunteer->isAlive()){
-                        m_bVolunteerDied = false;
-                        if(((npc_twilight_volunteerAI*)pVolunteer->AI())->m_bIsVulunteerNear)
+                        if(pVolunteer->GetVisibility() == VISIBILITY_OFF)
+                        {
+                            if(((npc_twilight_volunteerAI*)pVolunteer->AI())->m_bIsVulunteerNear)
+                                m_bVolunteerDied = false;
+                            else
+                                m_bVolunteerDied = true;
                             m_uiSubPhase = SUBPHASE_SACRIFACE;
+                        }
                     }else{
                         m_bIsVulunteerNear = true;
                         m_bVolunteerDied = true;
@@ -537,8 +572,6 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 
                 if(!m_bVolunteerDied)
                     DoCast(m_creature, SPELL_GIFT_OF_THE_HERALD);
-                else if(pVolunteer && pVolunteer->isAlive())
-                    ((npc_twilight_volunteerAI*)pVolunteer->AI())->Sacriface(SACRIFACE_DIE);
 
                 m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
                 m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O, MONSTER_MOVE_NONE, 0);

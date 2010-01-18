@@ -1926,6 +1926,10 @@
 						Name="halls_of_stone"
 						>
 						<File
+							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\boss_krystallus.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\boss_maiden_of_grief.cpp"
 							>
 						</File>
@@ -1934,11 +1938,11 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.cpp"
+							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\def_halls_of_stone.h"
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.h"
+							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.cpp"
 							>
 						</File>
 						<File
