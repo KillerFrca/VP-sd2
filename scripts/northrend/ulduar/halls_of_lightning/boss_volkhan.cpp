@@ -219,7 +219,7 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
 
         m_creature->AttackStop();
 
-        if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+        if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
             m_creature->GetMotionMaster()->MovementExpired();
 
         m_creature->GetMap()->CreatureRelocation(m_creature, fX, fY, fZ, pAnvil->GetOrientation());
@@ -244,7 +244,7 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
         {
             if (m_uiPause_Timer < uiDiff)
             {
-                if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != TARGETED_MOTION_TYPE)
+                if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE)
                 {
                     if (m_creature->getVictim())
                         m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
@@ -360,7 +360,7 @@ bool EffectDummyCreature_npc_volkhan_anvil(Unit* pCaster, uint32 uiSpellId, uint
 
         pCaster->AttackStop();
 
-        if (pCaster->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+        if (pCaster->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
             pCaster->GetMotionMaster()->MovementExpired();
 
         ((Creature*)pCaster)->GetMap()->CreatureRelocation((Creature*)pCaster, fX, fY, fZ, pCreatureTarget->GetOrientation());
@@ -464,7 +464,7 @@ struct MANGOS_DLL_DECL mob_molten_golemAI : public ScriptedAI
             m_creature->AttackStop();
             SetCombatMovement(false);
 
-            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
                 m_creature->GetMotionMaster()->MovementExpired();
 
             uiDamage = 0;

@@ -683,7 +683,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             m_creature->AttackStop();
             SetCombatMovement(false);
 
-            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == TARGETED_MOTION_TYPE)
+            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
                 m_creature->GetMotionMaster()->MovementExpired();
 
             uiDamage = 0;
