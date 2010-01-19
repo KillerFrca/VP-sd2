@@ -52,12 +52,12 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
     boss_maiden_of_griefAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     uint32 m_uiPartingSorrow_Timer;
     uint32 m_uiPillarWoe_Timer;
@@ -104,7 +104,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_uiPartingSorrow_Timer < uiDiff)
@@ -119,7 +119,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         if (m_uiPillarWoe_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsHeroicMode ? SPELL_PILLAR_OF_WOE_H : SPELL_PILLAR_OF_WOE);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_PILLAR_OF_WOE_H : SPELL_PILLAR_OF_WOE);
             m_uiPillarWoe_Timer = 9000 + rand()%4000;
         }
         else
@@ -127,7 +127,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
         if (m_uiStorm_Timer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroicMode ? SPELL_STORM_OF_GRIEF_H : SPELL_STORM_OF_GRIEF);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_STORM_OF_GRIEF_H : SPELL_STORM_OF_GRIEF);
             m_uiStorm_Timer = 20000 + rand()%5000;
         }
         else
@@ -136,7 +136,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         if (m_uiShockSorrow_Timer < uiDiff)
         {
             DoScriptText(SAY_STUN, m_creature);
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_SHOCK_OF_SORROW_H : SPELL_SHOCK_OF_SORROW);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_SHOCK_OF_SORROW_H : SPELL_SHOCK_OF_SORROW);
             m_uiShockSorrow_Timer = 20000 + rand()%5000;
         }
         else

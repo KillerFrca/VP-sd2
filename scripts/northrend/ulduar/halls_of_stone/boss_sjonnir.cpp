@@ -72,12 +72,12 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
     boss_sjonnirAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
     bool m_bIsFrenzy;
 
     std::list<uint64> m_lDwarfGUIDList;
@@ -161,13 +161,13 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_uiChainLightning_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsHeroicMode ? SPELL_CHAIN_LIGHTING_H : SPELL_CHAIN_LIGHTING);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTING_H : SPELL_CHAIN_LIGHTING);
             m_uiChainLightning_Timer = 10000 + rand()%5000;
         }
         else
@@ -175,7 +175,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
 
         if (m_uiLightningShield_Timer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroicMode ? SPELL_LIGHTING_SHIELD_H : SPELL_LIGHTING_SHIELD);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_LIGHTING_SHIELD_H : SPELL_LIGHTING_SHIELD);
             m_uiLightningShield_Timer = 20000 + rand()%5000;
         }
         else
@@ -183,7 +183,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
 
         if (m_uiStaticCharge_Timer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_STATIC_CHARGE_H : SPELL_STATIC_CHARGE);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_STATIC_CHARGE_H : SPELL_STATIC_CHARGE);
             m_uiStaticCharge_Timer = 20000 + rand()%5000;
         }
         else
@@ -193,7 +193,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
         {
             if (m_creature->IsNonMeleeSpellCasted(false))
                 m_creature->InterruptNonMeleeSpells(false);
-            DoCast(m_creature, m_bIsHeroicMode ? SPELL_LIGHTING_RING_H : SPELL_LIGHTING_RING);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_LIGHTING_RING_H : SPELL_LIGHTING_RING);
             m_uiLightningRing_Timer = 30000 + rand()%5000;
         }
         else

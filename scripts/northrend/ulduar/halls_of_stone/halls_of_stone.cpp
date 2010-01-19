@@ -143,13 +143,13 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
     mob_tribuna_controllerAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         SetCombatMovement(false);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
 
     std::list<Creature*> m_lKaddrakGUIDList;
     //std::list<Creature*> m_lMarnakGUIDList;
@@ -216,7 +216,7 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
                     if (!m_lKaddrakGUIDList.empty())
                         for(std::list<Creature*>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
                             if ((*itr)->isAlive())
-                                (*itr)->CastSpell(pTarget, m_bIsHeroicMode ? SPELL_GLARE_OF_THE_TRIBUNAL_H : SPELL_GLARE_OF_THE_TRIBUNAL, true);
+                                (*itr)->CastSpell(pTarget, m_bIsRegularMode ? SPELL_GLARE_OF_THE_TRIBUNAL_H : SPELL_GLARE_OF_THE_TRIBUNAL, true);
 
                 m_uiKaddrak_Encounter_timer = 1500;
             }
@@ -232,7 +232,7 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
                     {
                         pTemp->SetDisplayId(11686);
                         pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        pTemp->CastSpell(pTarget, m_bIsHeroicMode ? SPELL_DARK_MATTER_H : SPELL_DARK_MATTER, true);
+                        pTemp->CastSpell(pTarget, m_bIsRegularMode ? SPELL_DARK_MATTER_H : SPELL_DARK_MATTER, true);
                     }
 
                 m_uiMarnak_Encounter_timer = 30000 + rand()%1000;
@@ -249,7 +249,7 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
                     {
                         pTemp->SetDisplayId(11686);
                         pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        pTemp->CastSpell(pTemp, m_bIsHeroicMode ? SPELL_SEARING_GAZE_H : SPELL_SEARING_GAZE, true);
+                        pTemp->CastSpell(pTemp, m_bIsRegularMode ? SPELL_SEARING_GAZE_H : SPELL_SEARING_GAZE, true);
                     }
 
                 m_uiAbedneum_Encounter_timer = 30000 + rand()%1000;
@@ -269,12 +269,12 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
     npc_brann_hosAI(Creature* pCreature) : npc_escortAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
     bool m_bIsBattle;
     bool m_bIsLowHP;
 
@@ -391,7 +391,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
         {
             case 1:
             {
-                uint32 uiSpawnNumber = (m_bIsHeroicMode ? 3 : 2);
+                uint32 uiSpawnNumber = (m_bIsRegularMode ? 3 : 2);
                 for (uint8 i = 0; i < uiSpawnNumber; ++i)
                     m_creature->SummonCreature(NPC_DARK_RUNE_PROTECTOR, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0.0f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
                 m_creature->SummonCreature(NPC_DARK_RUNE_STORMCALLER, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0.0f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);

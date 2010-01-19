@@ -52,13 +52,13 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
     boss_krystallusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroic = pCreature->GetMap()->IsHeroic();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
 
-    bool m_bIsHeroic;
+    bool m_bIsRegularMode;
     bool m_bIsSlam;
 
     uint32 m_uiToss_Timer;
@@ -104,13 +104,13 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         //Return since we have no target
-        if (!m_creature->SelectHostilTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_uiToss_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsHeroic ? SPELL_BOULDER_TOSS_H : SPELL_BOULDER_TOSS);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_BOULDER_TOSS_H : SPELL_BOULDER_TOSS);
             m_uiToss_Timer = 9000 + rand()%6000;
         }
         else
@@ -127,7 +127,7 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
 
         if (m_uiStomp_Timer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroic ? SPELL_STOMP_H : SPELL_STOMP);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP_H : SPELL_STOMP);
             m_uiStomp_Timer = 20000 + rand()%9000;
         }
         else
@@ -147,7 +147,7 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
         {
             if (m_uiShatter_Timer < uiDiff)
             {
-                DoCast(m_creature, m_bIsHeroic ? SPELL_SHATTER_H : SPELL_SHATTER);
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_SHATTER_H : SPELL_SHATTER);
                 m_bIsSlam = false;
                 m_uiShatter_Timer = 0;
             }
