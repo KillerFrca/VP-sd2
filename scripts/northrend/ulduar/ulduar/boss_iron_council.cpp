@@ -379,7 +379,7 @@ struct MANGOS_DLL_DECL boss_brundirAI : public ScriptedAI
                     m_creature->AI()->AttackStart(pTarget);
                 }
                 tendrils = true;
-                m_creature->SetSpeed(MOVE_RUN, 0.8);
+                m_creature->SetSpeedRate(MOVE_RUN, 0.8);
                 Tendrils_start_Timer = 3000;
                 Tendrils_end_Timer = 40000;
                 Tendrils_Change = 5000;
@@ -409,7 +409,7 @@ struct MANGOS_DLL_DECL boss_brundirAI : public ScriptedAI
             if (m_creature->HasAura(LIGHTNING_TENDRILS_VISUAL))
                 m_creature->RemoveAurasDueToSpell(LIGHTNING_TENDRILS_VISUAL);
             Tendrils_start_Timer = 90000;
-            m_creature->SetSpeed(MOVE_RUN, 1.8);
+            m_creature->SetSpeedRate(MOVE_RUN, 1.8);
             tendrils = false;
             Chain_Lightning_Timer = 5000;
             Overload_Timer = 35000;

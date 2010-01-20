@@ -714,11 +714,11 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 		{
 			if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), 8) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 30))
 			{
-				m_creature->SetSpeed(MOVE_RUN, 0.0001);
+				m_creature->SetSpeedRate(MOVE_RUN, 0.0001);
 			}
 			else
 			{
-				m_creature->SetSpeed(MOVE_RUN, 1);
+				m_creature->SetSpeedRate(MOVE_RUN, 1);
 			}
 			enemy_check = 100;
 		}else enemy_check -= diff;

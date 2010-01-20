@@ -128,7 +128,7 @@ struct MANGOS_DLL_DECL boss_grandmaster_vorpilAI : public ScriptedAI
         if (summoned->GetEntry() == ENTRY_VOID_TRAVELER)
         {
             summoned->GetMotionMaster()->MoveChase(m_creature);
-            summoned->SetSpeed(MOVE_WALK,0.8,true);
+            summoned->SetSpeedRate(MOVE_WALK,0.8,true);
         }
 
         if (summoned->GetEntry() == ENTRY_VOID_PORTAL)

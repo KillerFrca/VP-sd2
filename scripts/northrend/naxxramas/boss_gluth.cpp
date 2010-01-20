@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        summoned->SetSpeed(MOVE_RUN, 0.8f);
+        summoned->SetSpeedRate(MOVE_RUN, 0.8f);
     }
 
     void UpdateAI(const uint32 uiDiff)
