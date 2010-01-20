@@ -242,8 +242,6 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_VOIDZONE);
             VoidZone_Timer = 12000;
         }else VoidZone_Timer -= uiDiff;
-
-        DoMeleeAttackIfReady();
     }
 };
 
@@ -619,8 +617,6 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
             DoCast(m_creature->getVictim(),SPELL_HOLY_WRATH);
             HolyWrath_Timer = 12000;
         }else HolyWrath_Timer -= uiDiff;
-
-        DoMeleeAttackIfReady();
     }
 };
 

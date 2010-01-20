@@ -46,7 +46,10 @@ enum
     SPELL_FIREBALL_H          = 54096,
     SPELL_WIDOWS_EMBRACE      = 28732,
 
-    SPELL_RAINOFFIRE          = 28794                       //Not sure if targeted AoEs work if casted directly upon a pPlayer
+    SPELL_RAINOFFIRE          = 28794,                       //Not sure if targeted AoEs work if casted directly upon a pPlayer
+
+    NPC_WORSHIPPER              = 16506,
+    NPC_FOLLOWER              = 16505,
 };
 struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
 {
@@ -71,6 +74,9 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         m_uiPoisonBoltVolleyTimer = 8000;
         m_uiRainOfFireTimer = 16000;
         m_uiEnrageTimer = 60000;
+
+        DespawnAdds();
+        SummonAdds();
     }
 
     void Aggro(Unit* pWho)
@@ -109,12 +115,48 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_FAERLINA, DONE);
+
+        DespawnAdds();
     }
 
     void JustReachedHome()
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_FAERLINA, FAIL);
+    }
+    
+    void SummonAdds()
+    {
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3362.66, -3620.97, 261.08, 4.57276, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3344.3, -3618.31, 261.08, 4.69494, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3356.71, -3620.05, 261.08, 4.57276, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3350.26, -3619.11, 261.08, 4.67748, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        if(!m_bIsRegularMode)
+        {
+            m_creature->SummonCreature(NPC_FOLLOWER, 3359.8, -3620.47, 260.996, 4.59711, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            m_creature->SummonCreature(NPC_FOLLOWER, 3347.17, -3618.95, 260.997, 4.6678, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        }
+    }
+
+    void DespawnAdds()
+    {
+        std::list<Creature*> pWorshippers;
+        GetCreatureListWithEntryInGrid(pWorshippers, m_creature, NPC_WORSHIPPER, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!pWorshippers.empty())
+            for(std::list<Creature*>::iterator itr = pWorshippers.begin(); itr != pWorshippers.end(); ++itr)
+            {
+                (*itr)->ForcedDespawn();
+            }
+
+        std::list<Creature*> pFollower;
+        GetCreatureListWithEntryInGrid(pFollower, m_creature, NPC_FOLLOWER, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!pFollower.empty())
+            for(std::list<Creature*>::iterator iter = pFollower.begin(); iter != pFollower.end(); ++iter)
+            {
+                (*iter)->ForcedDespawn();
+            }
     }
 
     void UpdateAI(const uint32 uiDiff)

@@ -473,7 +473,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
             {
                 error_log("Spawnuje NPC %u, motherPortalID %u, portalLoc %u", uiSpawnEntry, portalID, portalLoc);
                 ((mob_vh_dragonsAI*)pSummoned->AI())->motherPortalID = portalID;
-                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;		
+                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;        
             }
         }
     }

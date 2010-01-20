@@ -180,7 +180,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         ZeliekDead    = false; 
         KorthazzDead  = false;
         
-        HorsemanDeadCount = 0;
+        DeadTimer             = 0;
         UpdateCheck          = true;
     }
 
@@ -506,10 +506,6 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
     void Horseman()
     {
-        if (HorsemanDeadCount = 0)
-            DeadTimer = 15000;
-            HorsemanDeadCount ++;
-
         if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
         {
             SetData(TYPE_FOUR_HORSEMEN, DONE);
@@ -648,26 +644,29 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
     void Update(uint32 uiDiff)
     {
-        if (DeadTimer > uiDiff && UpdateCheck)
+        if (BlaumeuxDead || RivendareDead || ZeliekDead || KorthazzDead)
         {
-            if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
+            if (DeadTimer < 15000 && UpdateCheck)
             {
-                AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_TOGETHER : H_ACHIEVEMENT_TOGETHER);
-                if(AchievHorsemen && this)
+                if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
                 {
-                    Map::PlayerList const &lPlayers = instance->GetPlayers();
-                    if (!lPlayers.isEmpty())
+                    AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_TOGETHER : H_ACHIEVEMENT_TOGETHER);
+                    if(AchievHorsemen && this)
                     {
-                        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                        Map::PlayerList const &lPlayers = instance->GetPlayers();
+                        if (!lPlayers.isEmpty())
                         {
-                            if (Player* pPlayer = itr->getSource())
-                                pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                            for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                            {
+                                if (Player* pPlayer = itr->getSource())
+                                    pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
+                            }
                         }
                     }
+                    UpdateCheck = false;
                 }
-                UpdateCheck = false;
-            }
-        }else DeadTimer -= uiDiff;
+            }else DeadTimer += uiDiff;
+        }
     }
 };
 

@@ -163,9 +163,9 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     }
     void StartSummonGuard()
     {
-        m_creature->SummonCreature(NPC_CRYPT_GUARD, 3307, -3465, 287, 3.5, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+        m_creature->SummonCreature(NPC_CRYPT_GUARD, 3307, -3465, 287, 3.5, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if(!m_bIsRegularMode)
-            m_creature->SummonCreature(NPC_CRYPT_GUARD, 3304, -3490, 287, 2.5, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+            m_creature->SummonCreature(NPC_CRYPT_GUARD, 3304, -3490, 287, 2.5, TEMPSUMMON_CORPSE_DESPAWN, 0);
         
     }
     

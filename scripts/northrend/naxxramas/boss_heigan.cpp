@@ -73,6 +73,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     uint32 Feaver_Timer;
     uint32 Erupt_Timer;
     uint32 Phase_Timer;
+    uint32 Cloud_Timer;
 
     uint32 eruptSection;
     bool eruptDirection;
@@ -143,8 +144,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
             Erupt_Timer = 5000;
             Phase_Timer = 45000;
-            DoCast(m_creature, SPELL_PLAGUED_CLOUD);
-
+            Cloud_Timer = 1000;
         }
     }
     void Aggro(Unit *who)
@@ -200,6 +200,13 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
                 Erupt_Timer = 10000;
             }else Erupt_Timer = 3000;
         }else Erupt_Timer -= diff; */
+
+        if (phase != 1)
+            if (Cloud_Timer < diff)
+            {
+                DoCast(m_creature, SPELL_PLAGUED_CLOUD);
+                Cloud_Timer = 1000;
+            }else Phase_Timer -= diff;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
             return;

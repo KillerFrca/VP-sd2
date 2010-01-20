@@ -202,6 +202,8 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         if (m_uiWebWrapTimer < uiDiff)
         {
             DoCastWebWrap();
+            if(!m_bIsRegularMode)
+                DoCastWebWrap();
             m_uiWebWrapTimer = 40000;
         }
         else

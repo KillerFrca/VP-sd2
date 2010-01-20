@@ -152,6 +152,15 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GLUTH, DONE);
+        
+        std::list<Creature*> pZombies;
+        GetCreatureListWithEntryInGrid(pZombies, m_creature, NPC_ZOMBIE_CHOW, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!pZombies.empty())
+            for(std::list<Creature*>::iterator itr = pZombies.begin(); itr != pZombies.end(); ++itr)
+            {
+                (*itr)->ForcedDespawn();
+            }
     }
 
     void Aggro(Unit* pWho)

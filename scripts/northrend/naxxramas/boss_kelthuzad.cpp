@@ -152,6 +152,8 @@ I also don't know the emotes
 #define SPELL_SHADOW_FISURE         27810
 #define SPELL_FROST_BLAST           27808
 
+#define SPELL_FROST_BLAST            37159                    //
+
 #define NPC_SOLDIERS_FROZEN_WASTES  16427
 #define NPC_UNSTOPPABLE_ABOMINATIONS 16428
 #define NPC_SOUL_WEAVERS            16429
@@ -426,6 +428,15 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         m_lSummonsGUIDList.clear();
     }
 
+    void Possess()
+    {
+        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+        {
+            pTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+            pTarget->setFaction(m_creature->getFaction());
+        }
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (SendSummon)
@@ -485,11 +496,14 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         if (ChainsOfKelthuzad_Timer < diff)
         {
             //DoCast(m_creature->getVictim(),SPELL_CHAINS_OF_KELTHUZAD);
+            Possess();
+            Possess();
+            Possess();
 
-            //if (rand()%2)
-                //DoScriptText(SAY_CHAIN1, m_creature);
-            //else
-                //DoScriptText(SAY_CHAIN2, m_creature);
+            if (rand()%2)
+                DoScriptText(SAY_CHAIN1, m_creature);
+            else
+                DoScriptText(SAY_CHAIN2, m_creature);
 
             ChainsOfKelthuzad_Timer = (rand()%30+30)*1000;
         }else ChainsOfKelthuzad_Timer -= diff;
@@ -499,19 +513,39 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 if (pTarget->getPowerType() == POWER_MANA)
+                {
                     DoCast(pTarget,SPELL_MANA_DETONATION);
+                    int32 curPower = pTarget->GetPower(POWER_MANA);
+                    int32 manareduction =  m_bIsRegularMode ? urand(2500,4000) : urand(3500,5500);
+                    int32 mana = curPower - manareduction;
+                    pTarget->SetPower(POWER_MANA, mana);
+                    
+                    Map *map = m_creature->GetMap();
+                    if (map->IsDungeon())
+                    {
+                        Map::PlayerList const &PlayerList = map->GetPlayers();
+
+                        if (!PlayerList.isEmpty())
+                            
+                            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                            {
+                                if (i->getSource()->isAlive() && pTarget->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) < 15)
+                                    i->getSource()->DealDamage(i->getSource(), manareduction, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, true);
+                            }
+                    } 
+                }
 
             if (rand()%2)
                 DoScriptText(SAY_SPECIAL1_MANA_DET, m_creature);
 
-            ManaDetonation_Timer = 20000;
+            ManaDetonation_Timer = 15000;
         }else ManaDetonation_Timer -= diff;
 
         //Check for Shadow Fissure
         if (ShadowFisure_Timer < diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
-                DoCast(pTarget,SPELL_SHADOW_FISURE);
+                //DoCast(pTarget,SPELL_SHADOW_FISURE);
 
             if (rand()%2)
                 DoScriptText(SAY_SPECIAL3_MANA_DET, m_creature);
