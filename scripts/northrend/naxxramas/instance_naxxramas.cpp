@@ -180,7 +180,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         ZeliekDead    = false; 
         KorthazzDead  = false;
         
-        DeadTimer             = 0;
+        DeadTimer            = 0;
         UpdateCheck          = true;
     }
 

@@ -155,6 +155,11 @@ enum
     SHELL_MIN_Y                    = 1290,
     SHELL_MAX_Y                    = 1339,
 
+    NEXUS_LORD_COUNT               = 2,
+    NEXUS_LORD_COUNT_H             = 4,
+    SCION_OF_ETERNITY_COUNT        = 6,
+    SCION_OF_ETERNITY_COUNT_H      = 8,
+
     PHASE_NOSTART                  = 0,
         SUBPHASE_FLY_UP            = 01,
         SUBPHASE_UP                = 03,
@@ -165,6 +170,7 @@ enum
     PHASE_ADDS                     = 2,
         SUBPHASE_TALK              = 21,
     PHASE_DRAGONS                  = 3,
+        SUBPHASE_DESTROY_PLATFORM  = 31,
     PHASE_OUTRO                    = 4,
 
 };
@@ -445,15 +451,31 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     }
     void DoSpawnAdds()
     {
-        if(Vehicle *pDisc = m_creature->SummonVehicle(NPC_HOVER_DISC, 0, 0, 0, 0))
+        //Nexus lords
+        for(int i=0; i < m_bIsRegularMode ? NEXUS_LORD_COUNT : NEXUS_LORD_COUNT_H;i++)
         {
-            if(Creature *pTemp = m_creature->SummonCreature(NPC_NEXUS_LORD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 900000))
-            {
-                pTemp->EnterVehicle(pDisc, 0, true);
-                pTemp->GetMotionMaster()->MoveFollow(m_creature, 20, 0); 
-            }
+            if(Creature *pLord = m_creature->SummonCreature(NPC_NEXUS_LORD, m_creature->getVictim()->GetPositionX()-5+rand()%10, m_creature->getVictim()->GetPositionY()-5+rand()%10, m_creature->getVictim()->GetPositionZ(), 0, TEMSUMMON_CORPSE_DESPAWN, 0))
+                pLord->AI()->AttackStart(m_creature->getVictim());
         }
-        
+        //Scions of eternity
+        for(int i=0; i < m_bIsRegularMode ? SCION_OF_ETERNITY_COUNT : SCION_OF_ETERNITY_COUNT_H;i++)
+        {
+            uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
+            uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);    
+            m_creature->SummonCreature(NPC_SCION_OF_ETERNITY, x,y, FLOOR_Z+20, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        }       
+    }
+    bool IsThereAnyAdd()
+    {
+        //Search for Nexus lords
+        if(GetClosestCreatureWithEntry(m_creature, NPC_NEXUS_LORD, 80.0f))
+            return true;
+
+        //Search for Scions of eternity
+        if(GetClosestCreatureWithEntry(m_creature, NPC_SCION_OF_ETERNITY, 80.0f))
+            return true;
+
+        return false;
     }
     void DoSpawnShell()
     {
@@ -461,6 +483,29 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
         if(Creature *pShell = m_creature->SummonCreature(NPC_ARCANE_OVERLOAD, x, y, FLOOR_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 45000))
             pShell->CastSpell(pShell, SPELL_ARCANE_OVERLOAD, false);
+    }
+    void MountPlayers()
+    {
+        Map *pMap = m_creature->GetMap();
+
+        if(!pMap)
+            return;
+
+        Map::PlayerList const &lPlayers = pMap->GetPlayers();
+        if (lPlayers.isEmpty())
+            return;
+        
+        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            if (Player* pPlayer = itr->getSource())
+            {
+                if(pPlayer->GetVehicleGUID())
+                    pPlayer->ExitVehicle();
+
+                if(Vehicle *pTemp = m_creature->SummonVehicle(NPC_WYRMREST_SKYTALON, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0))
+                    pPlayer->EnterVehicle(pTemp, 0, true);
+            }
+        }
     }
     void UpdateAI(const uint32 uiDiff)
     {
@@ -505,6 +550,13 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         }
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        //Enrage timer.....
+        if(m_uiEnrageTimer <= uiDiff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiEnrageTimer = 600000;
+        }else m_uiEnrageTimer -= uiDiff;
 
         if(m_uiPhase == PHASE_FLOOR)
         {
@@ -596,6 +648,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     DoScriptText(SAY_AGGRO2, m_creature);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     DoSpawnAdds();
+                    DoSpawnShell();
+                    m_uiShellTimer = 30000;
                     m_uiSubPhase = 0;
                 }else m_uiTimer -= uiDiff;
             }
@@ -604,7 +658,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             if(m_uiShellTimer <= uiDiff)
             {
                 DoSpawnShell();
-                m_uiShellTimer = 20000;
+                m_uiShellTimer = 30000;
             }else m_uiShellTimer -= uiDiff;
 
             // Arcane Pulse
@@ -624,14 +678,43 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 DoCast(m_creature, m_bIsRegularMode ? SPELL_ARCANE_STORM : SPELL_ARCANE_STORM_H);
                 m_uiArcaneStormTimer = 20000;
             }else m_uiArcaneStormTimer -= uiDiff;
+
+            //Health check
+            if(m_uiTimer<= uiDiff)
+            {
+                if(!IsThereAnyAdd())
+                {
+                    m_uiPhase = PHASE_DRAGONS;
+                    m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM;
+                    if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
+                        pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFORM_PRE, false);
+                    m_uiTimer = 3000;
+                    return;
+                }
+                m_uiTimer = 5000;
+            }else m_uiTimer -= uiDiff;  
+        }
+        else if(m_uiPhase == PHASE_DRAGONS)
+        {
+            if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM)
+            {
+                if(m_uiTimer<= uiDiff)
+                {
+                    if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
+                        pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFORM_BOOM, false);
+                    MountPlayers();
+                    m_uiSubPhase = 0;
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    SetCombatMovement(true);
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                }else m_uiTimer -= uiDiff;
+                return;
+            }
+
+            DoMeleeAttackIfReady();
         }
 
-        //Enrage timer.....
-        if(m_uiEnrageTimer <= uiDiff)
-        {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiEnrageTimer = 600000;
-        }else m_uiEnrageTimer -= uiDiff;
+        
     }
 };
 /*######

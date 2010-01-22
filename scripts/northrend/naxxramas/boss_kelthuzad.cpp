@@ -152,8 +152,6 @@ I also don't know the emotes
 #define SPELL_SHADOW_FISURE         27810
 #define SPELL_FROST_BLAST           27808
 
-#define SPELL_FROST_BLAST            37159                    //
-
 #define NPC_SOLDIERS_FROZEN_WASTES  16427
 #define NPC_UNSTOPPABLE_ABOMINATIONS 16428
 #define NPC_SOUL_WEAVERS            16429
@@ -193,10 +191,12 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     uint32 ChainsOfKelthuzad_Targets;
     uint32 Phase1_Timer;
     uint32 Phase1Encounter_Timer;
+    uint32 DropChains_Timer;
     bool SendSummon;
     bool Phase1;
     bool Phase2;
     bool Phase3;
+    bool DropChains_Check;
 
     void Reset()
     {
@@ -207,6 +207,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         ShadowFisure_Timer = 25000;                         //25 seconds
         FrostBlast_Timer = (rand()%30+30)*1000;             //Random time between 30-60 seconds
         GuardiansOfIcecrown_Timer = 5000;                   //5 seconds for summoning each Guardian of Icecrown in phase 3
+        DropChains_Check = false;
 
         for(int i=0; i<5; ++i)
         {
@@ -433,7 +434,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
         {
             pTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
-            pTarget->setFaction(m_creature->getFaction());
+            pTarget->setFaction(pTarget->getFaction());
         }
     }
 
@@ -493,7 +494,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
         }else FrostBoltNova_Timer -= diff;
 
         //Check for Chains Of Kelthuzad
-        if (ChainsOfKelthuzad_Timer < diff)
+        if (ChainsOfKelthuzad_Timer < diff && !m_bIsRegularMode)
         {
             //DoCast(m_creature->getVictim(),SPELL_CHAINS_OF_KELTHUZAD);
             Possess();
@@ -506,7 +507,26 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 DoScriptText(SAY_CHAIN2, m_creature);
 
             ChainsOfKelthuzad_Timer = (rand()%30+30)*1000;
+            DropChains_Timer = 20000;
+            DropChains_Check = true;
         }else ChainsOfKelthuzad_Timer -= diff;
+
+        //Restore faction
+        if (DropChains_Timer < diff && DropChains_Check)
+        {
+            Map* pMap = m_creature->GetMap();
+            Map::PlayerList const &lPlayers = pMap->GetPlayers();
+            if (!lPlayers.isEmpty())
+                for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                {
+                    if (Player* pPlayer = itr->getSource())
+                    {
+                        pPlayer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+                        pPlayer->setFactionForRace(pPlayer->getRace());
+                    }
+                }
+            DropChains_Check = false;
+        }else DropChains_Timer -= diff;
 
         //Check for Mana Detonation
         if (ManaDetonation_Timer < diff)
@@ -519,14 +539,13 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                     int32 manareduction =  m_bIsRegularMode ? urand(2500,4000) : urand(3500,5500);
                     int32 mana = curPower - manareduction;
                     pTarget->SetPower(POWER_MANA, mana);
-                    
+
                     Map *map = m_creature->GetMap();
                     if (map->IsDungeon())
                     {
                         Map::PlayerList const &PlayerList = map->GetPlayers();
 
                         if (!PlayerList.isEmpty())
-                            
                             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                             {
                                 if (i->getSource()->isAlive() && pTarget->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) < 15)
