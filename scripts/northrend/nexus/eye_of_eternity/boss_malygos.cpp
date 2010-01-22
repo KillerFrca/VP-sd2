@@ -454,7 +454,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         //Nexus lords
         for(int i=0; i < m_bIsRegularMode ? NEXUS_LORD_COUNT : NEXUS_LORD_COUNT_H;i++)
         {
-            if(Creature *pLord = m_creature->SummonCreature(NPC_NEXUS_LORD, m_creature->getVictim()->GetPositionX()-5+rand()%10, m_creature->getVictim()->GetPositionY()-5+rand()%10, m_creature->getVictim()->GetPositionZ(), 0, TEMSUMMON_CORPSE_DESPAWN, 0))
+            if(Creature *pLord = m_creature->SummonCreature(NPC_NEXUS_LORD, m_creature->getVictim()->GetPositionX()-5+rand()%10, m_creature->getVictim()->GetPositionY()-5+rand()%10, m_creature->getVictim()->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                 pLord->AI()->AttackStart(m_creature->getVictim());
         }
         //Scions of eternity
@@ -701,7 +701,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 if(m_uiTimer<= uiDiff)
                 {
                     if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                        pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFORM_BOOM, false);
+                        pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFROM_BOOM, false);
                     MountPlayers();
                     m_uiSubPhase = 0;
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
