@@ -255,8 +255,7 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
         MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRange> searcher(m_creature, gameobjectList, check);
         TypeContainerVisitor<MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRange>, GridTypeMapContainer> visitor(searcher);
  
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, visitor, *(m_creature->GetMap()));
+        cell.Visit(pair, visitor, *(m_creature->GetMap()));
  
         return gameobjectList;
     }
