@@ -534,8 +534,10 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
                 if (pTarget->getPowerType() == POWER_MANA)
                 {
-                    DoCast(pTarget,SPELL_MANA_DETONATION);
                     int32 curPower = pTarget->GetPower(POWER_MANA);
+                    if (curPower < m_bIsRegularMode ? 4000 : 5500)
+                        return;
+                    DoCast(pTarget,SPELL_MANA_DETONATION);
                     int32 manareduction =  m_bIsRegularMode ? urand(2500,4000) : urand(3500,5500);
                     int32 mana = curPower - manareduction;
                     pTarget->SetPower(POWER_MANA, mana);
@@ -546,6 +548,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                         Map::PlayerList const &PlayerList = map->GetPlayers();
 
                         if (!PlayerList.isEmpty())
+
                             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                             {
                                 if (i->getSource()->isAlive() && pTarget->GetDistance2d(i->getSource()->GetPositionX(), i->getSource()->GetPositionY()) < 15)

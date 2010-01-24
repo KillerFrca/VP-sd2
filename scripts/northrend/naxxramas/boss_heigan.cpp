@@ -42,7 +42,7 @@ EndScriptData */
 #define SPELL_DISRUPTION    29310
 #define SPELL_FEAVER        29998
 #define H_SPELL_FEAVER      55011
-#define SPELL_PLAGUED_CLOUD 30122
+#define SPELL_PLAGUED_CLOUD 29350
 
 //Spell by eye stalks
 #define SPELL_MIND_FLAY     26143
@@ -73,7 +73,6 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     uint32 Feaver_Timer;
     uint32 Erupt_Timer;
     uint32 Phase_Timer;
-    uint32 Cloud_Timer;
 
     uint32 eruptSection;
     bool eruptDirection;
@@ -144,7 +143,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
             Erupt_Timer = 5000;
             Phase_Timer = 45000;
-            Cloud_Timer = 1000;
+            DoCast(m_creature, SPELL_PLAGUED_CLOUD);
         }
     }
     void Aggro(Unit *who)
@@ -200,13 +199,6 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
                 Erupt_Timer = 10000;
             }else Erupt_Timer = 3000;
         }else Erupt_Timer -= diff; */
-
-        if (phase != 1)
-            if (Cloud_Timer < diff)
-            {
-                DoCast(m_creature, SPELL_PLAGUED_CLOUD);
-                Cloud_Timer = 1000;
-            }else Phase_Timer -= diff;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || phase != 1)
             return;
