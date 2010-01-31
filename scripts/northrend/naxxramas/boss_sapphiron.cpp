@@ -277,7 +277,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     for (ThreatList::const_iterator iter = tList.begin();iter != tList.end(); ++iter)
                     {
                         Unit* pUnit = Unit::GetUnit((*m_creature), (*iter)->getUnitGuid());
-                        if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER))
+                        if (pUnit && (pUnit->GetTypeId() == TYPEID_PLAYER) && pUnit->isAlive())
                         {
                             if (!pUnit->HasAura(SPELL_ICEBOLT))
                             {
@@ -285,6 +285,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                                 {
                                     if (*itr)
                                     {
+                                        if(!(*itr)->isAlive())
+                                            return;
                                         if (pUnit->GetDistance2d(*itr) <= 5 && (*itr)->HasAura(SPELL_ICEBOLT))
                                             pUnit->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
                                     }
