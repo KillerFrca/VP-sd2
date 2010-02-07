@@ -377,7 +377,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_creature->SendMessageToSet(&heart, false);
         m_creature->GetMotionMaster()->MovePoint(0, x,y,z);
        // m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z, m_creature->GetOrientation());
-       // m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetMonsterMoveFlags(), time);
+       // m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetSplineFlags(), time);
     }
     void DoVortex(uint8 phase)
     {
@@ -453,7 +453,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             {
                 pSpark->CastSpell(pSpark, SPELL_POWER_SPARK_VISUAL, false);
                 pSpark->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+                m_creature->AddSplineFlag(MONSTER_MOVE_SPLINE_FLY);
                 m_lSparkGUIDList.push_back(pSpark->GetGUID());
             }
         }
@@ -822,7 +822,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
         pMalygos = GetClosestCreatureWithEntry(m_creature, NPC_MALYGOS, 150.0f);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
-        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_FLY);
+        m_creature->AddSplineFlag(MONSTER_MOVE_FLY);
         WorldPacket heart;
         m_creature->BuildHeartBeatMsg(&heart);
         m_creature->SendMessageToSet(&heart, false);

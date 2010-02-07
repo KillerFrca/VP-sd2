@@ -223,7 +223,7 @@ struct MANGOS_DLL_DECL boss_volkhanAI : public ScriptedAI
             m_creature->GetMotionMaster()->MovementExpired();
 
         m_creature->GetMap()->CreatureRelocation(m_creature, fX, fY, fZ, pAnvil->GetOrientation());
-        m_creature->SendMonsterMove(fX, fY, fZ, 0, m_creature->GetMonsterMoveFlags(), 1);
+        m_creature->SendMonsterMove(fX, fY, fZ, 0, m_creature->GetSplineFlags(), 1);
         pAnvil->CastSpell(m_creature, SPELL_TEMPER_DUMMY, false);
         m_bIsStriking = true;
 
@@ -364,7 +364,7 @@ bool EffectDummyCreature_npc_volkhan_anvil(Unit* pCaster, uint32 uiSpellId, uint
             pCaster->GetMotionMaster()->MovementExpired();
 
         ((Creature*)pCaster)->GetMap()->CreatureRelocation((Creature*)pCaster, fX, fY, fZ, pCreatureTarget->GetOrientation());
-        ((Creature*)pCaster)->SendMonsterMove(fX, fY, fZ, 0, ((Creature*)pCaster)->GetMonsterMoveFlags(), 1);
+        ((Creature*)pCaster)->SendMonsterMove(fX, fY, fZ, 0, ((Creature*)pCaster)->GetSplineFlags(), 1);
         pCreatureTarget->CastSpell(pCaster, SPELL_TEMPER_DUMMY, false);
 
         //always return true when we are handling this spell and effect

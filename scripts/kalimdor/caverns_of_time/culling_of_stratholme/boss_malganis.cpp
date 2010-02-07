@@ -239,7 +239,7 @@ if(Outro == false)
                  case 9:
                        Malganis->SetVisibility(VISIBILITY_OFF);
                        Arthas->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-                       Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                       Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                        Arthas->GetMotionMaster()->MovePoint(0, Malganis->GetPositionX(), Malganis->GetPositionY(), Malganis->GetPositionZ());
                        ++Step;
                        Steptim = 3000;

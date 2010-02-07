@@ -109,7 +109,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
         m_creature->RemoveAurasDueToSpell(SPELL_BEAM_VISUAL);
-        m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+        m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_TALDARAM, IN_PROGRESS);
     }
@@ -312,7 +312,7 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
 
             }
             m_bIsFlying = true;
-            m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+            m_creature->AddSplineFlag(MONSTER_MOVE_SPLINE_FLY);
         }else m_uiCast_Timer -= uiDiff;
     }
 };

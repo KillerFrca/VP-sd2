@@ -128,8 +128,8 @@ struct MANGOS_DLL_DECL boss_svalaAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (m_creature->HasMonsterMoveFlag(MONSTER_MOVE_SPLINE))
-            m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_SPLINE);
+        if (m_creature->HasSplineFlag(MONSTER_MOVE_SPLINE))
+            m_creature->RemoveSplineFlag(MONSTER_MOVE_SPLINE);
 
         DoScriptText(SAY_AGGRO, m_creature);
     }
@@ -184,7 +184,7 @@ struct MANGOS_DLL_DECL boss_svalaAI : public ScriptedAI
         float fX, fZ, fY;
         m_creature->GetRespawnCoord(fX, fY, fZ);
 
-        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE);
+        m_creature->AddSplineFlag(MONSTER_MOVE_SPLINE);
 
         m_creature->SendMonsterMoveWithSpeed(fX, fY, fZ + 5.0f, m_uiIntroTimer);
         m_creature->GetMap()->CreatureRelocation(m_creature, fX, fY, fZ + 5.0f, m_creature->GetOrientation());

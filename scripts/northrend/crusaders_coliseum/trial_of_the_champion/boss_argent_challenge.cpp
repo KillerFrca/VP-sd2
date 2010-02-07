@@ -90,7 +90,7 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
         Hammer_Dmg_Timer = 45000;
         HammerTarget = 0;
         m_creature->RemoveArenaAuras(true);
-        m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
+        m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetSplineFlags(), 1);
         m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
         m_creature->SetHealth(m_creature->GetMaxHealth());
     }
@@ -202,7 +202,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
         summoned = false;
         shielded = false;
         m_creature->RemoveArenaAuras(true);
-        m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
+        m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetSplineFlags(), 1);
         m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
         m_creature->SetHealth(m_creature->GetMaxHealth());
     }
