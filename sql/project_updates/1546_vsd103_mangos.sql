@@ -39,8 +39,8 @@ insert into spell_script_target values (53677, 1, 29227);
 insert into spell_script_target values (53685, 1, 29175);
 
 DELETE FROM `gameobject` WHERE `id` IN (191330);
-INSERT INTO `gameobject` (`id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
-('191330','609','1','128','2283.896','-5287.914','83.066','1','0.0','0.0','0.0','1.0','180','0','1');
+INSERT INTO `gameobject` (guid, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
+(19133001, '191330','609','1','128','2283.896','-5287.914','83.066','1','0.0','0.0','0.0','1.0','180','0','1');
 
 DELETE FROM creature_ai_scripts WHERE id BETWEEN 90051 AND 90084;
 INSERT INTO `creature_ai_scripts` VALUES ('90051', '29199', '0', '0', '100', '3', '10000', '20000', '10000', '20000', '11', '52374', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Koltira Deathweaver - SPELL_BLOOD_STRIKE1');

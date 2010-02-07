@@ -98,6 +98,7 @@ enum
     SPELL_STATIC_FIELD             = 57428, // Summon trigger and cast this on them should be enought
     SPELL_SURGE_OF_POWER           = 56548, // Summon triggers and cast to random targets
     SPELL_SURGE_OF_POWER_H         = 57407,
+    SPELL_RIDE_WYRMREST_SKYTALON   = 61245, // Ride vehicle
     //Dragons spells
     SPELL_FLAME_SPIKE              = 56091,
     SPELL_ENGULF_IN_FLAMES         = 56092,
@@ -138,17 +139,27 @@ enum
     SAY_INTRO3                     = -1616002,
     SAY_INTRO4                     = -1616003,
     SAY_INTRO5                     = -1616004,
+    SAY_INTRO_PHASE3               = -1616018,
     SAY_AGGRO1                     = -1616005,
-    SAY_AGGRO2                     = -1616013, 
+    SAY_AGGRO2                     = -1616013,
+    SAY_AGGRO3                     = -1616019,
     SAY_VORTEX                     = -1616006,
     SAY_POWER_SPARK                = -1616007,
     SAY_DEATH                      = -1616011,
     SAY_KILL1_1                    = -1616008,
     SAY_KILL1_2                    = -1616009,
     SAY_KILL1_3                    = -1616010,
+    SAY_KILL2_1                    = -1616020,
+    SAY_KILL2_2                    = -1616021,
+    SAY_KILL2_3                    = -1616022,
+    SAY_KILL3_1                    = -1616023,
+    SAY_KILL3_2                    = -1616024,
+    SAY_KILL3_3                    = -1616025,
     SAY_END_PHASE1                 = -1616012,
+    SAY_END_PHASE2                 = -1616017,
     SAY_ARCANE_PULSE               = -1616014,
     SAY_ARCANE_PULSE_WARN          = -1616015,
+    SAY_ARCANE_OVERLOAD            = -1616016,
 
     SHELL_MIN_X                    = 722,
     SHELL_MAX_X                    = 768,
@@ -170,7 +181,9 @@ enum
     PHASE_ADDS                     = 2,
         SUBPHASE_TALK              = 21,
     PHASE_DRAGONS                  = 3,
-        SUBPHASE_DESTROY_PLATFORM  = 31,
+        SUBPHASE_DESTROY_PLATFORM1 = 31,
+        SUBPHASE_DESTROY_PLATFORM2 = 32,
+        SUBPHASE_DESTROY_PLATFORM3 = 33,
     PHASE_OUTRO                    = 4,
 
 };
@@ -216,7 +229,7 @@ static LocationsXY VortexLoc[]=
     {716, 1318},
 };
 #define MAX_VORTEX              21
-#define VORTEX_Z                270
+#define VORTEX_Z                268
 
 #define FLOOR_Z                 269.17
 #define AIR_Z                   297.24   
@@ -275,6 +288,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiArcaneStormTimer = 15000;
         
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
     }
 
     void JustReachedHome()
@@ -282,6 +297,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         Reset();
         m_uiPhase = PHASE_FLOOR;
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 60.0f)){
+        //    pPlatform->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED + GO_FLAG_DESTROYED);
+            pPlatform->SetUInt32Value(GAMEOBJECT_DISPLAYID, pPlatform->GetGOInfo()->displayId);
+        }
     }
 
     void AttackStart(Unit* pWho)
@@ -294,7 +313,6 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             m_creature->AddThreat(pWho);
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
-
             m_creature->GetMotionMaster()->MoveChase(pWho);
         }
     }
@@ -329,6 +347,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             case 0: DoScriptText(SAY_KILL1_1, m_creature); break;
             case 1: DoScriptText(SAY_KILL1_2, m_creature); break;
             case 2: DoScriptText(SAY_KILL1_3, m_creature); break;
+
+            case 3: DoScriptText(SAY_KILL2_1, m_creature); break;
+            case 4: DoScriptText(SAY_KILL2_2, m_creature); break;
+            case 5: DoScriptText(SAY_KILL2_3, m_creature); break;
+
+            case 6: DoScriptText(SAY_KILL3_1, m_creature); break;
+            case 7: DoScriptText(SAY_KILL3_2, m_creature); break;
+            case 8: DoScriptText(SAY_KILL3_3, m_creature); break;
         }
             
     }
@@ -346,8 +372,12 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
         }
-        m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z, m_creature->GetOrientation());
-        m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetMonsterMoveFlags(), time);
+        WorldPacket heart;
+        m_creature->BuildHeartBeatMsg(&heart);
+        m_creature->SendMessageToSet(&heart, false);
+        m_creature->GetMotionMaster()->MovePoint(0, x,y,z);
+       // m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z, m_creature->GetOrientation());
+       // m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetMonsterMoveFlags(), time);
     }
     void DoVortex(uint8 phase)
     {
@@ -409,7 +439,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             SetCombatMovement(true);
             float x, y, z;
             m_creature->GetPosition(x, y, z);
-            z = z - 20;
+            z = FLOOR_Z;
             DoMovement(x, y, z, 0);
         }
         
@@ -426,9 +456,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
                 m_lSparkGUIDList.push_back(pSpark->GetGUID());
             }
-        }else if(action == 2 || action == 3) // Start/stop movement
+        }
+        else if(action == 2 || action == 3) // Start/stop movement
         {
-            if(action == 2)
+            if(action == 3)
                 m_creature->RemoveAurasDueToSpell(SPELL_POWER_SPARK);
 
             if (m_lSparkGUIDList.empty())
@@ -452,17 +483,22 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     void DoSpawnAdds()
     {
         //Nexus lords
-        for(int i=0; i < m_bIsRegularMode ? NEXUS_LORD_COUNT : NEXUS_LORD_COUNT_H;i++)
+        int max_lords = m_bIsRegularMode ? NEXUS_LORD_COUNT : NEXUS_LORD_COUNT_H;
+        for(int i=0; i < max_lords;i++)
         {
             if(Creature *pLord = m_creature->SummonCreature(NPC_NEXUS_LORD, m_creature->getVictim()->GetPositionX()-5+rand()%10, m_creature->getVictim()->GetPositionY()-5+rand()%10, m_creature->getVictim()->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
                 pLord->AI()->AttackStart(m_creature->getVictim());
         }
         //Scions of eternity
-        for(int i=0; i < m_bIsRegularMode ? SCION_OF_ETERNITY_COUNT : SCION_OF_ETERNITY_COUNT_H;i++)
+        int max_scions = m_bIsRegularMode ? SCION_OF_ETERNITY_COUNT : SCION_OF_ETERNITY_COUNT_H;
+        for(int i=0; i < max_scions;i++)
         {
             uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
-            uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);    
-            m_creature->SummonCreature(NPC_SCION_OF_ETERNITY, x,y, FLOOR_Z+20, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
+            if(Creature *pScion = m_creature->SummonCreature(NPC_SCION_OF_ETERNITY, x,y, m_creature->getVictim()->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))            
+                    pScion->AI()->AttackStart(pTarget);
+            
         }       
     }
     bool IsThereAnyAdd()
@@ -503,7 +539,16 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     pPlayer->ExitVehicle();
 
                 if(Vehicle *pTemp = m_creature->SummonVehicle(NPC_WYRMREST_SKYTALON, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0))
-                    pPlayer->EnterVehicle(pTemp, 0, true);
+                {
+                    ((Creature*)pTemp)->SetUInt32Value(UNIT_CREATED_BY_SPELL, SPELL_RIDE_WYRMREST_SKYTALON);
+                    ((Creature*)pTemp)->SetCreatorGUID(pPlayer->GetGUID());
+                    pPlayer->CastSpell((Unit*)pTemp, SPELL_RIDE_WYRMREST_SKYTALON, true);
+
+                    //Propably some calculations
+                    ((Creature*)pTemp)->SetMaxHealth(100000);
+                    ((Creature*)pTemp)->SetHealth(100000);
+                    pPlayer->EnterVehicle(pTemp, 0, false);
+                }
             }
         }
     }
@@ -513,9 +558,12 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         {
             if(m_uiSubPhase == SUBPHASE_FLY_UP){
                 float x, y, z;
-                m_creature->GetPosition(x, y, z);
-                z = z + 40;
-                DoMovement(x, y, z, 0, true);
+                if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 180.0f))
+                {
+                    pTrigger->GetPosition(x, y, z);
+                    z = m_creature->GetPositionZ();
+                    DoMovement(x, y, z, 0, true);
+                }
                 m_uiSubPhase = SUBPHASE_UP;
             }
             else if(m_uiSubPhase == SUBPHASE_UP){
@@ -533,7 +581,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 {
                     float x, y, z;
                     m_creature->GetPosition(x, y, z);
-                    z = z - 40;
+                    z = FLOOR_Z;
                     DoMovement(x, y, z, 0, false);
                     m_uiSubPhase = SUBPHASE_FLY_DOWN2;
                     m_uiTimer = 1500;
@@ -624,9 +672,15 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     SetCombatMovement(false);
                     m_creature->GetMotionMaster()->MovementExpired(false);
                     DoScriptText(SAY_END_PHASE1, m_creature);
+                    float x, y, z;
+                    if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
+                    {
+                        pTrigger->GetPosition(x, y, z);
+                        DoMovement(x, y, z+40, 0, true);
+                    }
                     m_uiPhase = PHASE_ADDS;
                     m_uiSubPhase = SUBPHASE_TALK;
-                    m_uiTimer = 20000;
+                    m_uiTimer = 23000;
                     return;
                 }
                 m_uiTimer = 1500;
@@ -639,25 +693,22 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             {
                 if(m_uiTimer <= uiDiff)
                 {
-                    float x, y, z;
-                    if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                    {
-                        pTrigger->GetPosition(x, y, z);
-                        DoMovement(x, y, z+40, 0, true);
-                    }
                     DoScriptText(SAY_AGGRO2, m_creature);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     DoSpawnAdds();
                     DoSpawnShell();
                     m_uiShellTimer = 30000;
                     m_uiSubPhase = 0;
+                    m_uiTimer = 15000;
                 }else m_uiTimer -= uiDiff;
+                return;
             }
             
             //Arcane overload (bubble)
             if(m_uiShellTimer <= uiDiff)
             {
                 DoSpawnShell();
+                DoScriptText(SAY_ARCANE_OVERLOAD, m_creature);
                 m_uiShellTimer = 30000;
             }else m_uiShellTimer -= uiDiff;
 
@@ -679,16 +730,16 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiArcaneStormTimer = 20000;
             }else m_uiArcaneStormTimer -= uiDiff;
 
-            //Health check
-            if(m_uiTimer<= uiDiff)
+            if(m_uiTimer <= uiDiff)
             {
                 if(!IsThereAnyAdd())
                 {
                     m_uiPhase = PHASE_DRAGONS;
-                    m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM;
+                    m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM1;
+                    DoScriptText(SAY_END_PHASE2, m_creature);
                     if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
                         pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFORM_PRE, false);
-                    m_uiTimer = 3000;
+                    m_uiTimer = 6500;
                     return;
                 }
                 m_uiTimer = 5000;
@@ -696,25 +747,55 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         }
         else if(m_uiPhase == PHASE_DRAGONS)
         {
-            if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM)
+            if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM1)
             {
                 if(m_uiTimer<= uiDiff)
                 {
+                    //Destroy Platform
                     if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
                         pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFROM_BOOM, false);
+                    if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 60.0f))
+                        pPlatform->DealSiegeDamage(75000);                
+                    
+                    //Mount Players
                     MountPlayers();
+                    m_uiTimer = 2000;
+                    m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM2;
+                }else m_uiTimer -= uiDiff;
+                return;
+            }
+            else if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM2)
+            {
+                if(m_uiTimer<= uiDiff){
+                    float x, y, z;
+                    m_creature->GetPosition(x, y, z);
+                    DoMovement(x, y, z, 0, true);
+                    m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM3;
+                    DoScriptText(SAY_INTRO_PHASE3, m_creature);
+                    m_uiTimer = 14900;
+                }else m_uiTimer -= uiDiff;
+                return;
+            }
+            else if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM3)
+            {
+                if(m_uiTimer<= uiDiff){
                     m_uiSubPhase = 0;
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     SetCombatMovement(true);
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    if(Unit *pVehicle = ((Unit*)Unit::GetUnit(*m_creature, m_creature->getVictim()->GetVehicleGUID())))
+                    {
+                        DoResetThreat();
+                        m_creature->AI()->AttackStart(pVehicle);
+                        m_creature->AddThreat(pVehicle, 1.0f);
+                        m_creature->GetMotionMaster()->MoveChase(pVehicle);
+                    }
+                    DoScriptText(SAY_AGGRO3, m_creature);
                 }else m_uiTimer -= uiDiff;
                 return;
             }
 
             DoMeleeAttackIfReady();
-        }
-
-        
+        }  
     }
 };
 /*######
@@ -741,6 +822,10 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
         pMalygos = GetClosestCreatureWithEntry(m_creature, NPC_MALYGOS, 150.0f);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_FLY);
+        WorldPacket heart;
+        m_creature->BuildHeartBeatMsg(&heart);
+        m_creature->SendMessageToSet(&heart, false);
         m_uiCheckTimer = 2500;
     }
     void AttackStart(Unit *pWho)
@@ -788,6 +873,9 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             }
             if(pMalygos && pMalygos->isAlive() && m_creature->GetVisibility() == VISIBILITY_ON)
             {
+                WorldPacket heart;
+                m_creature->BuildHeartBeatMsg(&heart);
+                m_creature->SendMessageToSet(&heart, false);
                 if(m_creature->IsWithinDist(pMalygos, 3.0f, false))
                 {
                     
@@ -798,6 +886,76 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             }
             m_uiCheckTimer = 2500;
         }else m_uiCheckTimer -= uiDiff;
+    }
+};
+/*######
+## mob_scion_of_eternity
+######*/
+struct MANGOS_DLL_DECL mob_scion_of_eternityAI : public ScriptedAI
+{
+    mob_scion_of_eternityAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+    uint32 m_uiArcaneBarrageTimer;
+
+    void Reset()
+    {
+        m_creature->SetSpeedRate(MOVE_WALK, 3.5f, true);
+        m_creature->SetSpeedRate(MOVE_RUN, 3.5f, true);
+        m_creature->SetSpeedRate(MOVE_FLIGHT, 3.5f, true);
+        DoNextMovement();
+        m_uiArcaneBarrageTimer = 5000 + rand()%5000;
+
+    }
+    void AttackStart(Unit *pWho)
+    {
+        if (m_creature->Attack(pWho, true))
+        {
+            m_creature->AddThreat(pWho);
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+            //m_creature->GetMotionMaster()->MoveChase(pWho, 15.0f);
+        }
+    }
+    void DoNextMovement()
+    {
+        uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
+        uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
+        uint32 z = urand(uint32(FLOOR_Z), uint32(FLOOR_Z)+10);
+        m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
+    }
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if(uiType != POINT_MOTION_TYPE)
+            return;
+
+        switch(uiPointId)
+        {
+            case 0:
+                DoNextMovement();
+                break;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+        
+        if(m_uiArcaneBarrageTimer <= uiDiff)
+        {
+            m_creature->GetMotionMaster()->MovementExpired(false);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, SPELL_ARCANE_BARRAGE);
+            m_uiArcaneBarrageTimer = 3000 + rand()%5000;
+            DoNextMovement();
+        }else m_uiArcaneBarrageTimer -= uiDiff;
     }
 };
 /*######
@@ -834,6 +992,11 @@ CreatureAI* GetAI_mob_power_spark(Creature* pCreature)
 {
     return new mob_power_sparkAI(pCreature);
 }
+CreatureAI* GetAI_mob_scion_of_eternity(Creature* pCreature)
+{
+    return new mob_scion_of_eternityAI(pCreature);
+}
+
 
 void AddSC_boss_malygos()
 {
@@ -847,6 +1010,11 @@ void AddSC_boss_malygos()
     newscript = new Script;
     newscript->Name = "mob_power_spark";
     newscript->GetAI = &GetAI_mob_power_spark;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_scion_of_eternity";
+    newscript->GetAI = &GetAI_mob_scion_of_eternity;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -886,16 +1054,23 @@ VALUES (
 
 UPDATE gameobject_template SET ScriptName="go_focusing_iris" WHERE entry IN (193960, 193958);
 UPDATE creature_template SET ScriptName="boss_malygos" WHERE entry=28859;
-UPDATE creature_template SET ScriptName="mob_power_spark", faction_A = 16, faction_H = 16, `InhabitType` = '3', speed ='0.7' WHERE entry=30084;
+UPDATE creature_template SET ScriptName="mob_power_spark", faction_A = 16, faction_H = 16, `InhabitType` = '7', speed ='1' WHERE entry=30084;
+UPDATE creature_template SET ScriptName="mob_scion_of_eternity", `InhabitType` = '7', faction_A = 16, faction_H = 16 WHERE entry=30249;
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `entry` =30282;
 
 SELECT * FROM creature_addon WHERE guid IN (SELECT guid FROM creature WHERE id=28859)
 SELECT * FROM creature_template WHERE entry=28859;
 UPDATE `creature_template` SET `InhabitType` = '3' WHERE `entry` =28859 LIMIT 1 ;
 UPDATE `mangostest`.`creature` SET `spawndist` = '0',
 `MovementType` = '0' WHERE `creature`.`guid` =132313 LIMIT 1 ;
-INSERT INTO creature_template_addon (entry, vehicle_id) VALUES (30161, 264);
+INSERT INTO creature_template_addon (entry, vehicle_id) VALUES (30161, 194);
+INSERT INTO creature_template_addon (entry, vehicle_id) VALUES (32535, 264);
 
-INSERT INTO `scriptdev2`.`script_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`) VALUES
+INSERT INTO `vehicle_data` (`entry`, `flags`, `Spell1`, `Spell2`, `Spell3`, `Spell4`, `Spell5`, `Spell6`, `Spell7`, `Spell8`, `Spell9`, `Spell10`, `req_aura`) VALUES
+(194, 280, 56091, 56092, 57090, 57143, 57108, 57092, 0, 0, 0, 0, 0);
+INSERT INTO `vehicle_seat_data` (`seat`, `flags`) VALUES ('2102', '1');
+
+INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`) VALUES
 ('-1616000', 'Lesser beings, intruding here! A shame that your excess courage does not compensate for your stupidity!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14512', '1', '0', '457', NULL),
 ('-1616001', 'None but the blue dragonflight are welcome here! Perhaps this is the work of Alexstrasza? Well then, she has sent you to your deaths.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14513', '1', '0', '457', NULL),
 ('-1616002', 'What could you hope to accomplish, to storm brazenly into my domain? To employ MAGIC? Against ME? <Laughs>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14514', '1', '0', '457', NULL),
@@ -911,22 +1086,33 @@ INSERT INTO `scriptdev2`.`script_texts` (`entry`, `content_default`, `content_lo
 ('-1616012', 'I had hoped to end your lives quickly, but you have proven more...resilient then I had anticipated. Nonetheless, your efforts are in vain, it is you reckless, careless mortals who are to blame for this war! I do what I must...And if it means your...extinction...THEN SO BE IT!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14522', '1', '0', '1', NULL),
 ('-1616013', 'Few have experienced the pain I will now inflict upon you!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL),
 ('-1616014', 'YOU WILL NOT SUCCEED WHILE I DRAW BREATH!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL),
-('-1616015', 'Malygos takes a deep breath...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL);
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30090 LIMIT 1 ;
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30118 LIMIT 1 ;
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30334 LIMIT 1 ;
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =31253 LIMIT 1 ;
-
-UPDATE `mangostest`.`creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =32448 LIMIT 1 ;
+('-1616015', 'Malygos takes a deep breath...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14523', '1', '0', '1', NULL),
+('-1616016', 'I will teach you IGNORANT children just how little you know of magic...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14524', '1', '0', '1', NULL),
+('-1616017', 'ENOUGH! If you intend to reclaim Azeroth\'s magic, then you shall have it...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14529', '1', '0', '1', NULL),
+('-1616018', 'Now your benefactors make their appearance...But they are too late. The powers contained here are sufficient to destroy the world ten times over! What do you think they will do to you?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14530', '1', '0', '1', NULL),
+('-1616019', 'SUBMIT!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14531', '1', '0', '1', NULL),
+('-1616020', 'Your energy will be put to good use!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14526', '1', '0', '1', NULL),
+('-1616021', 'I AM THE SPELL-WEAVER! My power is INFINITE!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14527', '1', '0', '1', NULL),
+('-1616022', 'Your spirit will linger here forever!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14528', '1', '0', '1', NULL),
+('-1616023', 'Alexstrasza! Another of your brood falls!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14534', '1', '0', '1', NULL),
+('-1616024', 'Little more then gnats!', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14535', '1', '0', '1', NULL),
+('-1616025', 'Your red allies will share your fate...', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '14536', '1', '0', '1', NULL);
 
 
-UPDATE `mangostest`.`creature_template` SET `modelid_A` = '11686',
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30090 LIMIT 1 ;
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30118 LIMIT 1 ;
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =30334 LIMIT 1 ;
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =31253 LIMIT 1 ;
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `creature_template`.`entry` =32448 LIMIT 1 ;
+
+
+UPDATE `creature_template` SET `modelid_A` = '11686',
 `modelid_A2` = '11686',
 `modelid_H` = '11686',
 `modelid_H2` = '11686',
@@ -937,6 +1123,9 @@ maxlevel=80,
 `AIName` = '',
 `flags_extra` = '2' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
 
-INSERT INTO `mangostest`.`spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('56152', '1', '28859');
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('56152', '1', '28859');
+UPDATE `creature_model_info` SET `combat_reach` = '30' WHERE `modelid` =26752;
+
+UPDATE `mangostest`.`creature_template` SET `InhabitType` = '4' WHERE `creature_template`.`entry` =30118;
 
 */
