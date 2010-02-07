@@ -213,8 +213,9 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
             //DoCast(m_creature, SPELL_VANISH); We dont want to drop aggro
             m_uiVanishPhase = 1;
             bool stop = false;
-            for(m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0); stop == false;)
+            while(!stop)
             {
+                m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0);
                 if(m_uEmbraceTarget && m_uEmbraceTarget->isAlive() && m_uEmbraceTarget->GetTypeId() == TYPEID_PLAYER)
                     stop = true;
                 else
