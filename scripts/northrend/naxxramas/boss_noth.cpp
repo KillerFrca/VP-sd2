@@ -188,7 +188,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->GetMap()->CreatureRelocation(m_creature, LastX, LastY, LastZ, 0);
-                m_creature->SendMonsterMove(LastX, LastY, LastZ, 0, MONSTER_MOVE_NONE, 0);
+                m_creature->SendMonsterMove(LastX, LastY, LastZ, 0, SPLINEFLAG_NONE, 0);
                 DoStartMovement(m_creature->getVictim());
                 LastX = 0;
                 LastY = 0;
@@ -264,7 +264,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             m_creature->GetMotionMaster()->Clear(false);
             m_creature->GetMotionMaster()->MoveIdle();
             m_creature->GetMap()->CreatureRelocation(m_creature, TELE_X, TELE_Y, TELE_Z, TELE_O);
-            m_creature->SendMonsterMove(TELE_X, TELE_Y, TELE_Z, TELE_O, MONSTER_MOVE_NONE, 0);
+            m_creature->SendMonsterMove(TELE_X, TELE_Y, TELE_Z, TELE_O, SPLINEFLAG_NONE, 0);
             isTeleported = true;
             SecondPhaseCounter = 0;
             SecondPhase_Timer = 0;

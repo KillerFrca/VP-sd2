@@ -139,7 +139,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
             m_creature->GetMotionMaster()->Clear(false);
             m_creature->GetMotionMaster()->MoveIdle();
             m_creature->GetMap()->CreatureRelocation(m_creature, POS_X, POS_Y, POS_Z, POS_O);
-            m_creature->SendMonsterMove(POS_X, POS_Y, POS_Z, POS_O, MONSTER_MOVE_NONE, 0);
+            m_creature->SendMonsterMove(POS_X, POS_Y, POS_Z, POS_O, SPLINEFLAG_NONE, 0);
 
             Erupt_Timer = 5000;
             Phase_Timer = 45000;
