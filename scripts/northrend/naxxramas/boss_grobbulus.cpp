@@ -34,6 +34,7 @@ EndScriptData */
 #define SPELL_BERSERK               26662
 
 #define MOB_FALLOUT_SLIME   16290
+#define MOB_GROBBOLUS_CLOUD    16363
 
 struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
 {
@@ -59,6 +60,7 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
         SlimeSpary_Timer = 15000+rand()%15000;
         Enrage_Timer = 720000;
 
+        Despawnall();
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GROBBULUS, NOT_STARTED);
     }
@@ -67,6 +69,28 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GROBBULUS, DONE);
+        Despawnall();
+    }
+    
+    void Despawnall()
+    {
+     /*   std::list<Creature*> m_pCloud;
+        GetCreatureListWithEntryInGrid(m_pCloud, m_creature, MOB_GROBBOLUS_CLOUD, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!m_pCloud.empty())
+            for(std::list<Creature*>::iterator itr = m_pCloud.begin(); itr != m_pCloud.end(); ++itr)
+            {
+                (*itr)->ForcedDespawn();
+            }
+
+        std::list<Creature*> m_pSpray;
+        GetCreatureListWithEntryInGrid(m_pSpray, m_creature, MOB_FALLOUT_SLIME, DEFAULT_VISIBILITY_INSTANCE);
+
+        if (!m_pSpray.empty())
+            for(std::list<Creature*>::iterator iter = m_pSpray.begin(); iter != m_pSpray.end(); ++iter)
+            {
+                (*iter)->ForcedDespawn();
+            } */
     }
 
     void Aggro(Unit *who)

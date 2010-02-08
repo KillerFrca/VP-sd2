@@ -88,14 +88,13 @@ enum
     H_SPELL_HOLY_WRATH      = 57466,
     SPELL_HOLY_BOLT         = 57376,
     H_SPELL_HOLY_BOLT       = 57465,
-    SPELL_CONDEMNATION        = 57377, 
+    SPELL_CONDEMNATION      = 57377, 
 
     // horseman spirits
     NPC_SPIRIT_OF_BLAUMEUX    = 16776,
     NPC_SPIRIT_OF_RIVENDARE    = 0,                          //creature entry not known yet
     NPC_SPIRIT_OF_KORTHAZZ    = 16778,
     NPC_SPIRIT_OF_ZELIREK    = 16777,
-
 };
 
 /*walk coords*/
@@ -115,7 +114,7 @@ enum
 #define WALKY_ZELI                -2891.633
 #define WALKZ_ZELI                241.276
 
-
+#define HIGH_THREAT                  100000.0f
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
@@ -133,17 +132,18 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     uint32 VoidZone_Timer;
     uint32 Cast_Timer;
     bool Move_Check;
-    bool Attack_Check;
+    bool Chase;
 
     bool ShieldWall1;
     bool ShieldWall2;
 
     void Reset()
     {
-        Cast_Timer = 15000;
         Mark_Timer = 20000;                                 // First Horsemen Mark is applied at 20 sec.
         VoidZone_Timer = 12000;                             // right
+        Cast_Timer = 9000;
         Move_Check = true;
+        Chase = true;
 
         ShieldWall1 = true;
         ShieldWall2 = true;
@@ -156,6 +156,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_BLAUMEUX, IN_PROGRESS);
 
+        m_creature->AddThreat(who, HIGH_THREAT);
         m_creature->CallForHelp(50.0f);
     }
 
@@ -168,13 +169,55 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     {
         if (!pWho)
             return;
-
+ 
         if (m_creature->Attack(pWho, true))
         {
             m_creature->AddThreat(pWho);
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
+            if(Chase)
+            {
+                m_creature->GetMotionMaster()->MoveChase(pWho);
+                Chase = false;
+            }
         }
+    }
+
+    Unit *PickNearestPlayer()
+    {
+        Unit *nearp = NULL;
+        float neardist = 0.0f;
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const &lPlayers = pMap->GetPlayers();
+        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            Player* pPlayer = itr->getSource();
+            if (!pPlayer)
+                continue;
+            float pudist = pPlayer->GetDistance((const Creature *)m_creature);
+            if (!nearp || (neardist > pudist))
+            {
+                nearp = pPlayer;
+                neardist = pudist;
+            }
+        }
+        return nearp;
+    }
+
+
+    void Cast(Unit* pWho)
+    {
+        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        if (!pWho)
+            return;
+
+        if(pWho->IsWithinDist(m_creature, 40))
+            DoCast(pWho, m_bIsRegularMode ? SPELL_SHADOW_BOLT : H_SPELL_SHADOW_BOLT);
+        else
+            DoCast(pWho, SPELL_UNYILDING_PAIN);
+        Cast_Timer = 2050;
     }
 
     void JustDied(Unit* Killer)
@@ -198,18 +241,13 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
             Move_Check = false;
         }
         
-        // Cast
+        // Attack Start
         if (Cast_Timer < uiDiff)
         {
-            if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            if(m_creature->getVictim()->IsWithinDist(m_creature, 40))
-                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_SHADOW_BOLT : H_SPELL_SHADOW_BOLT);
-            else
-                DoCast(m_creature->getVictim(), SPELL_UNYILDING_PAIN);
-            Cast_Timer = 2050;
+            Unit *nearu = PickNearestPlayer();
+            m_creature->AddThreat(pWho, HIGH_THREAT);
+            Cast(nearu);
         }else Cast_Timer -= uiDiff;
-        
 
         // Mark of Blaumeux
         if (Mark_Timer < uiDiff)
@@ -295,6 +333,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
             m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
             m_pInstance->SetData(TYPE_RIVENDARE, IN_PROGRESS);
 
+        m_creature->AddThreat(who, HIGH_THREAT);
         m_creature->CallForHelp(50.0f);
     }
 
@@ -419,6 +458,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_KORTHAZZ, IN_PROGRESS);
 
+        m_creature->AddThreat(who, HIGH_THREAT);
         m_creature->CallForHelp(50.0f);
     }
 
@@ -508,17 +548,18 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
     uint32 Mark_Timer;
     uint32 HolyWrath_Timer;
     bool Move_Check;
-    bool Attack_Check;
+    bool Chase;
     
     bool ShieldWall1;
     bool ShieldWall2;
 
     void Reset()
     {
-        Cast_Timer = 15000;
         Mark_Timer = 20000;                                 // First Horsemen Mark is applied at 20 sec.
         HolyWrath_Timer = 12000;                            // right
+        Cast_Timer = 9000;
         Move_Check = true;
+        Chase = true;
         
         ShieldWall1 = true;
         ShieldWall2 = true;
@@ -531,19 +572,58 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ZELIEK, IN_PROGRESS);
 
+        m_creature->AddThreat(who, HIGH_THREAT);
         m_creature->CallForHelp(50.0f);
+    }
+
+    Unit *PickNearestPlayer()
+    {
+        Unit *nearp = NULL;
+        float neardist = 0.0f;
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const &lPlayers = pMap->GetPlayers();
+        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            Player* pPlayer = itr->getSource();
+            if (!pPlayer)
+                continue;
+            float pudist = pPlayer->GetDistance((const Creature *)m_creature);
+            if (!nearp || (neardist > pudist))
+            {
+                nearp = pPlayer;
+                neardist = pudist;
+            }
+        }
+        return nearp;
+    }
+
+    void Cast(Unit* pWho)
+    {
+        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        
+         if(pWho->IsWithinDist(m_creature, 40))
+            DoCast(pWho, m_bIsRegularMode ? SPELL_HOLY_BOLT : H_SPELL_HOLY_BOLT);
+        else
+            DoCast(pWho, SPELL_CONDEMNATION);
+        Cast_Timer = 2050;
     }
 
     void AttackStart(Unit* pWho)
     {
         if (!pWho)
             return;
-
+ 
         if (m_creature->Attack(pWho, true))
         {
             m_creature->AddThreat(pWho);
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
+            if(Chase)
+            {
+                m_creature->GetMotionMaster()->MoveChase(pWho);
+                Chase = false;
+            }
         }
     }
 
@@ -566,26 +646,22 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-           //run on aggro
+        //run on aggro
         if (m_creature->getVictim() && Move_Check)
         {
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             m_creature->GetMotionMaster()->MovePoint(0, WALKX_ZELI, WALKY_ZELI, WALKZ_ZELI);
             Move_Check = false;
         }
-        
-        // Cast
+
+        // Attack Start
         if (Cast_Timer < uiDiff)
         {
-            if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            if(m_creature->getVictim()->IsWithinDist(m_creature, 40))
-                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_HOLY_BOLT : H_SPELL_HOLY_BOLT);
-            else
-                DoCast(m_creature->getVictim(), SPELL_CONDEMNATION);
-            Cast_Timer = 2050;
+            Unit *nearu = PickNearestPlayer();
+            m_creature->AddThreat(pWho, HIGH_THREAT);
+            Cast(nearu);
         }else Cast_Timer -= uiDiff;
-
+        
         // Mark of Zeliek
         if (Mark_Timer < uiDiff)
         {

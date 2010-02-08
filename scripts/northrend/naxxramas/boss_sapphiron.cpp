@@ -108,33 +108,6 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             m_pInstance->SetData(TYPE_SAPPHIRON, IN_PROGRESS);
     }
 
-    void MoveInLineOfSight(Unit* who)
-    {
-        if (!who)
-            return;
-
-        if (who->isTargetableForAttack() && who->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (m_pInstance)
-            {
-                if (m_pInstance->GetData(TYPE_SAPPHIRON) == NOT_STARTED)
-                {
-                    if (/*m_pInstance->GetData(TYPE_THADDIUS) == DONE && */m_pInstance->GetData(TYPE_MAEXXNA) == DONE &&
-                        m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == DONE && m_pInstance->GetData(TYPE_LOATHEB) == DONE)
-                    {
-                        if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    }
-                    else
-                    {
-                        if (!m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
-                            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    }
-                }
-            }
-        }
-    }
-
     void SpellHitTarget(Unit *target, const SpellEntry *spell)
     {
         if(spell->Id == SPELL_ICEBOLT)
@@ -241,7 +214,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     m_creature->GetMotionMaster()->Clear(false);
                     m_creature->GetMotionMaster()->MoveIdle();
                     m_creature->GetMap()->CreatureRelocation(m_creature, SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, m_creature->GetOrientation()); 
-                    m_creature->SendMonsterMove(SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, 0, m_creature->GetSplineFlags(), 1);
+                    m_creature->SendMonsterMove(SAPPHIRON_X, SAPPHIRON_Y, SAPPHIRON_Z + 20, 0, m_creature->GetMonsterMoveFlags(), 1);
 
                     //DoCast(m_creature,11010);
                     //m_creature->SetHover(true);
