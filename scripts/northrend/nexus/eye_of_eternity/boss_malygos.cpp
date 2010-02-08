@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Malygos
-SD%Complete: 45%
+SD%Complete: 55%
 SDComment: 
 SDAuthor: Tassadar
 SDCategory: Nexus, Eye of Eternity
@@ -119,10 +119,12 @@ enum
 
     //////////////// PHASE 2 ////////////////
     NPC_HOVER_DISC                 = 30248, // Maybe wrong, two following NPC flying on them (vehicle)
+    DISPLAY_HOVER_DISC             = 26876, // DisplayID of hover disc
     NPC_NEXUS_LORD                 = 30245, // two (?) of them are spawned on beginning of phase 2
     NPC_SCION_OF_ETERNITY          = 30249, // same, but unknow count
     NPC_ARCANE_OVERLOAD            = 30282, // Bubles
     GO_PLATFORM                    = 193070,
+    GO_PLATFORM_DESTROY            = 393070,
 
     //////////////// PHASE 3 ////////////////
     NPC_WYRMREST_SKYTALON          = 30161, // Dragon Vehicle in Third Phase
@@ -297,9 +299,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         Reset();
         m_uiPhase = PHASE_FLOOR;
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 60.0f)){
+        if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 120.0f)){
         //    pPlatform->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED + GO_FLAG_DESTROYED);
-            pPlatform->SetUInt32Value(GAMEOBJECT_DISPLAYID, pPlatform->GetGOInfo()->displayId);
+            pPlatform->SetLootState(GO_READY);
         }
     }
 
@@ -363,7 +365,15 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         if(pSpell->Id == SPELL_POWER_SPARK)
             DoScriptText(SAY_POWER_SPARK, m_creature);
     }
-    void DoMovement(float x, float y, float z, uint32 time, bool tofly = false)
+    void SummonedCreatureDespawn(Creature* pDespawned)
+    {
+        float x,y,z;
+        pDespawned->GetPosition(x,y,z);
+        z = FLOOR_Z;
+        if(Vehicle *pDisc = m_creature->SummonVehicle(NPC_HOVER_DISC, x, y, z, 0))
+            ((Creature*)pDisc)->SetSpeedRate(MOVE_FLIGHT, 3.5f, true);
+    }
+    void DoMovement(float x, float y, float z, uint32 time, bool tofly = false, bool movepoint = true)
     {        
         if(tofly){
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
@@ -375,9 +385,13 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         WorldPacket heart;
         m_creature->BuildHeartBeatMsg(&heart);
         m_creature->SendMessageToSet(&heart, false);
-        m_creature->GetMotionMaster()->MovePoint(0, x,y,z);
-       // m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z, m_creature->GetOrientation());
-       // m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetSplineFlags(), time);
+        if(movepoint)
+            m_creature->GetMotionMaster()->MovePoint(0, x,y,z);
+        else
+        {
+            m_creature->GetMap()->CreatureRelocation(m_creature, x, y, z, m_creature->GetOrientation());
+            m_creature->SendMonsterMove(x, y, z, 0, m_creature->GetSplineFlags(), time);
+        }
     }
     void DoVortex(uint8 phase)
     {
@@ -487,7 +501,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         for(int i=0; i < max_lords;i++)
         {
             if(Creature *pLord = m_creature->SummonCreature(NPC_NEXUS_LORD, m_creature->getVictim()->GetPositionX()-5+rand()%10, m_creature->getVictim()->GetPositionY()-5+rand()%10, m_creature->getVictim()->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
+            {
+                pLord->Mount(DISPLAY_HOVER_DISC);
                 pLord->AI()->AttackStart(m_creature->getVictim());
+            }
         }
         //Scions of eternity
         int max_scions = m_bIsRegularMode ? SCION_OF_ETERNITY_COUNT : SCION_OF_ETERNITY_COUNT_H;
@@ -496,9 +513,11 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
             uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
             if(Creature *pScion = m_creature->SummonCreature(NPC_SCION_OF_ETERNITY, x,y, m_creature->getVictim()->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))            
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                {
                     pScion->AI()->AttackStart(pTarget);
-            
+                    pScion->Mount(DISPLAY_HOVER_DISC);
+                }
         }       
     }
     bool IsThereAnyAdd()
@@ -581,8 +600,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 {
                     float x, y, z;
                     m_creature->GetPosition(x, y, z);
-                    z = FLOOR_Z;
-                    DoMovement(x, y, z, 0, false);
+                    DoMovement(x, y, FLOOR_Z, 0, false);
                     m_uiSubPhase = SUBPHASE_FLY_DOWN2;
                     m_uiTimer = 1500;
                 }else m_uiTimer -= uiDiff;
@@ -754,8 +772,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     //Destroy Platform
                     if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
                         pTrigger->CastSpell(pTrigger, SPELL_DESTROY_PLATFROM_BOOM, false);
-                    if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 60.0f))
-                        pPlatform->DealSiegeDamage(75000);                
+                    if(GameObject *pPlatform = GetClosestGameObjectWithEntry(m_creature, GO_PLATFORM, 120.0f))
+                        pPlatform->SetLootState(GO_ACTIVATED);                
                     
                     //Mount Players
                     MountPlayers();
@@ -1127,5 +1145,10 @@ INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('5615
 UPDATE `creature_model_info` SET `combat_reach` = '30' WHERE `modelid` =26752;
 
 UPDATE `mangostest`.`creature_template` SET `InhabitType` = '4' WHERE `creature_template`.`entry` =30118;
+
+
+
+INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES
+(393070, 0, 8390, 'Nexus Raid Platform - custom destroyed', '', '', '', 35, 36, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '');
 
 */
