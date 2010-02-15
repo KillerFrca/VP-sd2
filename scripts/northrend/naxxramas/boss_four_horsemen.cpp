@@ -114,7 +114,7 @@ enum
 #define WALKY_ZELI                -2891.633
 #define WALKZ_ZELI                241.276
 
-#define HIGH_THREAT                  3.0f
+#define HIGH_THREAT               50.0f
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
@@ -213,6 +213,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         if (!pWho)
             return;
 
+        AttackStart(pWho);
         if(pWho->IsWithinDist(m_creature, 40))
             DoCast(pWho, m_bIsRegularMode ? SPELL_SHADOW_BOLT : H_SPELL_SHADOW_BOLT);
         else
@@ -241,11 +242,10 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
             Move_Check = false;
         }
         
-        // Attack Start
+        // Cast
         if (Cast_Timer < uiDiff)
         {
             Unit *nearu = PickNearestPlayer();
-            m_creature->AddThreat(nearu, HIGH_THREAT);
             Cast(nearu);
         }else Cast_Timer -= uiDiff;
 
@@ -602,7 +602,8 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         
-         if(pWho->IsWithinDist(m_creature, 40))
+        AttackStart(pWho);
+        if(pWho->IsWithinDist(m_creature, 40))
             DoCast(pWho, m_bIsRegularMode ? SPELL_HOLY_BOLT : H_SPELL_HOLY_BOLT);
         else
             DoCast(pWho, SPELL_CONDEMNATION);
@@ -654,11 +655,10 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
             Move_Check = false;
         }
 
-        // Attack Start
+        // Cast
         if (Cast_Timer < uiDiff)
         {
             Unit *nearu = PickNearestPlayer();
-            m_creature->AddThreat(nearu, HIGH_THREAT);
             Cast(nearu);
         }else Cast_Timer -= uiDiff;
         
