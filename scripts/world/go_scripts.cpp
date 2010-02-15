@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -217,7 +217,7 @@ bool GOHello_go_gilded_brazier(Player* pPlayer, GameObject* pGO)
 {
     if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
     {
-        if (Creature* pCreature = pPlayer->SummonCreature(NPC_STILLBLADE, 8087.632, -7542.740, 151.568, 0.122, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
+        if (Creature* pCreature = pPlayer->SummonCreature(NPC_STILLBLADE, 8087.632f, -7542.740f, 151.568f, 0.122f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
             pCreature->AI()->AttackStart(pPlayer);
     }
 
@@ -283,7 +283,39 @@ enum
 bool GOHello_go_sacred_fire_of_life(Player* pPlayer, GameObject* pGO)
 {
     if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
-        pPlayer->SummonCreature(NPC_ARIKARA, -5008.338, -2118.894, 83.657, 0.874, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        pPlayer->SummonCreature(NPC_ARIKARA, -5008.338f, -2118.894f, 83.657f, 0.874f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+
+    return true;
+}
+
+/*######
+## go_school_of_red_snapper
+######*/
+
+enum
+{
+    ITEM_RED_SNAPPER        = 23614,
+    NPC_ANGRY_MURLOC        = 17102,
+    SPELL_SUMMON_TEST       = 49214                         // ! Just wrong spell name? It summon correct creature (17102)
+};
+
+bool GOHello_go_school_of_red_snapper(Player* pPlayer, GameObject* pGo)
+{
+    if (!urand(0, 2))
+    {
+        // pPlayer->CastSpell(pPlayer, SPELL_SUMMON_TEST, true);
+
+        if (Creature *Murloc = pPlayer->SummonCreature(NPC_ANGRY_MURLOC, pPlayer->GetPositionX(), pPlayer->GetPositionY()+20.0f, pPlayer->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
+            Murloc->AI()->AttackStart(pPlayer);
+    }
+    else
+    {
+        if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(ITEM_RED_SNAPPER, 1))
+            pPlayer->SendNewItem(pItem, 1, true, false);
+    }
+
+    // not nice, need more research on how this kind of GO behave and how it must be handled in Mangos in such cases.
+    pGo->Delete();
 
     return true;
 }
@@ -455,6 +487,11 @@ void AddSC_go_scripts()
     newscript = new Script;
     newscript->Name = "go_sacred_fire_of_life";
     newscript->pGOHello =           &GOHello_go_sacred_fire_of_life;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_school_of_red_snapper";
+    newscript->pGOHello =           &GOHello_go_school_of_red_snapper;
     newscript->RegisterSelf();
 
     newscript = new Script;

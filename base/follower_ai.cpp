@@ -1,10 +1,10 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
 /* ScriptData
 SDName: FollowerAI
-SD%Complete: 50
+SD%Complete: 60
 SDComment: This AI is under development
 SDCategory: Npc
 EndScriptData */
@@ -36,9 +36,6 @@ void FollowerAI::AttackStart(Unit* pWho)
         m_creature->AddThreat(pWho);
         m_creature->SetInCombatWith(pWho);
         pWho->SetInCombatWith(m_creature);
-
-        if (m_creature->hasUnitState(UNIT_STAT_FOLLOW))
-            m_creature->clearUnitState(UNIT_STAT_FOLLOW);
 
         if (IsCombatMovement())
             m_creature->GetMotionMaster()->MoveChase(pWho);
@@ -129,8 +126,8 @@ void FollowerAI::JustDied(Unit* pKiller)
             {
                 if (Player* pMember = pRef->getSource())
                 {
-                    if (pPlayer->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->FailQuest(m_pQuestForFollow->GetQuestId());
+                    if (pMember->GetQuestStatus(m_pQuestForFollow->GetQuestId()) == QUEST_STATUS_INCOMPLETE)
+                        pMember->FailQuest(m_pQuestForFollow->GetQuestId());
                 }
             }
         }
@@ -304,7 +301,7 @@ void FollowerAI::StartFollow(Player* pLeader, uint32 uiFactionForFollower, const
 
     m_creature->GetMotionMaster()->MoveFollow(pLeader, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
-    debug_log("SD2: FollowerAI start follow %s (GUID %u)", pLeader->GetName(), m_uiLeaderGUID);
+    debug_log("SD2: FollowerAI start follow %s (GUID " UI64FMTD ")", pLeader->GetName(), m_uiLeaderGUID);
 }
 
 Player* FollowerAI::GetLeaderForFollower()
@@ -339,10 +336,8 @@ Player* FollowerAI::GetLeaderForFollower()
 
 void FollowerAI::SetFollowComplete(bool bWithEndEvent)
 {
-    if (m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+    if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
     {
-        m_creature->clearUnitState(UNIT_STAT_FOLLOW);
-
         m_creature->StopMoving();
         m_creature->GetMotionMaster()->Clear();
         m_creature->GetMotionMaster()->MoveIdle();
@@ -368,10 +363,8 @@ void FollowerAI::SetFollowPaused(bool bPaused)
     {
         AddFollowState(STATE_FOLLOW_PAUSED);
 
-        if (m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+        if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
         {
-            m_creature->clearUnitState(UNIT_STAT_FOLLOW);
-
             m_creature->StopMoving();
             m_creature->GetMotionMaster()->Clear();
             m_creature->GetMotionMaster()->MoveIdle();

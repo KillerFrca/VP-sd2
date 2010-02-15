@@ -41,6 +41,7 @@ UPDATE gameobject_template SET ScriptName='go_jump_a_tron' WHERE entry=183146;
 UPDATE gameobject_template SET ScriptName='go_orb_of_command' WHERE entry=179879;
 UPDATE gameobject_template SET ScriptName='go_resonite_cask' WHERE entry=178145;
 UPDATE gameobject_template SET ScriptName='go_sacred_fire_of_life' WHERE entry=175944;
+UPDATE gameobject_template SET ScriptName='go_school_of_red_snapper' WHERE entry=181616;
 UPDATE gameobject_template SET ScriptName='go_shrine_of_the_birds' WHERE entry IN (185547,185553,185551);
 UPDATE gameobject_template SET ScriptName='go_tablet_of_madness' WHERE entry=180368;
 UPDATE gameobject_template SET ScriptName='go_tablet_of_the_seven' WHERE entry=169294;
@@ -72,7 +73,6 @@ UPDATE creature_template SET ScriptName='guard_shattrath_scryer' WHERE entry=185
 
 /* ITEM */
 UPDATE item_template SET ScriptName='item_arcane_charges' WHERE entry=34475;
-UPDATE item_template SET ScriptName='item_draenei_fishing_net' WHERE entry=23654;
 UPDATE item_template SET ScriptName='item_flying_machine' WHERE entry IN (34060,34061);
 UPDATE item_template SET ScriptName='item_gor_dreks_ointment' WHERE entry=30175;
 UPDATE item_template SET ScriptName='item_nether_wraith_beacon' WHERE entry=31742;
@@ -239,6 +239,7 @@ UPDATE creature_template SET ScriptName='npc_spirit_of_olum' WHERE entry=23411;
 
 /* BLACKFATHOM DEPTHS */
 UPDATE instance_template SET script='instance_blackfathom_deeps' WHERE map=48;
+UPDATE gameobject_template SET ScriptName='go_fire_of_akumai' WHERE entry IN (21118,21119,21120,21121);
 
 /* BLACKROCK DEPTHS */
 DELETE FROM areatrigger_scripts WHERE entry=1526;
@@ -310,6 +311,7 @@ UPDATE creature_template SET ScriptName='npc_captured_sunhawk_agent' WHERE entry
 UPDATE creature_template SET ScriptName='npc_fizzcrank_fullthrottle' WHERE entry=25590;
 UPDATE creature_template SET ScriptName='npc_iruk' WHERE entry=26219;
 UPDATE creature_template SET ScriptName='npc_kara_thricestar' WHERE entry=26602;
+UPDATE creature_template SET ScriptName='npc_robot_reprogrammed' WHERE entry IN (25793,25758,25752,25792,25753);
 UPDATE creature_template SET ScriptName='npc_surristrasz' WHERE entry=24795;
 UPDATE creature_template SET ScriptName='npc_tiare' WHERE entry=30051;
 
@@ -479,6 +481,7 @@ UPDATE creature_template SET ScriptName='npc_henze_faulk' WHERE entry=6172;
 UPDATE creature_template SET ScriptName='npc_kelerun_bloodmourn' WHERE entry=17807;
 UPDATE gameobject_template SET ScriptName='go_harbinger_second_trial' WHERE entry=182052;
 UPDATE creature_template SET ScriptName='npc_prospector_anvilward' WHERE entry=15420;
+UPDATE creature_template SET ScriptName='npc_apprentice_mirveda' WHERE entry=15402;
 
 /* FELWOOD */
 UPDATE creature_template SET ScriptName='npc_kitten' WHERE entry=9937;
@@ -864,6 +867,7 @@ UPDATE creature_template SET ScriptName='npc_blood_knight_stillblade' WHERE entr
 /* SILVERPINE FOREST */
 UPDATE creature_template SET ScriptName='npc_astor_hadren' WHERE entry=6497;
 UPDATE creature_template SET ScriptName='npc_deathstalker_erland' WHERE entry=1978;
+UPDATE creature_template SET ScriptName='npc_deathstalker_faerleia' WHERE entry=2058;
 
 /* STOCKADES */
 
@@ -1097,7 +1101,11 @@ UPDATE instance_template SET script='instance_pinnacle' WHERE map=575;
 
 
 /* VIOLET HOLD */
-
+UPDATE instance_template SET script='instance_violet_hold' WHERE map=608;
+UPDATE gameobject_template SET ScriptName='go_activation_crystal' WHERE entry=193611;
+UPDATE creature_template SET ScriptName='npc_door_seal' WHERE entry=30896;
+UPDATE creature_template SET ScriptName='npc_sinclari' WHERE entry=30658;
+UPDATE creature_template SET ScriptName='npc_teleportation_portal' WHERE entry IN (31011,30679,32174);
 
 /* WAILING CAVERNS */
 

@@ -51,13 +51,10 @@ bool GossipSelect_npc_blood_knight_dawnstar(Player* pPlayer, Creature* pCreature
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
-        ItemPosCountVec dest;
-        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 24226, 1, false);
-        if (msg == EQUIP_ERR_OK)
-        {
-            pPlayer->StoreNewItem(dest, 24226, 1, true);
-            pPlayer->PlayerTalkClass->ClearMenus();
-        }
+        if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(24226, 1))
+            pPlayer->SendNewItem(pItem, 1, true, false);
+
+        pPlayer->CLOSE_GOSSIP_MENU();
     }
     return true;
 }
@@ -168,9 +165,9 @@ struct MANGOS_DLL_DECL npc_ranger_lilathaAI : public npc_escortAI
                 break;
             case 18:
                 DoScriptText(SAY_PROGRESS3, m_creature, pPlayer);
-                if (Creature* pSum1 = m_creature->SummonCreature(16342, 7627.083984, -7532.538086, 152.128616, 1.082733, TEMPSUMMON_DEAD_DESPAWN, 0))
+                if (Creature* pSum1 = m_creature->SummonCreature(16342, 7627.083984f, -7532.538086f, 152.128616f, 1.082733f, TEMPSUMMON_DEAD_DESPAWN, 0))
                     pSum1->AI()->AttackStart(m_creature);
-                if (Creature* pSum2 = m_creature->SummonCreature(16343, 7620.432129, -7532.550293, 152.454865, 0.827478, TEMPSUMMON_DEAD_DESPAWN, 0))
+                if (Creature* pSum2 = m_creature->SummonCreature(16343, 7620.432129f, -7532.550293f, 152.454865f, 0.827478f, TEMPSUMMON_DEAD_DESPAWN, 0))
                     pSum2->AI()->AttackStart(pPlayer);
                 break;
             case 19:

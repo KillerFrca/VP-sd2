@@ -1,19 +1,19 @@
 K 25
 svn:wc:ra_dav:version-url
 V 68
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj
+/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/ruins_of_ahnqiraj
 END
 boss_moam.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 82
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj/boss_moam.cpp
+/svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/ruins_of_ahnqiraj/boss_moam.cpp
 END
 ruins_of_ahnqiraj.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 90
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj/ruins_of_ahnqiraj.cpp
+/svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/ruins_of_ahnqiraj/ruins_of_ahnqiraj.cpp
 END
 boss_buru.cpp
 K 25
@@ -31,7 +31,7 @@ instance_ruins_of_ahnqiraj.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 99
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj/instance_ruins_of_ahnqiraj.cpp
+/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/ruins_of_ahnqiraj/instance_ruins_of_ahnqiraj.cpp
 END
 ruins_of_ahnqiraj.h
 K 25
@@ -43,13 +43,13 @@ boss_ayamiss.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 85
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj/boss_ayamiss.cpp
+/svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/ruins_of_ahnqiraj/boss_ayamiss.cpp
 END
 boss_kurinnaxx.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 87
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/ruins_of_ahnqiraj/boss_kurinnaxx.cpp
+/svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/ruins_of_ahnqiraj/boss_kurinnaxx.cpp
 END
 boss_ossirian.cpp
 K 25
