@@ -114,7 +114,7 @@ enum
 #define WALKY_ZELI                -2891.633
 #define WALKZ_ZELI                241.276
 
-#define HIGH_THREAT                  100000.0f
+#define HIGH_THREAT                  3.0f
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
@@ -245,7 +245,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         if (Cast_Timer < uiDiff)
         {
             Unit *nearu = PickNearestPlayer();
-            m_creature->AddThreat(pWho, HIGH_THREAT);
+            m_creature->AddThreat(nearu, HIGH_THREAT);
             Cast(nearu);
         }else Cast_Timer -= uiDiff;
 
@@ -658,7 +658,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         if (Cast_Timer < uiDiff)
         {
             Unit *nearu = PickNearestPlayer();
-            m_creature->AddThreat(pWho, HIGH_THREAT);
+            m_creature->AddThreat(nearu, HIGH_THREAT);
             Cast(nearu);
         }else Cast_Timer -= uiDiff;
         
