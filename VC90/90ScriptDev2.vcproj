@@ -2711,6 +2711,10 @@
 					RelativePath="..\scripts\world\npcs_special.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\scripts\world\spell_scripts.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

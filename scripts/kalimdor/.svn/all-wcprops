@@ -1,19 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 50
-/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor
-END
-felwood.cpp
-K 25
-svn:wc:ra_dav:version-url
-V 62
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/felwood.cpp
-END
-dustwallow_marsh.cpp
-K 25
-svn:wc:ra_dav:version-url
-V 71
-/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/dustwallow_marsh.cpp
+/svnroot/scriptdev2/!svn/ver/1585/scripts/kalimdor
 END
 orgrimmar.cpp
 K 25
@@ -21,11 +9,23 @@ svn:wc:ra_dav:version-url
 V 64
 /svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/orgrimmar.cpp
 END
+dustwallow_marsh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/dustwallow_marsh.cpp
+END
+felwood.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/scriptdev2/!svn/ver/1583/scripts/kalimdor/felwood.cpp
+END
 tanaris.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 62
-/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/tanaris.cpp
+/svnroot/scriptdev2/!svn/ver/1585/scripts/kalimdor/tanaris.cpp
 END
 silithus.cpp
 K 25
@@ -37,19 +37,19 @@ moonglade.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 64
-/svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/moonglade.cpp
-END
-teldrassil.cpp
-K 25
-svn:wc:ra_dav:version-url
-V 65
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/teldrassil.cpp
+/svnroot/scriptdev2/!svn/ver/1583/scripts/kalimdor/moonglade.cpp
 END
 ashenvale.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 64
 /svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/ashenvale.cpp
+END
+teldrassil.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/teldrassil.cpp
 END
 ungoro_crater.cpp
 K 25
@@ -69,17 +69,17 @@ svn:wc:ra_dav:version-url
 V 62
 /svnroot/scriptdev2/!svn/ver/1572/scripts/kalimdor/feralas.cpp
 END
-desolace.cpp
-K 25
-svn:wc:ra_dav:version-url
-V 63
-/svnroot/scriptdev2/!svn/ver/1537/scripts/kalimdor/desolace.cpp
-END
 azuremyst_isle.cpp
 K 25
 svn:wc:ra_dav:version-url
 V 69
-/svnroot/scriptdev2/!svn/ver/1568/scripts/kalimdor/azuremyst_isle.cpp
+/svnroot/scriptdev2/!svn/ver/1580/scripts/kalimdor/azuremyst_isle.cpp
+END
+desolace.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/scriptdev2/!svn/ver/1583/scripts/kalimdor/desolace.cpp
 END
 darkshore.cpp
 K 25

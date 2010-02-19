@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/scarlet_monastery
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:06.641726Z
-bb82e15c30553b66caa89eac8beb1017
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.593500Z
+7defa324986286dd646f4e6bd9d55b8b
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-3495
+3505
 
 instance_scarlet_monastery.cpp
 file
@@ -134,11 +134,11 @@ file
 
 
 
-2010-01-14T12:54:06.781928Z
-12825178a230aa1550d89c89b466a74d
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.623544Z
+28deb96b94f52eb5ad464bcb5ee202a5
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-2991
+3021
 
 boss_houndmaster_loksey.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2010-01-14T12:54:06.862043Z
-d1e2ef6367932756892b8c39a1a2fbb7
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.683630Z
+06bc0dc466dc54e2875f00c8cc9405bc
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-2343
+2363
 
 boss_bloodmage_thalnos.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2010-01-14T12:54:06.952172Z
-fd5739bef9f9e34095bcf60983d7e4e0
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.723688Z
+3ee5084b3e897f564d1581d01ac02e86
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-3601
+3641
 
 boss_herod.cpp
 file
@@ -236,10 +236,10 @@ file
 
 
 
-2010-01-14T12:54:07.012259Z
-094b70dccd26d63e9a4ac05f01a62143
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:38.927032Z
+1a08d30c855200f973a5c1f81e0a56b5
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 has-props
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-4639
+4794
 
 boss_headless_horseman.cpp
 file
@@ -304,10 +304,10 @@ file
 
 
 
-2010-01-14T12:54:07.152460Z
-00ec5d9dc0ee8ceb91a2fcc23bbcc240
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:13.803803Z
+92294e53b7ea68d700dbc0c05be162bc
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-12608
+12704
 
 boss_scorn.cpp
 file
@@ -338,11 +338,11 @@ file
 
 
 
-2010-01-14T12:54:07.272633Z
-64fc10ed422f18fa7843beaaf811a773
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.833846Z
+35082f8b0c19dad829e5ba592e8adc56
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-2954
+2994
 
 boss_arcanist_doan.cpp
 file
@@ -372,11 +372,11 @@ file
 
 
 
-2010-01-14T12:54:07.312691Z
-2ed27bbf23b16fcd134d448afad3bbde
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.873904Z
+a383f0719fc54e5a053040fd47e4f1c6
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-3805
+3855
 
 boss_high_inquisitor_fairbanks.cpp
 file
@@ -406,11 +406,11 @@ file
 
 
 
-2010-01-14T12:54:07.422849Z
-07832308cc5993d63277ae22bbaacb8f
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:13.913961Z
+9fe586e775eaadf9703cc95755098b58
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -432,5 +432,5 @@ has-props
 
 
 
-4130
+4190
 

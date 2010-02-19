@@ -1,15 +1,15 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/coilfang_reservoir/serpent_shrine
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:53:25.542628Z
-101452d47483e0f95ab5845582d56029
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:00.965342Z
+28cd9f818225c09c0150716804f10268
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-12052
+12102
 
 boss_leotheras_the_blind.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2010-01-14T12:53:25.642772Z
-e66f578d3c3d05d4c591e7c54390f339
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:01.005400Z
+ee9b90a0a68964bf2d3406d7fe652c06
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-11204
+11225
 
 boss_lady_vashj.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2010-01-14T12:53:25.782974Z
-4d7913a67f4d1c9cf7efcb01cfb3b01e
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:01.075500Z
+a7b91ff23f797c89619074e9b00ac0de
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-29859
+29923
 
 boss_fathomlord_karathress.cpp
 file
@@ -134,11 +134,11 @@ file
 
 
 
-2010-01-14T12:53:25.863089Z
-f7f6835a1ca54900220adf5381fe1b0b
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:01.115558Z
+eac3fec6d682934d8ddc7e9c82bc3bb5
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-19520
+19611
 
 boss_morogrim_tidewalker.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2010-01-14T12:53:25.953219Z
-7d5e0ef7b8f2af1c4a03f9d51c647e01
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:01.155616Z
+d38beeb408806e2395b5998d166d5b3f
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-11061
+11081
 
 instance_serpent_shrine.cpp
 file

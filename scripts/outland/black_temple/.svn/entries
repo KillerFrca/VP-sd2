@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/black_temple
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-05T12:24:08.693076Z
-1541
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2010-01-14T12:53:21.777214Z
-d0c220f22ec5f3461bf9c17bf884b928
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:31.185900Z
+ec710fd7dd0a4a52f64fbd66748fec77
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-17921
+18055
 
 black_temple.cpp
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2010-01-14T12:53:21.937444Z
-3eac20a398be1436b224c01838d7fad8
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:31.446275Z
+e8bb47532e2b458b557c4609900f2834
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-94911
+95412
 
 boss_mother_shahraz.cpp
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2010-01-14T12:53:22.007545Z
-75c9aad3731071c57d913faaf7062b50
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:31.746707Z
+75dc9d23a8b27173d8fe775a24a5cac8
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-9966
+10090
 
 illidari_council.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2010-01-14T12:53:22.087660Z
-0a8b0d5af66ee48aeac0f4afb63eb0eb
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:43:59.192793Z
+7cac86ba58b671f83642076d9d12d622
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-28234
+28394
 
 instance_black_temple.cpp
 file
@@ -270,10 +270,10 @@ file
 
 
 
-2010-01-14T12:53:22.227862Z
-712fef3c10e6986da743bba4e6ad7ba9
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:31.866880Z
+064c419e7981f874958b4bacd3a6af0b
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-6806
+6879
 
 boss_shade_of_akama.cpp
 file
@@ -304,10 +304,10 @@ file
 
 
 
-2010-01-14T12:53:22.348035Z
-66cb43222497585b57cb22d3033f4233
-2010-01-05T12:24:08.693076Z
-1541
+2010-02-15T14:43:59.282923Z
+a97b1c6e2fa536922662ff3905bdda40
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-31338
+31418
 
 boss_supremus.cpp
 file
@@ -338,10 +338,10 @@ file
 
 
 
-2010-01-14T12:53:22.398107Z
-d15a78250892372c1292e18437ab5079
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:31.967024Z
+b1ebcfc781074ca2115da5eb8e1e988f
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-12013
+12114
 
 boss_bloodboil.cpp
 file
@@ -372,10 +372,10 @@ file
 
 
 
-2010-01-14T12:53:22.508265Z
-573ca47d8da1d259e4694ab63fc74069
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:32.047139Z
+fb1ef3d36b793fbac271d4ac88d8b32f
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-11764
+11996
 
 boss_reliquary_of_souls.cpp
 file
@@ -406,10 +406,10 @@ file
 
 
 
-2010-01-14T12:53:22.598395Z
-5113012a8644c0adef32d819e75a0c45
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:43:59.403096Z
+9bf2b585aba5b0ee6757c175476dfbf4
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -432,5 +432,5 @@ has-props
 
 
 
-33371
+33604
 

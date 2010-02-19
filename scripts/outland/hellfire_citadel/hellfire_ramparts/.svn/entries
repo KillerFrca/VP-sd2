@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/outland/hellfire_citadel/hellfire_ramparts
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:53:16.850129Z
-2acd8dc696d178ec4dd40efc46279e95
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:43:57.219956Z
+7333bafe561edeb3cb6839de722d8a71
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-5295
+5325
 
 instance_hellfire_ramparts.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2010-01-14T12:53:16.980316Z
-4ae2b5af16e1241f064b7be7e2148068
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:43:57.260014Z
+fed2c5dc019d07e58ed1352b0261f220
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-7073
+7129
 
 hellfire_ramparts.h
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:53:17.140547Z
-78891cad13b472fea36718137e89744b
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:43:57.300072Z
+e61f3c7d08b35ef0c0cdafd8a436da89
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 

@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/zulaman
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2010-01-14T12:54:22.654752Z
-ffb12bafd8cf1c887666e583ef79b217
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:18.490542Z
+1feaf09e12407422ad5f62d74eabcb7e
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-5030
+5033
 
 boss_janalai.cpp
 file
@@ -66,10 +66,10 @@ file
 
 
 
-2010-01-14T12:54:22.925140Z
-bd1b037e48284ac11ca04a9a2dbc28fb
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:41.360531Z
+5ba74a77a938c88a3d623893f839f4cf
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 has-props
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-26281
+26543
 
 zulaman.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2010-01-14T12:54:23.576076Z
-ee4d36b401e0447a70944ec5e0661adf
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:18.600700Z
+d0458ff601d2cbd79bdbc50788b1cd2c
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-8181
+8203
 
 boss_halazzi.cpp
 file
@@ -134,11 +134,11 @@ file
 
 
 
-2010-01-14T12:54:24.066782Z
-997eff60341ebd768b9aa82ab8827498
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:18.640758Z
+09ce55fabcd6eccbf8bc32a5778eb506
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-12013
+12114
 
 boss_nalorakk.cpp
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:24.827876Z
-f4ee7c7898955e0fef2fba9e77236772
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:41.420617Z
+06724a6a6526611c23dddf56351ec786
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-8360
+8525
 
 instance_zulaman.cpp
 file
@@ -236,10 +236,10 @@ file
 
 
 
-2010-01-14T12:54:26.650497Z
-616807245eebe159122853fad3c1cbbe
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:18.720873Z
+32b4cf29530a449ab3093fdb13e7e751
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-24055
+24179
 
 zulaman.h
 file
@@ -304,10 +304,10 @@ file
 
 
 
-2010-01-14T12:54:28.523190Z
-4e2138b84a5a2bc176ffb73221922508
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:18.770945Z
+bd98ca9a10c39b21b2e3b7029ad17a21
+2010-02-07T13:39:06.943108Z
+1570
 nofantasy
 has-props
 
@@ -330,5 +330,5 @@ has-props
 
 
 
-9159
+9163
 

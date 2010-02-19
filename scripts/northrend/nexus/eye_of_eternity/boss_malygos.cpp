@@ -766,7 +766,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         DoMovement(x, y, z+40, 0, true);
                     }
                     //Despawn power sparks
-                    DespawnCreatures(NPC_POWER_SPARK);
+                    DespawnCreatures(NPC_POWER_SPARK, 120.0f);
                     m_uiPhase = PHASE_ADDS;
                     m_uiSubPhase = SUBPHASE_TALK;
                     m_uiTimer = 23000;
@@ -909,8 +909,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 else
                     pSpeaker = pAlexstrasza;
 
-                if(pSpeaker && pSpeaker->isAlive())
-                    DoScriptText(SAY_OUTRO1-m_uiSpeechCount, pSpeaker);
+                //if(pSpeaker && pSpeaker->isAlive())
+                    //DoScriptText(SAY_OUTRO1-m_uiSpeechCount, pSpeaker);
 
                 switch(m_uiSpeechCount)
                 {

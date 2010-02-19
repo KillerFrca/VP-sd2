@@ -46,13 +46,13 @@ EndContentData */
 
 float HighborneLoc[4][3]=
 {
-    {1285.41, 312.47, 0.51},
-    {1286.96, 310.40, 1.00},
-    {1289.66, 309.66, 1.52},
-    {1292.51, 310.50, 1.99},
+    {1285.41f, 312.47f, 0.51f},
+    {1286.96f, 310.40f, 1.00f},
+    {1289.66f, 309.66f, 1.52f},
+    {1292.51f, 310.50f, 1.99f},
 };
-#define HIGHBORNE_LOC_Y             -61.00
-#define HIGHBORNE_LOC_Y_NEW         -55.50
+#define HIGHBORNE_LOC_Y             -61.00f
+#define HIGHBORNE_LOC_Y_NEW         -55.50f
 
 struct MANGOS_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
 {
@@ -83,8 +83,7 @@ struct MANGOS_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         {
             if (Creature* pBunny = (Creature*)Unit::GetUnit(*summoned,targetGUID))
             {
-                pBunny->SendMonsterMove(pBunny->GetPositionX(), pBunny->GetPositionY(), myZ+15.0f, 0, MONSTER_MOVE_NONE, 0);
-                pBunny->GetMap()->CreatureRelocation(pBunny, pBunny->GetPositionX(), pBunny->GetPositionY(), myZ+15.0f, 0);
+                pBunny->NearTeleportTo(pBunny->GetPositionX(), pBunny->GetPositionY(), myZ+15.0f, 0.0f);
                 summoned->CastSpell(pBunny,SPELL_RIBBON_OF_SOULS,false);
             }
 
@@ -106,7 +105,7 @@ struct MANGOS_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                 m_creature->SummonCreature(ENTRY_HIGHBORNE_BUNNY,raX,raY,myZ,0,TEMPSUMMON_TIMED_DESPAWN,3000);
 
                 LamentEvent_Timer = 2000;
-                if (!m_creature->HasAura(SPELL_SYLVANAS_CAST,0))
+                if (!m_creature->HasAura(SPELL_SYLVANAS_CAST, EFFECT_INDEX_0))
                 {
                     DoScriptText(SAY_LAMENT_END, m_creature);
                     DoScriptText(EMOTE_LAMENT_END, m_creature);
@@ -168,7 +167,7 @@ struct MANGOS_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventMove_Timer < diff)
             {
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_LEVITATING);
+                m_creature->AddSplineFlag(SPLINEFLAG_NO_SPLINE);
                 m_creature->SendMonsterMoveWithSpeed(m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
                 m_creature->GetMap()->CreatureRelocation(m_creature,m_creature->GetPositionX(),m_creature->GetPositionY(),HIGHBORNE_LOC_Y_NEW,m_creature->GetOrientation());
                 EventMove = false;
@@ -178,7 +177,7 @@ struct MANGOS_DLL_DECL npc_highborne_lamenterAI : public ScriptedAI
         {
             if (EventCast_Timer < diff)
             {
-                DoCast(m_creature,SPELL_HIGHBORNE_AURA);
+                DoCastSpellIfCan(m_creature,SPELL_HIGHBORNE_AURA);
                 EventCast = false;
             }else EventCast_Timer -= diff;
         }
@@ -200,7 +199,7 @@ bool GossipHello_npc_parqual_fintallas(Player* pPlayer, Creature* pCreature)
     if (pCreature->isQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if (pPlayer->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasAura(SPELL_MARK_OF_SHAME,0))
+    if (pPlayer->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !pPlayer->HasAura(SPELL_MARK_OF_SHAME, EFFECT_INDEX_0))
     {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Gul'dan", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Kel'Thuzad", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);

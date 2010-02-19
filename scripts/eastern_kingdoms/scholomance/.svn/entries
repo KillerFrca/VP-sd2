@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/scholomance
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2010-01-14T12:54:46.859556Z
-582f0a0e597e7c03ba01dfe33e4af773
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:42.882720Z
+3cbdbe31deb2a647ea8b56e7a0285384
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-3433
+3528
 
 boss_vectus.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2010-01-14T12:54:46.909628Z
-ab4e467aa931a140d5e14b022ab98529
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:23.978433Z
+8b036e4ffd7cd2a1f4c737a74ec42cab
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-3187
+3217
 
 instance_scholomance.cpp
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:47.119931Z
-e0a6426bcca5c66ec0de251936c5ae1f
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.018491Z
+7dc5669f27856aebc9192377cea0d384
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-3446
+3490
 
 boss_instructor_malicia.cpp
 file
@@ -202,10 +202,10 @@ file
 
 
 
-2010-01-14T12:54:47.200046Z
-2173b3ce545555c57b76b45f424ad70d
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.058548Z
+d2ed2990dabe8baf3bbed42a70d9fc91
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-4467
+4521
 
 boss_death_knight_darkreaver.cpp
 file
@@ -270,10 +270,10 @@ file
 
 
 
-2010-01-14T12:54:47.310204Z
-039cd2dd441d8908e02a8af0483a271d
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.098606Z
+76c8ca1e88e9e676dc0814bb38904949
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-10936
+11228
 
 boss_lord_alexei_barov.cpp
 file
@@ -304,10 +304,10 @@ file
 
 
 
-2010-01-14T12:54:47.660708Z
-2309435fd912c1d6aed198989120f4e6
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.128649Z
+de071a27801c7ae5e61517607f339819
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-2987
+3011
 
 boss_kormok.cpp
 file
@@ -338,11 +338,11 @@ file
 
 
 
-2010-01-14T12:54:47.720795Z
-e6df27675cf7cf184af2df027b2d8973
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:24.178721Z
+9eece67472a835301c95c6634ba01273
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-4519
+4539
 
 boss_the_ravenian.cpp
 file
@@ -372,10 +372,10 @@ file
 
 
 
-2010-01-14T12:54:47.780881Z
-8add73a81b1f92a6b39b075c0819d309
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.218779Z
+88804961258b51308f7814023de8523f
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-3418
+3462
 
 boss_ras_frostwhisper.cpp
 file
@@ -406,11 +406,11 @@ file
 
 
 
-2010-01-14T12:54:47.901054Z
-d77f47eece8b2236f49b333047d11781
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:24.258836Z
+438bed87238d4b606afded07149b41e8
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -432,7 +432,7 @@ has-props
 
 
 
-3728
+3788
 
 boss_jandice_barov.cpp
 file
@@ -440,11 +440,11 @@ file
 
 
 
-2010-01-14T12:54:47.951126Z
-5d85e4cb03cf1877071fb0b22b2afab8
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:24.288880Z
+209e467a24806bc3434786cb7e5b2e02
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -466,7 +466,7 @@ has-props
 
 
 
-6518
+6548
 
 boss_lorekeeper_polkelt.cpp
 file
@@ -474,10 +474,10 @@ file
 
 
 
-2010-01-14T12:54:48.011212Z
-5ba73ad0d81a1a0d51c855463bfd3b18
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:24.328937Z
+2b5067d2e473a89d11c0577b3395703d
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -500,5 +500,5 @@ has-props
 
 
 
-3560
+3604
 

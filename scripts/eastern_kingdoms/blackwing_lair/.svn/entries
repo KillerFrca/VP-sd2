@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/blackwing_lair
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:36.074048Z
-a17a28ea82b07110938c551d25f31cdf
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:19.381824Z
+a6c9d2323e65f104371781dda48fffb6
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-3539
+3579
 
 boss_firemaw.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2010-01-14T12:54:36.124120Z
-0f6f0f38ec13cda08466635f90e4c5b4
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:19.411867Z
+d3996c2d7951a09fbb65c87351f922ce
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-2966
+2996
 
 boss_razorgore.cpp
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2010-01-14T12:54:36.184206Z
-e0d5c10d383bbd48ade96bbdfa62e0bf
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:41.921337Z
+3d4d596ce18f7ddfbf051c475f0ffeaf
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-4122
+4176
 
 boss_flamegor.cpp
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2010-01-14T12:54:37.456035Z
-b2d1a7d767be6e5a06426e5ad148c908
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:41.961395Z
+d4f83d59b54ebfe4ebe1de0c19682374
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 has-props
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-3134
+3219
 
 boss_chromaggus.cpp
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:38.657763Z
-beca975d68caa5755d991cd6db62489a
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:42.021481Z
+4b7e90523f2572e5cd5d66676b4c748e
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-11874
+12135
 
 boss_vaelastrasz.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2010-01-14T12:54:38.838022Z
-fbb7e6047bd3dca1c38d4adb8148d0b0
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:19.582112Z
+2b217181ea5c0c20432b41a13018f4e8
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-8595
+8655
 
 boss_victor_nefarius.cpp
 file
@@ -236,10 +236,10 @@ file
 
 
 
-2010-01-14T12:54:39.088382Z
-cb2ec0fdbc89088887dce7815dbf903d
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:42.101596Z
+25ad1573d51e52d970d1bc52658246cb
+2010-02-17T11:57:02.004470Z
+1579
 nofantasy
 has-props
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-14602
+14484
 
 boss_nefarian.cpp
 file
@@ -270,11 +270,11 @@ file
 
 
 
-2010-01-14T12:54:39.138454Z
-738f4e86f77e60536d5d24e12d201af3
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:19.652212Z
+ea628960b89401964f9e369431b65020
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-7866
+8016
 
 instance_blackwing_lair.cpp
 file
@@ -338,10 +338,10 @@ file
 
 
 
-2010-01-14T12:54:39.859491Z
-7af54ba128768017962b969d7151e3c8
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:42.151668Z
+4d2f414777d553e72fdb0d0098e2c401
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -364,5 +364,5 @@ has-props
 
 
 
-3306
+3360
 

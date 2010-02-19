@@ -70,28 +70,28 @@ struct MANGOS_DLL_DECL boss_razorgoreAI : public ScriptedAI
         //Cleave_Timer
         if (Cleave_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CLEAVE);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_CLEAVE);
             Cleave_Timer = urand(7000, 10000);
         }else Cleave_Timer -= diff;
 
         //WarStomp_Timer
         if (WarStomp_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_WARSTOMP);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_WARSTOMP);
             WarStomp_Timer = urand(15000, 25000);
         }else WarStomp_Timer -= diff;
 
         //FireballVolley_Timer
         if (FireballVolley_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_FIREBALLVOLLEY);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_FIREBALLVOLLEY);
             FireballVolley_Timer = urand(12000, 15000);
         }else FireballVolley_Timer -= diff;
 
         //Conflagration_Timer
         if (Conflagration_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CONFLAGRATION);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_CONFLAGRATION);
             //We will remove this threat reduction and add an aura check.
 
             //if (m_creature->getThreatManager().getThreat(m_creature->getVictim()))
@@ -101,7 +101,7 @@ struct MANGOS_DLL_DECL boss_razorgoreAI : public ScriptedAI
         }else Conflagration_Timer -= diff;
 
         // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
-        if (m_creature->getVictim()->HasAura(SPELL_CONFLAGRATION,0))
+        if (m_creature->getVictim()->HasAura(SPELL_CONFLAGRATION, EFFECT_INDEX_0))
         {
             Unit* target = NULL;
             target = SelectUnit(SELECT_TARGET_RANDOM,1);

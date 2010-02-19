@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/blackrock_spire
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:03.046556Z
-05f53e38d50220ec88af8b0d7bffe6ee
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.401787Z
+f8fd3c5cd727b7391de7dc3bf782cf96
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-6829
+6869
 
 boss_warmaster_voone.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2010-01-14T12:54:03.126672Z
-464df5c1734f5a7dd872aaef3984a26c
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.441844Z
+43a8519e51f3170ef30453af1ade46bd
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-3601
+3661
 
 boss_halycon.cpp
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2010-01-14T12:54:03.226816Z
-01f098cca904d39559b50f7d95b84ad1
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:12.481902Z
+d165eb40aaf46a9f6ddd6ce21c642b82
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-2833
+2857
 
 boss_the_beast.cpp
 file
@@ -134,11 +134,11 @@ file
 
 
 
-2010-01-14T12:54:03.326960Z
-0ebd246a973dc8e503377a9dc9d888aa
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.541988Z
+635baef78b7539ee073f86bd033157b1
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-2773
+2803
 
 boss_overlord_wyrmthalak.cpp
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:03.677464Z
-21fc0a082d454f5a679d388ced5e7d04
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:12.592060Z
+993d83527da5c7c685e78e6f41ebf2c3
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-4028
+4076
 
 boss_rend_blackhand.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2010-01-14T12:54:03.787622Z
-33309b4677833003db37b2c7d73c9418
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.622104Z
+c610df9d96e86b96bc3edc617edf266c
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-2766
+2796
 
 boss_highlord_omokk.cpp
 file
@@ -236,11 +236,11 @@ file
 
 
 
-2010-01-14T12:54:03.867737Z
-8b31b85694dca70f1bb86176fe74749b
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.662161Z
+213bce389911dd7ea958750943564695
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-3850
+3920
 
 boss_mother_smolderweb.cpp
 file
@@ -270,11 +270,11 @@ file
 
 
 
-2010-01-14T12:54:04.068025Z
-03f5d916c5a5a576424135bae616e484
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.702219Z
+2dcf3bc25d76b6555e88aff2601c7a4b
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-2702
+2722
 
 boss_shadow_hunter_voshgajin.cpp
 file
@@ -304,11 +304,11 @@ file
 
 
 
-2010-01-14T12:54:04.588774Z
-1dc6180944ca77e63ab836013e0ac34b
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.762305Z
+f5b33baa6068f1fb30bee5f6f25bb58e
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-2792
+2822
 
 boss_drakkisath.cpp
 file
@@ -338,11 +338,11 @@ file
 
 
 
-2010-01-14T12:54:04.759019Z
-80257c7da5292eaf4b68a4f1b26a0b55
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.792348Z
+6f81a710db83f858f88a4a8a48db2e1f
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-3100
+3140
 
 boss_pyroguard_emberseer.cpp
 file
@@ -372,11 +372,11 @@ file
 
 
 
-2010-01-14T12:54:04.899220Z
-51373b7275c3b88a2983dd3cbfbd2b71
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.852435Z
+e6bb293dc1847e2508b0fd3341e6eca6
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-2851
+2881
 
 boss_quartermaster_zigris.cpp
 file
@@ -406,11 +406,11 @@ file
 
 
 
-2010-01-14T12:54:04.959307Z
-b3962c06662afb8dd0e18fb4566fac1d
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:12.892492Z
+b95502ae1b61216c30114416f90e07dc
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -432,5 +432,5 @@ has-props
 
 
 
-2526
+2546
 

@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-05T12:24:08.693076Z
-1541
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:51.616396Z
-6f6681c7bc040a0ce7c74a656e1d2f36
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.470579Z
+d3e1a0cd09f6b9eca28c65a90e426722
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-2613
+2623
 
 zulgurub
 dir
@@ -103,11 +103,11 @@ file
 
 
 
-2010-01-14T12:54:52.617836Z
-79e3a7b9f1fef4c6715391f1e8472531
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.510636Z
+a9047ac1458fe9970f424a4050712b5c
+2010-02-02T15:01:29.814696Z
+1558
+deverend
 has-props
 
 
@@ -129,7 +129,7 @@ has-props
 
 
 
-3059
+3061
 
 gnomeregan
 dir
@@ -140,10 +140,10 @@ file
 
 
 
-2010-01-14T12:54:53.969780Z
-3418d1a1c132064994a433ff863fb33c
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.560708Z
+60c99c4021dfb831736bb5e336f9742c
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -166,7 +166,7 @@ has-props
 
 
 
-10597
+14035
 
 loch_modan.cpp
 file
@@ -245,10 +245,10 @@ file
 
 
 
-2010-01-14T12:54:56.673668Z
-895b90ca603c7863114d091458fd89ec
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:43.523641Z
+0b5ff1518de5a57f33d495b1b44b41e3
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -271,7 +271,7 @@ has-props
 
 
 
-8386
+8285
 
 ghostlands.cpp
 file
@@ -279,10 +279,10 @@ file
 
 
 
-2010-01-14T12:54:56.052776Z
-12696e15cf12c2d7dd802c05a2b07840
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.590752Z
+f90e8327b1b89d237aa7d1f73ceb370e
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -305,7 +305,7 @@ has-props
 
 
 
-8990
+8883
 
 deadmines
 dir
@@ -319,10 +319,10 @@ file
 
 
 
-2010-01-14T12:54:57.404720Z
-de9088640791b365717b87813cc180f1
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.710924Z
+fe84d72178e8cf605988cd3fc6727eb4
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -345,7 +345,7 @@ has-props
 
 
 
-10385
+10391
 
 searing_gorge.cpp
 file
@@ -353,10 +353,10 @@ file
 
 
 
-2010-01-14T12:54:57.334619Z
-97282f73debfe8f310ad506b409789cd
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.680881Z
+02653c1c0c95e9a70fcce92c9b815c73
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -379,12 +379,9 @@ has-props
 
 
 
-5587
+5595
 
 blackrock_spire
-dir
-
-scarlet_monastery
 dir
 
 isle_of_queldanas.cpp
@@ -393,11 +390,11 @@ file
 
 
 
-2010-01-14T12:54:57.584979Z
-8c0b5c8965a82a02b281acc9942a2d05
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.750982Z
+6b23ec8c7654f64f77c04c01dcf42c88
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -419,9 +416,9 @@ has-props
 
 
 
-5225
+5235
 
-karazhan
+scarlet_monastery
 dir
 
 stormwind_city.cpp
@@ -458,39 +455,11 @@ has-props
 
 8245
 
-westfall.cpp
-file
-
-
-
-
-2010-01-14T12:54:59.357528Z
-3cd6f4f0de77a5b74885a6a2c1f649da
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9073
+karazhan
+dir
+
+blackrock_depths
+dir
 
 wetlands.cpp
 file
@@ -526,8 +495,39 @@ has-props
 
 4664
 
-blackrock_depths
-dir
+westfall.cpp
+file
+
+
+
+
+2010-02-15T14:44:25.791040Z
+e645714e999bf8f1d623271f13c73525
+2010-02-10T00:24:08.032959Z
+1572
+nofantasy
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9131
 
 sunwell_plateau
 dir
@@ -541,17 +541,20 @@ dir
 blackwing_lair
 dir
 
+sunken_temple
+dir
+
 boss_kruul.cpp
 file
 
 
 
 
-2010-01-14T12:54:59.818190Z
-9de23c3884de207326f6102b665d23eb
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.831097Z
+4bb95f7c7988e01a647bec837f669278
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -573,10 +576,7 @@ has-props
 
 
 
-5353
-
-sunken_temple
-dir
+5423
 
 arathi_highlands.cpp
 file
@@ -584,10 +584,10 @@ file
 
 
 
-2010-01-14T12:55:02.331804Z
-713a1f85e1a1a073922111e88b76cbb1
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.871155Z
+baaec78885feb96431469708360784f0
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -610,7 +610,7 @@ has-props
 
 
 
-4329
+4337
 
 uldaman
 dir
@@ -624,11 +624,11 @@ file
 
 
 
-2010-01-14T12:55:04.074310Z
-c4b26ba50d4b384c31bdd8c9c015d92a
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.901198Z
+ae5ad1a77f2f95f9520a0495a1b2cf98
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -650,7 +650,7 @@ has-props
 
 
 
-2582
+2592
 
 silverpine_forest.cpp
 file
@@ -658,10 +658,10 @@ file
 
 
 
-2010-01-14T12:55:04.575030Z
-62434fa3994b8ee8523cde6569a9caa9
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.941256Z
+eacc88aa7f944f131fdedfe98236b161
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -684,7 +684,7 @@ has-props
 
 
 
-7055
+13511
 
 burning_steppes.cpp
 file
@@ -692,10 +692,10 @@ file
 
 
 
-2010-01-14T12:55:05.826830Z
-320afefc51a89f0ed552648e869d8eca
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:43.593742Z
+33412804459c05cbd7dbc0a6ceecdc10
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -718,7 +718,7 @@ has-props
 
 
 
-6630
+6654
 
 alterac_mountains.cpp
 file
@@ -766,11 +766,11 @@ file
 
 
 
-2010-01-14T12:55:06.738140Z
-d22da39b1f805f9361db7f9147f31387
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:26.051414Z
+76fd8958050505cf2cd195135b5fb650
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -792,7 +792,7 @@ has-props
 
 
 
-6045
+6055
 
 magisters_terrace
 dir
@@ -803,11 +803,11 @@ file
 
 
 
-2010-01-14T12:55:06.808241Z
-0fd6d9b2ab598018b8a254fef25ced3a
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:26.111500Z
+af388d9362fad64b77e1a9762682a304
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -829,7 +829,7 @@ has-props
 
 
 
-3101
+3111
 
 ironforge.cpp
 file
@@ -871,10 +871,10 @@ file
 
 
 
-2010-01-14T12:55:07.018544Z
-ec81fa1abb92682be921f3ec94294682
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:26.141544Z
+3f0e222b3ceee4b5cca8d470ca91dd22
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -897,5 +897,5 @@ has-props
 
 
 
-5829
+5833
 

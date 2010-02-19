@@ -93,7 +93,9 @@ struct MANGOS_DLL_DECL mob_doom_blossomAI : public ScriptedAI
 
         if (ShadowBoltTimer < diff)
         {
-            DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCastSpellIfCan(pTarget, SPELL_SHADOWBOLT);
+
             ShadowBoltTimer = 10000;
         }else ShadowBoltTimer -= diff;
     }
@@ -158,7 +160,7 @@ struct MANGOS_DLL_DECL mob_shadowy_constructAI : public ScriptedAI
         Unit* target = targets.front();
         if (target && m_creature->IsWithinDistInMap(target, m_creature->GetAttackDistance(target)))
         {
-            DoCast(target, SPELL_ATROPHY);
+            DoCastSpellIfCan(target, SPELL_ATROPHY);
             m_creature->AI()->AttackStart(target);
         }
     }
@@ -311,7 +313,7 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         Unit* Ghost = NULL;
         if (GhostGUID)
             Ghost = Unit::GetUnit((*m_creature), GhostGUID);
-        if (Ghost && Ghost->isAlive() && Ghost->HasAura(SPELL_SHADOW_OF_DEATH, 0))
+        if (Ghost && Ghost->isAlive() && Ghost->HasAura(SPELL_SHADOW_OF_DEATH, EFFECT_INDEX_0))
         {
             /*float x,y,z;
             Ghost->GetPosition(x,y,z);
@@ -427,7 +429,7 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             if (target)
             {
                 DoScriptText(urand(0, 1) ? SAY_SPECIAL1 : SAY_SPECIAL2, m_creature);
-                DoCast(target, SPELL_INCINERATE);
+                DoCastSpellIfCan(target, SPELL_INCINERATE);
                 IncinerateTimer = urand(20000, 50000);
             }
         }else IncinerateTimer -= diff;
@@ -436,7 +438,7 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         {
             Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if (target && target->isAlive())
-                DoCast(target, SPELL_CRUSHING_SHADOWS);
+                DoCastSpellIfCan(target, SPELL_CRUSHING_SHADOWS);
 
             CrushingShadowsTimer = urand(10000, 26000);
         }else CrushingShadowsTimer -= diff;
@@ -451,7 +453,7 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
 
             if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER)
             {
-                DoCast(target, SPELL_SHADOW_OF_DEATH);
+                DoCastSpellIfCan(target, SPELL_SHADOW_OF_DEATH);
                 GhostGUID = target->GetGUID();
                 ShadowOfDeathTimer = 30000;
                 SummonShadowsTimer = 53000; // Make it VERY close but slightly less so that we can check if the aura is still on the pPlayer
@@ -464,11 +466,11 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
             RandomYellTimer = urand(50000, 100000);
         }else RandomYellTimer -= diff;
 
-        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!m_creature->HasAura(SPELL_BERSERK, EFFECT_INDEX_0))
         {
             if (EnrageTimer < diff)
             {
-                DoCast(m_creature, SPELL_BERSERK);
+                DoCastSpellIfCan(m_creature, SPELL_BERSERK);
                 DoScriptText(SAY_ENRAGE, m_creature);
             }else EnrageTimer -= diff;
         }

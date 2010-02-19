@@ -139,8 +139,8 @@ struct MANGOS_DLL_DECL mob_lumpAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (m_creature->HasAura(SPELL_VISUAL_SLEEP,0))
-            m_creature->RemoveAura(SPELL_VISUAL_SLEEP,0);
+        if (m_creature->HasAura(SPELL_VISUAL_SLEEP, EFFECT_INDEX_0))
+            m_creature->RemoveAurasDueToSpell(SPELL_VISUAL_SLEEP);
 
         if (!m_creature->IsStandState())
             m_creature->SetStandState(UNIT_STAND_STATE_STAND);
@@ -169,7 +169,7 @@ struct MANGOS_DLL_DECL mob_lumpAI : public ScriptedAI
         //Spear_Throw_Timer
         if (Spear_Throw_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_SPEAR_THROW);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SPEAR_THROW);
             Spear_Throw_Timer = 20000;
         }else Spear_Throw_Timer -= diff;
 
@@ -507,8 +507,8 @@ enum
     NPC_MURK_PUTRIFIER          = 18202
 };
 
-static float m_afAmbushA[]= {-1568.805786, 8533.873047, 1.958};
-static float m_afAmbushB[]= {-1491.554321, 8506.483398, 1.248};
+static float m_afAmbushA[]= {-1568.805786f, 8533.873047f, 1.958f};
+static float m_afAmbushB[]= {-1491.554321f, 8506.483398f, 1.248f};
 
 struct MANGOS_DLL_DECL npc_maghar_captiveAI : public npc_escortAI
 {
@@ -586,7 +586,7 @@ struct MANGOS_DLL_DECL npc_maghar_captiveAI : public npc_escortAI
 
         if (m_uiChainLightningTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING);
             m_uiChainLightningTimer = urand(7000, 14000);
         }
         else
@@ -596,7 +596,7 @@ struct MANGOS_DLL_DECL npc_maghar_captiveAI : public npc_escortAI
         {
             if (m_uiHealTimer < uiDiff)
             {
-                DoCast(m_creature, SPELL_HEALING_WAVE);
+                DoCastSpellIfCan(m_creature, SPELL_HEALING_WAVE);
                 m_uiHealTimer = 5000;
             }
             else
@@ -605,7 +605,7 @@ struct MANGOS_DLL_DECL npc_maghar_captiveAI : public npc_escortAI
 
         if (m_uiFrostShockTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_FROST_SHOCK);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_SHOCK);
             m_uiFrostShockTimer = urand(7500, 15000);
         }
         else

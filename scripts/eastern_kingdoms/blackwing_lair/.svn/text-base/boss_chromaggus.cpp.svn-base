@@ -209,24 +209,26 @@ struct MANGOS_DLL_DECL boss_chromaggusAI : public ScriptedAI
                 case 4: spell = SPELL_ARCANE_VURNALBILTY; break;
             }
 
-            DoCast(m_creature,spell);
-            CurrentVurln_Spell = spell;
+            if (DoCastSpellIfCan(m_creature, spell) == CAST_OK)
+            {
+                CurrentVurln_Spell = spell;
 
-            DoScriptText(EMOTE_SHIMMER, m_creature);
-            Shimmer_Timer = 45000;
+                DoScriptText(EMOTE_SHIMMER, m_creature);
+                Shimmer_Timer = 45000;
+            }
         }else Shimmer_Timer -= diff;
 
         //Breath1_Timer
         if (Breath1_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),Breath1_Spell);
+            DoCastSpellIfCan(m_creature->getVictim(),Breath1_Spell);
             Breath1_Timer = 60000;
         }else Breath1_Timer -= diff;
 
         //Breath2_Timer
         if (Breath2_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),Breath2_Spell);
+            DoCastSpellIfCan(m_creature->getVictim(),Breath2_Spell);
             Breath2_Timer = 60000;
         }else Breath2_Timer -= diff;
 
@@ -253,17 +255,17 @@ struct MANGOS_DLL_DECL boss_chromaggusAI : public ScriptedAI
                 if (pUnit)
                 {
                     //Cast affliction
-                    DoCast(pUnit, SpellAfflict, true);
+                    DoCastSpellIfCan(pUnit, SpellAfflict, CAST_TRIGGERED);
 
                     //Chromatic mutation if target is effected by all afflictions
-                    if (pUnit->HasAura(SPELL_BROODAF_BLUE,0)
-                        && pUnit->HasAura(SPELL_BROODAF_BLACK,0)
-                        && pUnit->HasAura(SPELL_BROODAF_RED,0)
-                        && pUnit->HasAura(SPELL_BROODAF_BRONZE,0)
-                        && pUnit->HasAura(SPELL_BROODAF_GREEN,0))
+                    if (pUnit->HasAura(SPELL_BROODAF_BLUE, EFFECT_INDEX_0)
+                        && pUnit->HasAura(SPELL_BROODAF_BLACK, EFFECT_INDEX_0)
+                        && pUnit->HasAura(SPELL_BROODAF_RED, EFFECT_INDEX_0)
+                        && pUnit->HasAura(SPELL_BROODAF_BRONZE, EFFECT_INDEX_0)
+                        && pUnit->HasAura(SPELL_BROODAF_GREEN, EFFECT_INDEX_0))
                     {
                         //target->RemoveAllAuras();
-                        //DoCast(target,SPELL_CHROMATIC_MUT_1);
+                        //DoCastSpellIfCan(target,SPELL_CHROMATIC_MUT_1);
 
                         //Chromatic mutation is causing issues
                         //Assuming it is caused by a lack of core support for Charm
@@ -282,15 +284,17 @@ struct MANGOS_DLL_DECL boss_chromaggusAI : public ScriptedAI
         //Frenzy_Timer
         if (Frenzy_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FRENZY);
-            DoScriptText(EMOTE_GENERIC_FRENZY_KILL, m_creature);
-            Frenzy_Timer = urand(10000, 15000);
+            if (DoCastSpellIfCan(m_creature,SPELL_FRENZY) == CAST_OK)
+            {
+                DoScriptText(EMOTE_GENERIC_FRENZY_KILL, m_creature);
+                Frenzy_Timer = urand(10000, 15000);
+            }
         }else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
         if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 20)
         {
-            DoCast(m_creature,SPELL_ENRAGE);
+            DoCastSpellIfCan(m_creature,SPELL_ENRAGE);
             Enraged = true;
         }
 

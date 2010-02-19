@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/blackrock_depths
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:11.588840Z
-427275847e1ffee196a0567e52603114
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:15.896812Z
+32e8eebabf20b25354bc6139a48e823f
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-3181
+3191
 
 boss_high_interrogator_gerstahn.cpp
 file
@@ -66,10 +66,10 @@ file
 
 
 
-2010-01-14T12:54:11.628897Z
-7ea70b1e4d2b91633c9d423cb8d8cfb9
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:40.118745Z
+1cd09ff1b4ad1bbc0870b7583668bdad
+2010-02-16T15:12:53.200924Z
+1576
 nofantasy
 has-props
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-3352
+3543
 
 boss_magmus.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2010-01-14T12:54:11.749070Z
-a6192511dbcd86564ad0bc46aa024db4
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:15.986942Z
+ebe831a170199c44eeda2b4fd63fce4d
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-3120
+3140
 
 blackrock_depths.cpp
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2010-01-14T12:54:11.809156Z
-408eafd930170971691e034d16973ee2
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:16.027000Z
+e3641a81aa934b039283aa167ba536c4
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-23593
+23650
 
 boss_general_angerforge.cpp
 file
@@ -168,11 +168,11 @@ file
 
 
 
-2010-01-14T12:54:12.089560Z
-6ed96d95514df4b0690e1ce4640d4220
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:16.087086Z
+22707436729076b69cbb6e1bfb081d1f
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-5002
+5032
 
 instance_blackrock_depths.cpp
 file
@@ -270,11 +270,11 @@ file
 
 
 
-2010-01-14T12:54:12.670395Z
-5c630ec5fd6ee121ac43e73544378b26
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:16.127144Z
+b7cdf6ff5d0cdfdc5af3c16247369a08
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-3585
+3635
 
 boss_gorosh_the_dervish.cpp
 file
@@ -304,11 +304,11 @@ file
 
 
 
-2010-01-14T12:54:12.710452Z
-b9998612917f069900205fe348bc1798
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:16.167201Z
+f9b668ef06f54377b916904abc5c0dbb
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-2418
+2438
 
 boss_tomb_of_seven.cpp
 file
@@ -338,11 +338,11 @@ file
 
 
 
-2010-01-14T12:54:12.780553Z
-ebac7492c7871081f4d197d12d48b2aa
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:16.197244Z
+3e2df132583f1885279eb297caac55fe
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-11184
+11224
 
 boss_emperor_dagran_thaurissan.cpp
 file
@@ -372,11 +372,11 @@ file
 
 
 
-2010-01-14T12:54:12.890712Z
-39a1803e97c2279967b7a61f54f756fa
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:16.237302Z
+b2b0d4884f4163d2f4f9dc357ba329ed
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-7547
+7607
 
 boss_grizzle.cpp
 file
@@ -406,10 +406,10 @@ file
 
 
 
-2010-01-14T12:54:12.940784Z
-4218e06cf6ec27b7507c789b71c8b5b9
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:40.168817Z
+0e4529f349d7840908adcd6fd129f629
+2010-02-19T01:44:17.441101Z
+1584
 nofantasy
 has-props
 
@@ -432,5 +432,5 @@ has-props
 
 
 
-2538
+2620
 

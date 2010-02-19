@@ -92,7 +92,7 @@ struct MANGOS_DLL_DECL boss_ambassador_hellmawAI : public npc_escortAI
 
     void DoIntro()
     {
-        if (m_creature->HasAura(SPELL_BANISH,0))
+        if (m_creature->HasAura(SPELL_BANISH, EFFECT_INDEX_0))
             m_creature->RemoveAurasDueToSpell(SPELL_BANISH);
 
         IsBanished = false;
@@ -112,7 +112,7 @@ struct MANGOS_DLL_DECL boss_ambassador_hellmawAI : public npc_escortAI
 
     void MoveInLineOfSight(Unit *who)
     {
-        if (m_creature->HasAura(SPELL_BANISH,0))
+        if (m_creature->HasAura(SPELL_BANISH, EFFECT_INDEX_0))
             return;
 
         npc_escortAI::MoveInLineOfSight(who);
@@ -170,13 +170,13 @@ struct MANGOS_DLL_DECL boss_ambassador_hellmawAI : public npc_escortAI
 
         if (CorrosiveAcid_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_CORROSIVE_ACID);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_CORROSIVE_ACID);
             CorrosiveAcid_Timer = urand(15000, 25000);
         }else CorrosiveAcid_Timer -= diff;
 
         if (Fear_Timer < diff)
         {
-            DoCast(m_creature,SPELL_FEAR);
+            DoCastSpellIfCan(m_creature,SPELL_FEAR);
             Fear_Timer = urand(20000, 35000);
         }else Fear_Timer -= diff;
 
@@ -184,7 +184,7 @@ struct MANGOS_DLL_DECL boss_ambassador_hellmawAI : public npc_escortAI
         {
             if (!Enraged && Enrage_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ENRAGE);
+                DoCastSpellIfCan(m_creature,SPELL_ENRAGE);
                 Enraged = true;
             }else Enrage_Timer -= diff;
         }

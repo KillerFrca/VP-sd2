@@ -388,7 +388,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
         SetCombatMovement(false);
         m_creature->GetMotionMaster()->MoveIdle();
         m_creature->GetMap()->CreatureRelocation(m_creature, RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], 0.0f);
-        m_creature->SendMonsterMove(RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], 0, m_creature->GetSplineFlags(), 1);
+        m_creature->SendMonsterMove(RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], SPLINETYPE_NORMAL, m_creature->GetSplineFlags(), 1);
     }
 
     void JustReachedHome()
@@ -479,7 +479,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
         if (Timetoground < diff && airphase)
         {
             m_creature->GetMap()->CreatureRelocation(m_creature, RazorscaleBossX[2], RazorscaleBossY[2], RazorscaleBossZ[2], 1.5);
-            m_creature->SendMonsterMove(RazorscaleBossX[2], RazorscaleBossY[2], RazorscaleBossZ[2], 1.564225, m_creature->GetSplineFlags(), 1);
+            m_creature->SendMonsterMove(RazorscaleBossX[2], RazorscaleBossY[2], RazorscaleBossZ[2], SPLINETYPE_NORMAL, m_creature->GetSplineFlags(), 1);
             grounded = true;
             Stun_Timer = 2000;
             Ground_Cast = 40000;
@@ -510,7 +510,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
         if (Grounded_Timer < diff && grounded)
         {
             m_creature->GetMap()->CreatureRelocation(m_creature, RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], 0.0f);
-            m_creature->SendMonsterMove(RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], 0, m_creature->GetSplineFlags(), 1);
+            m_creature->SendMonsterMove(RazorscaleBossX[1], RazorscaleBossY[1], RazorscaleBossZ[1], SPLINETYPE_NORMAL, m_creature->GetSplineFlags(), 1);
             grounded = false;
             Fireball_Timer = 10000;
             Devouring_Flame_Timer = 18000;

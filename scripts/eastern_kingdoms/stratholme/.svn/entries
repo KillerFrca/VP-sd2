@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/stratholme
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 
 
@@ -32,11 +32,11 @@ file
 
 
 
-2010-01-14T12:54:44.055524Z
-4fa86cb22b6ea84089b8561fdba94c5c
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.175841Z
+ff6fdf4a88791f210b13fb8463f9eaa0
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-4034
+4064
 
 boss_magistrate_barthilas.cpp
 file
@@ -66,11 +66,11 @@ file
 
 
 
-2010-01-14T12:54:44.105596Z
-46ea7098fb49b117c5bee73743e19dbb
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.215899Z
+2ea8ebeefc8d4d4e691e763ed7fe8be1
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -92,7 +92,7 @@ has-props
 
 
 
-3792
+3822
 
 boss_timmy_the_cruel.cpp
 file
@@ -100,11 +100,11 @@ file
 
 
 
-2010-01-14T12:54:44.205740Z
-ecd1d7a88695aadb7d2265022796e514
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.255956Z
+3ac74f56e6783843baa4a388155cfa41
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-2114
+2124
 
 boss_cannon_master_willey.cpp
 file
@@ -134,10 +134,10 @@ file
 
 
 
-2010-01-14T12:54:44.275841Z
-4553e6a90914d4a0f34aa6a53eeb4f70
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:22.296014Z
+f904d49b05df32cfc66cb6fbae4e1db3
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -160,7 +160,7 @@ has-props
 
 
 
-8803
+8869
 
 boss_dathrohan_balnazzar.cpp
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:44.345942Z
-0f1099c3c60fd61f020451d51055c912
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:22.326057Z
+38f50ae18dc7c937d2f986fb80f6a2e2
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-7589
+7689
 
 stratholme.cpp
 file
@@ -202,10 +202,10 @@ file
 
 
 
-2010-01-14T12:54:44.476129Z
-668833d253e7a186295ca0635807b28a
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:42.472129Z
+ed24d10a90dd102876ce681e07acb9b5
+2010-02-19T02:02:25.202153Z
+1585
 nofantasy
 has-props
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-8405
+8433
 
 boss_order_of_silver_hand.cpp
 file
@@ -236,11 +236,11 @@ file
 
 
 
-2010-01-14T12:54:44.546230Z
-9d46ca6e11d578a06263335cdc6f31d7
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.376129Z
+fd7cd69b4054b5f9a113e86347414f77
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-5112
+5132
 
 boss_baroness_anastari.cpp
 file
@@ -270,11 +270,11 @@ file
 
 
 
-2010-01-14T12:54:44.706460Z
-a4e5f540b179cc4996abd4e14c33c72c
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.416187Z
+44c24bb3fcc7088695bf309d9e475f58
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -296,7 +296,7 @@ has-props
 
 
 
-3460
+3500
 
 boss_postmaster_malown.cpp
 file
@@ -304,11 +304,11 @@ file
 
 
 
-2010-01-14T12:54:44.836648Z
-8cb0d4d8dff1f87b588103ce34ea9f3a
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.456244Z
+e2b28add740b7a91ba1a398ef8fd445f
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -330,7 +330,7 @@ has-props
 
 
 
-4553
+4603
 
 boss_baron_rivendare.cpp
 file
@@ -338,10 +338,10 @@ file
 
 
 
-2010-01-14T12:54:44.896734Z
-bbbf63a71e7b7e340b777d5453c385b8
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:22.486288Z
+40cc0e05352c62c19a78752b469c2d31
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -364,7 +364,7 @@ has-props
 
 
 
-6403
+6467
 
 instance_stratholme.cpp
 file
@@ -372,10 +372,10 @@ file
 
 
 
-2010-01-14T12:54:44.986864Z
-32cc82922568ae59dc06544107307639
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:22.536360Z
+6f15214e4d95489af633c62b2493a957
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -398,7 +398,7 @@ has-props
 
 
 
-15317
+15335
 
 stratholme.h
 file
@@ -440,11 +440,11 @@ file
 
 
 
-2010-01-14T12:54:45.187152Z
-96f27c7544218f10ed1aa61e4cc2c583
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:22.596446Z
+4209f479a4d9fdce987a0423d0c69e63
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -466,7 +466,7 @@ has-props
 
 
 
-3128
+3158
 
 boss_ramstein_the_gorger.cpp
 file
@@ -474,10 +474,10 @@ file
 
 
 
-2010-01-14T12:54:45.247238Z
-97dc24f76e7d7ba8204c7d71a010d85f
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:22.626489Z
+adbce3ebf09ab4ffe392c11df55970e1
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -500,5 +500,5 @@ has-props
 
 
 
-2798
+2827
 

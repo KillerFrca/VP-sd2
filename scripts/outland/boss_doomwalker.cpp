@@ -96,9 +96,9 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
     {
         if (who && who->GetTypeId() == TYPEID_PLAYER && m_creature->IsHostileTo(who))
         {
-            if (who->HasAura(SPELL_MARK_DEATH,0))
+            if (who->HasAura(SPELL_MARK_DEATH, EFFECT_INDEX_0))
             {
-            who->CastSpell(who,SPELL_AURA_DEATH,1);
+                who->CastSpell(who,SPELL_AURA_DEATH,true);
             }
         }
     }
@@ -113,7 +113,7 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         {
             if (Enrage_Timer < diff)
             {
-                DoCast(m_creature,SPELL_ENRAGE);
+                DoCastSpellIfCan(m_creature,SPELL_ENRAGE);
                 Enrage_Timer = 6000;
                 InEnrage = true;
             }else Enrage_Timer -= diff;
@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         if (Overrun_Timer < diff)
         {
             DoScriptText(urand(0, 1) ? SAY_OVERRUN_1 : SAY_OVERRUN_2, m_creature);
-            DoCast(m_creature->getVictim(),SPELL_OVERRUN);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_OVERRUN);
             Overrun_Timer = urand(25000, 40000);
         }else Overrun_Timer -= diff;
 
@@ -137,9 +137,9 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
 
             //remove enrage before casting earthquake because enrage + earthquake = 16000dmg over 8sec and all dead
             if (InEnrage)
-                m_creature->RemoveAura(SPELL_ENRAGE, 0);
+                m_creature->RemoveAurasDueToSpell(SPELL_ENRAGE);
 
-            DoCast(m_creature,SPELL_EARTHQUAKE);
+            DoCastSpellIfCan(m_creature,SPELL_EARTHQUAKE);
             Quake_Timer = urand(30000, 55000);
         }else Quake_Timer -= diff;
 
@@ -153,7 +153,7 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
                 target = m_creature->getVictim();
 
             if (target)
-                DoCast(target,SPELL_CHAIN_LIGHTNING);
+                DoCastSpellIfCan(target,SPELL_CHAIN_LIGHTNING);
 
             Chain_Timer = urand(7000, 27000);
         }else Chain_Timer -= diff;
@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_doomwalkerAI : public ScriptedAI
         //Spell Sunder Armor
         if (Armor_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_SUNDER_ARMOR);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_SUNDER_ARMOR);
             Armor_Timer = urand(10000, 25000);
         }else Armor_Timer -= diff;
 

@@ -1,14 +1,14 @@
 10
 
 dir
-1543
+1585
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2/scripts/eastern_kingdoms/magisters_terrace
 https://scriptdev2.svn.sourceforge.net/svnroot/scriptdev2
 
 
 
-2010-01-05T12:24:08.693076Z
-1541
+2010-02-17T11:57:02.004470Z
+1579
 nofantasy
 
 
@@ -32,10 +32,10 @@ file
 
 
 
-2010-01-14T12:54:49.313084Z
-91481da5b0d2396fc17e4bc9cc9b570c
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.090032Z
+8fa24fdc8172f0d566892a1a70930e02
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -58,7 +58,7 @@ has-props
 
 
 
-6141
+6144
 
 instance_magisters_terrace.cpp
 file
@@ -100,10 +100,10 @@ file
 
 
 
-2010-01-14T12:54:49.493344Z
-75d0dec88001cba5b562c20c88fc4562
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-19T12:38:43.303324Z
+693f7907c2b8a68ec28af9dd5b4c1e33
+2010-02-17T11:57:02.004470Z
+1579
 nofantasy
 has-props
 
@@ -126,7 +126,7 @@ has-props
 
 
 
-24321
+24283
 
 magisters_terrace.h
 file
@@ -168,10 +168,10 @@ file
 
 
 
-2010-01-14T12:54:49.943992Z
-b002cf4b817951a2510e3a8583ac5a9e
-2010-01-05T12:24:08.693076Z
-1541
+2010-02-15T14:44:25.180161Z
+f5a9dde74401ea10b1cca0fbcdac611e
+2010-02-07T13:39:06.943108Z
+1570
 nofantasy
 has-props
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-14775
+14919
 
 boss_vexallus.cpp
 file
@@ -202,11 +202,11 @@ file
 
 
 
-2010-01-14T12:54:49.984049Z
-49a23375ce4f898a69748cb014322f92
-2010-01-01T23:51:11.692998Z
-1537
-nofantasy
+2010-02-15T14:44:25.210204Z
+f6419570bd7083966e63bb309bc10eb6
+2010-02-05T20:19:19.663643Z
+1568
+deverend
 has-props
 
 
@@ -228,7 +228,7 @@ has-props
 
 
 
-7530
+7560
 
 boss_priestess_delrissa.cpp
 file
@@ -236,10 +236,10 @@ file
 
 
 
-2010-01-14T12:54:50.054150Z
-a45e123f6aefc633e8ea7084568d0c4b
-2010-01-01T23:51:11.692998Z
-1537
+2010-02-15T14:44:25.250262Z
+608e2675212fffc337baa3ec58078649
+2010-02-10T00:24:08.032959Z
+1572
 nofantasy
 has-props
 
@@ -262,5 +262,5 @@ has-props
 
 
 
-39798
+40358
 
