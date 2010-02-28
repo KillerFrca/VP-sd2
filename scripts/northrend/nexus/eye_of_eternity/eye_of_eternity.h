@@ -14,5 +14,5 @@ enum
     DATA_DISABLE_ENTER           = 6,  // Players will be ported back when they enter instance
 
     NPC_WYRMREST_SKYTALON        = 30161, // Dragon Vehicle in Third Phase
-}
+};
 #endif

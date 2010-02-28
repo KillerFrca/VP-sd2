@@ -1841,6 +1841,14 @@
 							RelativePath="..\scripts\northrend\nexus\eye_of_eternity\boss_malygos.cpp"
 							>
 						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\eye_of_eternity\eye_of_eternity.h"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\eye_of_eternity\instance_eye_of_eternity.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="nexus"
@@ -2091,7 +2099,7 @@
 					Name="vault_of_archavon"
 					>
 				</Filter>
-								<Filter
+				<Filter
 					Name="violet_hold"
 					>
 					<File

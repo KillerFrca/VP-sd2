@@ -39,35 +39,35 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
     std::string strInstData;
     uint32 m_auiEncounter[MAX_ENCOUNTER];
     uint8 m_uiInstanceEnterRules;
+    std::list<uint64> m_lLeavePlayerList;
+    uint32 m_uiKickPlayersTimer;
 
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-        m_uiInstanceEnterRules = DATA_ALLOW_ENTER;
+        m_uiInstanceEnterRules = DATA_ALLOW_ENTER_VEHICLE;
+        m_lLeavePlayerList.clear();
+        m_uiKickPlayersTimer = 3000;
     }
 
     void OnPlayerEnter(Player* pPlayer)
     {
         if(m_uiInstanceEnterRules == DATA_ALLOW_ENTER)
             return;
-
-        switch(m_uiInstanceEnterRules)
+        else if(m_uiInstanceEnterRules == DATA_ALLOW_ENTER_VEHICLE)
         {
-            case DATA_ALLOW_ENTER_VEHICLE:
-                Vehicle *pTemp = pPlayer->SummonVehicle(NPC_WYRMREST_SKYTALON, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0))
-                if(!pTemp)
-                    return;
-                ((Creature*)pTemp)->SetCreatorGUID(pPlayer->GetGUID());
-                uint32 health = 100000 + (pPlayer->GetMaxHealth()*2); // may be wrong
-                ((Creature*)pTemp)->SetMaxHealth(health);
-                ((Creature*)pTemp)->SetHealth(health);
-                pPlayer->EnterVehicle(pTemp, 0, false);
-                break;
-            case DATA_DISABLE_ENTER:
-                pPlayer->TeleportTo(EXIT_MAP, EXIT_X, EXIT_Y, EXIT_Z, 0);
-                pPlayer->GetSession()->SendAreaTriggerMessage(DISABLED_ENTER_MESSAGE);
-                break;
+            Vehicle *pTemp = pPlayer->SummonVehicle(NPC_WYRMREST_SKYTALON, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0);
+            if(!pTemp)
+                return;
+            ((Creature*)pTemp)->SetCreatorGUID(pPlayer->GetGUID());
+            uint32 health = 100000 + (pPlayer->GetMaxHealth()*2); // may be wrong
+            ((Creature*)pTemp)->SetMaxHealth(health);
+            ((Creature*)pTemp)->SetHealth(health);
+            pPlayer->EnterVehicle(pTemp, 0, false);
+            pPlayer->SendInitialPacketsAfterAddToMap();
         }
+        else if(m_uiInstanceEnterRules == DATA_DISABLE_ENTER)
+            m_lLeavePlayerList.push_back(pPlayer->GetGUID());
     }
     void OnCreatureCreate(Creature* pCreature)
     {
