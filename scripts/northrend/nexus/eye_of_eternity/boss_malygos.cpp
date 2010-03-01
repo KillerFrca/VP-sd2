@@ -88,7 +88,8 @@ enum
     SPELL_ARCANE_STORM_H           = 61694,
     SPELL_ARCANE_OVERLOAD          = 56432, // Cast this on arcane overload NPCs
     SPELL_ARCANE_BOMB              = 56431, // Cast by arcane overload
-    SPELL_DEEP_BREATH              = 60071,
+    SPELL_DEEP_BREATH              = 60071, // in Deadly boss mod this is as event spell, but not exist in DBC..
+	SPELL_SURGE_OF_POWER           = 56505, // omfg, they say deep breath, but its this!
     SPELL_DESTROY_PLATFORM_PRE     = 58842, // lights all over the platform
     SPELL_DESTROY_PLATFROM_BOOM    = 59084, // Big Blue boom
     //NPCs spells
@@ -99,8 +100,8 @@ enum
 
     //////////////// PHASE 3 ////////////////
     SPELL_STATIC_FIELD             = 57428, // Summon trigger and cast this on them should be enought
-    SPELL_SURGE_OF_POWER           = 56548, // Summon triggers and cast to random targets
-    SPELL_SURGE_OF_POWER_H         = 57407,
+    //SPELL_SURGE_OF_POWER           = 56548, // Summon triggers and cast to random targets
+    //SPELL_SURGE_OF_POWER_H         = 57407,
     SPELL_ARCANE_PULSE             = 57432,
     //Dragons spells
     SPELL_FLAME_SPIKE              = 56091,
@@ -674,7 +675,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     ((Creature*)pTemp)->SetMaxHealth(health);
                     ((Creature*)pTemp)->SetHealth(health);
                     //((Creature*)pTemp)->SetArmor(pPlayer->GetArmor());  // ???
-                    m_creature->AddThreat(pTemp, 1.0f);  // To not leave combat
+                    m_creature->AddThreat((Creature*)pTemp, 1.0f);  // To not leave combat
                     pPlayer->EnterVehicle(pTemp, 0, false);
                 }
             }
@@ -871,14 +872,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiShellTimer = 30000;
             }else m_uiShellTimer -= uiDiff;
 
-            // Arcane Pulse
+            // Deep breath
             if(m_uiDeepBreathTimer <= uiDiff)
             {
                 DoScriptText(SAY_ARCANE_PULSE, m_creature);
                 DoScriptText(SAY_ARCANE_PULSE_WARN, m_creature);
                 SendDeepBreathCast();
                 if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                    pTrigger->CastSpell(pTrigger, SPELL_ARCANE_PULSE, false);
+                    DoCast(pTrigger, SPELL_SURGE_OF_POWER);
 
                 m_uiDeepBreathTimer = 60000;
             }else m_uiDeepBreathTimer -= uiDiff;
@@ -886,7 +887,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             // Arcane Storm
             if(m_uiArcaneStormTimer <= uiDiff)
             {
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_ARCANE_STORM : SPELL_ARCANE_STORM_H);
+                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_ARCANE_STORM : SPELL_ARCANE_STORM_H);
                 m_uiArcaneStormTimer = 20000;
             }else m_uiArcaneStormTimer -= uiDiff;
 
@@ -1358,4 +1359,5 @@ UPDATE `instance_template` SET `script` = 'instance_eye_of_eternity' WHERE `map`
 REPLACE INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entry_2`, `difficulty_entry_3`, `KillCredit1`, `KillCredit2`, `modelid_A`, `modelid_A2`, `modelid_H`, `modelid_H2`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `minhealth`, `maxhealth`, `minmana`, `maxmana`, `armor`, `faction_A`, `faction_H`, `npcflag`, `speed`, `scale`, `rank`, `mindmg`, `maxdmg`, `dmgschool`, `attackpower`, `dmg_multiplier`, `baseattacktime`, `rangeattacktime`, `unit_class`, `unit_flags`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_class`, `trainer_race`, `minrangedmg`, `maxrangedmg`, `rangedattackpower`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `spell1`, `spell2`, `spell3`, `spell4`, `PetSpellDataId`, `mingold`, `maxgold`, `AIName`, `MovementType`, `InhabitType`, `unk16`, `unk17`, `RacialLeader`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `movementId`, `RegenHealth`, `equipment_id`, `mechanic_immune_mask`, `flags_extra`, `ScriptName`) VALUES
 (30161, 31752, 0, 0, 0, 0, 25835, 0, 25835, 0, 'Wyrmrest Skytalon', '', '', 0, 80, 80, 100000, 100000, 0, 0, 10000, 35, 35, 0, 1, 1, 0, 0, 0, 0, 0, 1, 2000, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 3, 7.93651, 1, 0, 0, 0, 0, 0, 0, 0, 231, 1, 0, 0, 0, '');
 
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('56505', '1', '22517');
 */

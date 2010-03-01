@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -19,6 +19,7 @@ class SpellCastTargets;
 class Map;
 class Unit;
 class WorldObject;
+class Aura;
 
 #define MAX_SCRIPTS         5000                            //72 bytes each (approx 351kb)
 #define VISIBLE_RANGE       (166.0f)                        //MAX visible range (size of grid)
@@ -31,7 +32,7 @@ struct Script
         pQuestSelect(NULL), pQuestComplete(NULL), pNPCDialogStatus(NULL), pGODialogStatus(NULL),
         pChooseReward(NULL), pItemHello(NULL), pGOHello(NULL), pAreaTrigger(NULL), pItemQuestAccept(NULL),
         pGOQuestAccept(NULL), pGOChooseReward(NULL), pItemUse(NULL),
-        pEffectDummyCreature(NULL), pEffectDummyGameObj(NULL), pEffectDummyItem(NULL),
+        pEffectDummyCreature(NULL), pEffectDummyGameObj(NULL), pEffectDummyItem(NULL), pEffectAuraDummy(NULL),
         GetAI(NULL), GetInstanceData(NULL)
     {}
 
@@ -54,9 +55,10 @@ struct Script
     bool (*pGOQuestAccept       )(Player*, GameObject*, const Quest*);
     bool (*pGOChooseReward      )(Player*, GameObject*, const Quest*, uint32);
     bool (*pItemUse             )(Player*, Item*, SpellCastTargets const&);
-    bool (*pEffectDummyCreature )(Unit*, uint32, uint32, Creature*);
-    bool (*pEffectDummyGameObj  )(Unit*, uint32, uint32, GameObject*);
-    bool (*pEffectDummyItem     )(Unit*, uint32, uint32, Item*);
+    bool (*pEffectDummyCreature )(Unit*, uint32, SpellEffectIndex, Creature*);
+    bool (*pEffectDummyGameObj  )(Unit*, uint32, SpellEffectIndex, GameObject*);
+    bool (*pEffectDummyItem     )(Unit*, uint32, SpellEffectIndex, Item*);
+    bool (*pEffectAuraDummy     )(const Aura*, bool);
 
     CreatureAI* (*GetAI)(Creature*);
     InstanceData* (*GetInstanceData)(Map*);
