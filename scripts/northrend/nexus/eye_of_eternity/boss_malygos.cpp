@@ -41,10 +41,10 @@ enum
     // Power Spark   - from wowhead: "Spawned throughout the fight and slowly
     //                 shift towards Malygos. Once they reach him, they buff him
     //                 with Power Spark, increasing the damage output by 50% for
-    //                   10 seconds, stacking multiplicatively. If killed, they
-    //                   instead grant players in proximity the same buff,
-    //                   Power Spark, which especially is a great buff for melee
-    //                   players close to Malygos."
+    //                 10 seconds, stacking multiplicatively. If killed, they
+    //                 instead grant players in proximity the same buff,
+    //                 Power Spark, which especially is a great buff for melee
+    //                 players close to Malygos."
     //
     //////////////// PHASE 2 //////////////// - 50% of health
     // On beggining of this phase, malygos will take off slowly and let
@@ -54,7 +54,7 @@ enum
     // Players also have to cover in protective bubbles(which are spawned continuosly),
     // they shrink over time so players have to run to another one.
     //
-    // Arcane Pulse   - Deep Breath....
+    // Surge of Power - Deep Breath....
     // Arcane Storm   - normal spell...
     //
     //////////////// PHASE 3 //////////////// - when all NPCs from previos phase are dead
@@ -89,7 +89,7 @@ enum
     SPELL_ARCANE_OVERLOAD          = 56432, // Cast this on arcane overload NPCs
     SPELL_ARCANE_BOMB              = 56431, // Cast by arcane overload
     SPELL_DEEP_BREATH              = 60071, // in Deadly boss mod this is as event spell, but not exist in DBC..
-	SPELL_SURGE_OF_POWER           = 56505, // omfg, they say deep breath, but its this!
+    SPELL_SURGE_OF_POWER_BREATH    = 56505, // omfg, they say deep breath, but its this!
     SPELL_DESTROY_PLATFORM_PRE     = 58842, // lights all over the platform
     SPELL_DESTROY_PLATFROM_BOOM    = 59084, // Big Blue boom
     //NPCs spells
@@ -285,6 +285,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     uint8 m_uiSpeechCount;
     uint8 m_uiVortexPhase;
     std::list<uint64> m_lSparkGUIDList;
+    std::list<uint64> m_lDiscGUIDList;
 
     uint32 m_uiEnrageTimer;
     uint32 m_uiSpeechTimer[5];
@@ -308,6 +309,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiSubPhase = 0;
         m_uiSpeechCount = 0;
         m_uiVortexPhase = 0;
+        m_lSparkGUIDList.clear();
+        m_lDiscGUIDList.clear();
 
         m_uiEnrageTimer = 600000;
         m_uiSpeechTimer[0] = 15000;
@@ -320,7 +323,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiVortexTimer = 60000;
         m_uiArcaneBreathTimer = 15000;
         m_uiPowerSparkTimer = 20000;
-        m_uiDeepBreathTimer = 60000;
+        m_uiDeepBreathTimer = 63000;
         m_uiShellTimer = 0;
         m_uiArcaneStormTimer = 15000;
         m_uiStaticFieldTimer = 15000;
@@ -469,7 +472,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             DoScriptText(SAY_POWER_SPARK_BUFF, m_creature);
     }
     void SummonedCreatureDespawn(Creature* pDespawned)
-    {/*
+    {
         if(pDespawned->GetEntry() != NPC_SCION_OF_ETERNITY && pDespawned->GetEntry() != NPC_NEXUS_LORD)
             return;
 
@@ -479,7 +482,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         if(Vehicle *pDisc = m_creature->SummonVehicle(NPC_HOVER_DISC, x, y, z, 0))
         {
             ((Creature*)pDisc)->SetSpeedRate(MOVE_FLIGHT, 3.5f, true);
-        } */
+            ((Creature*)pDisc)->SetHealth(m_creature->GetMaxHealth());
+            m_lDiscGUIDList.push_back(((Creature*)pDisc)->GetGUID());
+        }
     }
     void DoMovement(float x, float y, float z, uint32 time, bool tofly = false, bool movepoint = true)
     {        
@@ -581,7 +586,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         if(action == 1) //Summon
         {
             uint8 random = urand(0, 3);
-            if(Creature *pSpark = m_creature->SummonCreature(NPC_POWER_SPARK, SparkLoc[random].x, SparkLoc[random].y, FLOOR_Z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 40000))
+            if(Creature *pSpark = m_creature->SummonCreature(NPC_POWER_SPARK, SparkLoc[random].x, SparkLoc[random].y, FLOOR_Z+10, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
             {
                 pSpark->CastSpell(pSpark, SPELL_POWER_SPARK_VISUAL, false);
                 pSpark->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
@@ -648,7 +653,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
         uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
         if(Creature *pShell = m_creature->SummonCreature(NPC_ARCANE_OVERLOAD, x, y, FLOOR_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 45000))
-            pShell->CastSpell(pShell, SPELL_ARCANE_OVERLOAD, false);
+        {
+            pShell->CastSpell(pShell, SPELL_ARCANE_OVERLOAD, true);
+            pShell->CastSpell(pShell, SPELL_ARCANE_BOMB, false);
+        }
     }
     void MountPlayers()
     {
@@ -681,8 +689,26 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             }
         }
     }
-    void DespawnCreatures(uint32 entry, float distance)
+    void DespawnCreatures(uint32 entry, float distance, bool discs = false)
     {
+        //Because vehicles cant be found by GetCreatureListWithEntryInGrid()
+        if(discs)
+        {
+            if(m_lDiscGUIDList.empty())
+                return;
+            Map *pMap = m_creature->GetMap();
+
+            if(!pMap)
+                return;
+
+            for(std::list<uint64>::iterator itr = m_lDiscGUIDList.begin(); itr != m_lDiscGUIDList.end(); ++itr)
+                if(Vehicle *pVehicle = pMap->GetVehicle(*itr))
+                    ((Creature*)pVehicle)->ForcedDespawn();
+
+            m_lDiscGUIDList.clear();
+            return;
+        }
+
         std::list<Creature*> m_pCreatures;
         GetCreatureListWithEntryInGrid(m_pCreatures, m_creature, entry, distance);
 
@@ -690,7 +716,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             return;
 
         for(std::list<Creature*>::iterator iter = m_pCreatures.begin(); iter != m_pCreatures.end(); ++iter)
-            (*iter)->ForcedDespawn();            
+            (*iter)->ForcedDespawn();
+
     }
     //Spell not in DBC, but on retail client recieve its opcode, so..
     void SendDeepBreathCast()
@@ -804,8 +831,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 DoVortex(0);
                 m_uiVortexPhase = 1;
                 m_uiSubPhase = SUBPHASE_VORTEX;
-                m_uiVortexTimer = 54000;
-                m_uiTimer = 4000;
+                m_uiVortexTimer = 56000;
+                m_uiTimer = 6000;
                 DoScriptText(SAY_VORTEX, m_creature);
                 return;
             }else m_uiVortexTimer -= uiDiff;
@@ -879,7 +906,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 DoScriptText(SAY_ARCANE_PULSE_WARN, m_creature);
                 SendDeepBreathCast();
                 if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
-                    DoCast(pTrigger, SPELL_SURGE_OF_POWER);
+                    DoCast(pTrigger, SPELL_SURGE_OF_POWER_BREATH);
 
                 m_uiDeepBreathTimer = 60000;
             }else m_uiDeepBreathTimer -= uiDiff;
@@ -923,7 +950,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
 
                     //Despawn bubbles and discs
                     DespawnCreatures(NPC_ARCANE_OVERLOAD, 70.0f);
-                    DespawnCreatures(NPC_HOVER_DISC, 70.0f);
+                    DespawnCreatures(NPC_HOVER_DISC, 70.0f, true);
 
                     //Players cant enter instance if phase 3 is in progress - not implented yet
                     m_pInstance->SetData(TYPE_INSTANCE_ENTER_RULES, DATA_DISABLE_ENTER);
@@ -1001,8 +1028,6 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         break;
                     case 5:
                         m_uiSubPhase = SUBPHASE_DIE;
-                        if(pAlexstrasza && pAlexstrasza->isAlive())
-                            pAlexstrasza->ForcedDespawn();
                         //Summon exit portal
                         if(!GetClosestGameObjectWithEntry(m_creature, GO_EXIT_PORTAL, 120.0f))
                             m_creature->SummonGameobject(GO_EXIT_PORTAL, GOPositions[2].x, GOPositions[2].y, GOPositions[2].z, GOPositions[2].o, 0);
@@ -1038,9 +1063,10 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
     {
         isDead = false;
         pMalygos = GetClosestCreatureWithEntry(m_creature, NPC_MALYGOS, 150.0f);
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
-        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
         m_uiCheckTimer = 2500;
+        WorldPacket heart;
+        m_creature->BuildHeartBeatMsg(&heart);
+        m_creature->SendMessageToSet(&heart, false);
     }
     void AttackStart(Unit *pWho)
     {
@@ -1048,7 +1074,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
     }
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (isDead && m_creature->GetVisibility() == VISIBILITY_ON)
+        if (isDead)
         {
             uiDamage = 0;
             return;
@@ -1071,7 +1097,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             uiDamage = 0;
             m_creature->SetHealth(1);
             m_creature->CastSpell(m_creature, SPELL_POWER_SPARK_PLAYERS, false);
-            m_uiCheckTimer = 35000;
+            m_creature->ForcedDespawn(60000);
             if(pMalygos && pMalygos->isAlive())
                 ((boss_malygosAI*)pMalygos->AI())->m_lSparkGUIDList.clear();
         }
@@ -1080,11 +1106,6 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
     {
         if(m_uiCheckTimer <= uiDiff)
         {
-            if(isDead)
-            {
-                m_creature->ForcedDespawn();
-                return;
-            }
             if(pMalygos && pMalygos->isAlive() && m_creature->GetVisibility() == VISIBILITY_ON)
             {
                 if(m_creature->IsWithinDist(pMalygos, 3.0f, false))
@@ -1101,7 +1122,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
 /*######
 ## mob_scion_of_eternity
 ######*/
-/*
+
 struct MANGOS_DLL_DECL mob_scion_of_eternityAI : public ScriptedAI
 {
     mob_scion_of_eternityAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -1114,15 +1135,17 @@ struct MANGOS_DLL_DECL mob_scion_of_eternityAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
     uint32 m_uiArcaneBarrageTimer;
+    uint32 m_uiMoveTimer;
     uint8 m_uiMovePoint;
 
     void Reset()
     {
-        m_creature->SetSpeedRate(MOVE_WALK, 3.5f, true);
-        m_creature->SetSpeedRate(MOVE_RUN, 3.5f, true);
-        m_creature->SetSpeedRate(MOVE_FLIGHT, 3.5f, true);
+        m_creature->SetSpeedRate(MOVE_WALK, 1.0f, true);
+        m_creature->SetSpeedRate(MOVE_RUN, 1.0f, true);
+        m_creature->SetSpeedRate(MOVE_FLIGHT, 1.0f, true);
         DoNextMovement();
         m_uiMovePoint = 0;
+        m_uiMoveTimer = 10000;
         m_uiArcaneBarrageTimer = 5000 + rand()%5000;
     }
     void AttackStart(Unit *pWho)
@@ -1140,19 +1163,13 @@ struct MANGOS_DLL_DECL mob_scion_of_eternityAI : public ScriptedAI
     }
     void DoNextMovement()
     {
+        WorldPacket heart;
+        m_creature->BuildHeartBeatMsg(&heart);
+        m_creature->SendMessageToSet(&heart, false);
         m_uiMovePoint++;
         uint32 x = urand(SHELL_MIN_X, SHELL_MAX_X);
         uint32 y = urand(SHELL_MIN_Y, SHELL_MAX_Y);
-        uint32 z = urand(uint32(FLOOR_Z), uint32(FLOOR_Z)+10);
-        m_creature->GetMotionMaster()->MoveConfused();//MovePoint(m_uiMovePoint, x, y, z);
-    }
-    void MovementInform(uint32 uiType, uint32 uiPointId)
-    {
-        if(uiType != POINT_MOTION_TYPE)
-            return;
-
-        if(uiPointId == m_uiMovePoint)
-            DoNextMovement();
+        m_creature->GetMotionMaster()->MovePoint(m_uiMovePoint, x, y, FLOOR_Z+10);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -1162,14 +1179,19 @@ struct MANGOS_DLL_DECL mob_scion_of_eternityAI : public ScriptedAI
         
         if(m_uiArcaneBarrageTimer <= uiDiff)
         {
-            m_creature->GetMotionMaster()->MovementExpired(false);
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_ARCANE_BARRAGE);
             m_uiArcaneBarrageTimer = 3000 + rand()%5000;
             DoNextMovement();
         }else m_uiArcaneBarrageTimer -= uiDiff;
+
+        if(m_uiMoveTimer <= uiDiff)
+        {
+            m_uiMoveTimer = 10000;
+            DoNextMovement();
+        }else m_uiMoveTimer -= uiDiff;
     }
-}; */
+}; 
 /*######
 ## go_focusing_iris
 ######*/
@@ -1203,11 +1225,11 @@ CreatureAI* GetAI_mob_power_spark(Creature* pCreature)
 {
     return new mob_power_sparkAI(pCreature);
 }
-/*
+
 CreatureAI* GetAI_mob_scion_of_eternity(Creature* pCreature)
 {
     return new mob_scion_of_eternityAI(pCreature);
-} */
+} 
 
 
 void AddSC_boss_malygos()
@@ -1223,11 +1245,11 @@ void AddSC_boss_malygos()
     newscript->Name = "mob_power_spark";
     newscript->GetAI = &GetAI_mob_power_spark;
     newscript->RegisterSelf();
-/*
+
     newscript = new Script;
     newscript->Name = "mob_scion_of_eternity";
     newscript->GetAI = &GetAI_mob_scion_of_eternity;
-    newscript->RegisterSelf(); */
+    newscript->RegisterSelf(); 
 
     newscript = new Script;
     newscript->Name = "go_focusing_iris";
@@ -1338,12 +1360,12 @@ UPDATE `creature_template` SET `modelid_A` = '11686',
 `modelid_A2` = '11686',
 `modelid_H` = '11686',
 `modelid_H2` = '11686',
-`minhealth` = '44120',
-`maxhealth` = '44120',
+`minhealth` = '444120',
+`maxhealth` = '444120',
 minlevel=80,
 maxlevel=80,
 `AIName` = '',
-`flags_extra` = '2' WHERE `creature_template`.`entry` =22517 LIMIT 1 ;
+`flags_extra` = '2' WHERE `entry` IN (22517, 30090);
 
 INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('56152', '1', '28859');
 UPDATE `creature_model_info` SET `combat_reach` = '30' WHERE `modelid` =26752;
