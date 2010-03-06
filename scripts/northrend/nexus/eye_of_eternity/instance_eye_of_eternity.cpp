@@ -24,6 +24,7 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "eye_of_eternity.h"
+#include "WorldPacket.h"
 
 #define DISABLED_ENTER_MESSAGE "You cannot enter Eye of Eternity now"
 #define EXIT_MAP 571
@@ -38,41 +39,24 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
 
     std::string strInstData;
     uint32 m_auiEncounter[MAX_ENCOUNTER];
-    uint8 m_uiInstanceEnterRules;
-    std::list<uint64> m_lLeavePlayerList;
-    uint32 m_uiKickPlayersTimer;
+    uint32 m_uiOutroCheck;
+
+    uint64 m_uiMalygosGUID;
 
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-        m_uiInstanceEnterRules = DATA_ALLOW_ENTER_VEHICLE;
-        m_lLeavePlayerList.clear();
-        m_uiKickPlayersTimer = 3000;
-    }
 
-    void OnPlayerEnter(Player* pPlayer)
-    {
-        if(m_uiInstanceEnterRules == DATA_ALLOW_ENTER)
-            return;
-        else if(m_uiInstanceEnterRules == DATA_ALLOW_ENTER_VEHICLE)
-        {
-            Vehicle *pTemp = pPlayer->SummonVehicle(NPC_WYRMREST_SKYTALON, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0);
-            if(!pTemp)
-                return;
-            ((Creature*)pTemp)->SetCreatorGUID(pPlayer->GetGUID());
-            uint32 health = 100000 + (pPlayer->GetMaxHealth()*2); // may be wrong
-            ((Creature*)pTemp)->SetMaxHealth(health);
-            ((Creature*)pTemp)->SetHealth(health);
-            pPlayer->EnterVehicle(pTemp, 0, false);
-            pPlayer->SendInitialPacketsAfterAddToMap();
-        }
-        else if(m_uiInstanceEnterRules == DATA_DISABLE_ENTER)
-            m_lLeavePlayerList.push_back(pPlayer->GetGUID());
+        m_uiMalygosGUID = 0;
+        m_uiOutroCheck = 0; 
     }
     void OnCreatureCreate(Creature* pCreature)
     {
         switch(pCreature->GetEntry())
         {
+            case NPC_MALYGOS:
+                m_uiMalygosGUID = pCreature->GetGUID();
+                break;
             default:
                 break;
         }
@@ -103,23 +87,18 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
             case TYPE_MALYGOS:
                 m_auiEncounter[0] = uiData;
                 break;
-            case TYPE_INSTANCE_ENTER_RULES:
-                m_uiInstanceEnterRules = uiData;
+            case TYPE_OUTRO_CHECK:
+                m_uiOutroCheck = uiData;
                 break;
         }
+        OUT_SAVE_INST_DATA;
+        std::ostringstream saveStream;
+        saveStream << m_auiEncounter[0] << " " << m_uiOutroCheck;
 
-        if (uiData == DONE)
-        {
-            OUT_SAVE_INST_DATA;
+        strInstData = saveStream.str();
+        SaveToDB();
+        OUT_SAVE_INST_DATA_COMPLETE;
 
-            std::ostringstream saveStream;
-            saveStream << m_auiEncounter[0];
-
-            strInstData = saveStream.str();
-
-            SaveToDB();
-            OUT_SAVE_INST_DATA_COMPLETE;
-        }
     }
 
     const char* Save()
@@ -138,7 +117,7 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
         OUT_LOAD_INST_DATA(chrIn);
 
         std::istringstream loadStream(chrIn);
-        loadStream >> m_auiEncounter[0];
+        loadStream >> m_auiEncounter[0] >> m_uiOutroCheck;
 
         for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
         {
@@ -154,7 +133,9 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
         switch(uiType)
         {
             case TYPE_MALYGOS:
-                return m_auiEncounter[0];   
+                return m_auiEncounter[0];
+            case TYPE_OUTRO_CHECK:
+                return m_uiOutroCheck;
         }
         return 0;
     }
@@ -163,6 +144,8 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
     {
         switch(uiData)
         {
+            case NPC_MALYGOS:
+                return m_uiMalygosGUID;
             default:
                 return 0;
         }
