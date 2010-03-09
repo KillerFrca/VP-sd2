@@ -32,6 +32,7 @@ EndScriptData */
 */
 enum
 {
+    //freya
     //general abilities
     SPELL_SUNBEAM                       = 62623,
     H_SPELL_SUNBEAM                     = 62872,
@@ -46,8 +47,8 @@ enum
     SPELL_NATURE_BOMB_SUMMON            = 64606,
 
     //abilities with Elder Brightleaf
-    SPELL_UNSTABLE_ENERGY               = 62451,
-    H_SPELL_UNSTABLE_ENERGY             = 62865,
+    SPELL_UNSTABLE_ENERGY_FREYA         = 62451,
+    H_SPELL_UNSTABLE_ENERGY_FREYA       = 62865,
     SPELL_BRIGHTLEAFS_ESSENCE           = 62385,
 
     //abilities with Elder Ironbranch
@@ -60,9 +61,41 @@ enum
     NPC_STRENGTHENED_IRON_ROOTS         = 33168,
 
     //abilities with Elder Stonebark 
-    SPELL_GROUND_TREMOR                 = 62437,
-    H_SPELL_GROUND_TREMOR               = 62859,
+    SPELL_GROUND_TREMOR_FREYA           = 62437,
+    H_SPELL_GROUND_TREMOR_FREYA         = 62859,
     SPELL_STONEBARKS_ESSENCE            = 62386,
+
+    //elders
+    SPELL_DRAINED_OF_POWER              = 62467,
+    
+    //Elder Brightleaf
+    SPELL_BRIGHTLEAFS_FLUX              = 62262,
+    SPELL_SOLAR_FLARE                   = 62240,
+    H_SPELL_SOLAR_FLARE                 = 62920,
+    SPELL_UNSTABLE_SOLAR_BEAM           = 62243,
+    SPELL_UNSTABLE_ENERGY               = 62217,
+    H_SPELL_UNSTABLE_ENERGY             = 62922,
+    SPELL_PHOTOSYNTHESIS                = 62209
+
+    //Elder Ironbranch
+    SPELL_IMPALE                        = 62310,
+    H_SPELL_IMPALE                      = 62928,
+    SPELL_IRON_ROOTS                    = 62438,
+    H_SPELL_IRON_ROOTS                  = 62861,
+    SPELL_THORN_SWARM                   = 62285,
+    H_SPELL_THORN_SWARM                 = 62931,
+    
+    SPELL_IRON_ROOTS_SUMM               = 65160,
+
+    NPC_IRON_ROOTS                      = 33008,
+    
+    //Elder Stonebark
+    SPELL_FIST_OF_STONE                 = 62344,
+    SPELL_BROKEN_BONES                  = 62356,
+    SPELL_GROUND_TREMOR                 = 62325,
+    H_SPELL_GROUND_TREMOR               = 62932,
+    SPELL_PETRIFIED_BARK                = 62337,
+    H_SPELL_PETRIFIED_BARK              = 62933,
 
     NPC_NATURE_BOMB                     = 34129,
 
