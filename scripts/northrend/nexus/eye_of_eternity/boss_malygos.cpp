@@ -718,9 +718,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             if(!pMap)
                 return;
 
-            for(std::list<uint64>::iterator itr = m_lDiscGUIDList.begin(); itr != m_lDiscGUIDList.end(); ++itr)
+            /*for(std::list<uint64>::iterator itr = m_lDiscGUIDList.begin(); itr != m_lDiscGUIDList.end(); ++itr)
                 if(Vehicle *pVehicle = pMap->GetVehicle(*itr))
-                    pVehicle->Dismiss();
+                    pVehicle->Dismiss();*/
 
             m_lDiscGUIDList.clear();
             return;
@@ -952,9 +952,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiTimer = 5000;
             }else m_uiTimer -= uiDiff;  
 
-            if(m_creature->HasAura(SPELL_BERSERK)
+            if(m_creature->HasAura(SPELL_BERSERK))
                 DoMeleeAttackIfReady(); // this is there just for case of enrage
-        }
+		}
         else if(m_uiPhase == PHASE_DRAGONS)
         {
             if(m_uiSubPhase == SUBPHASE_DESTROY_PLATFORM1)
@@ -1044,7 +1044,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiSurgeOfPowerTimer = 16000+rand()%15000;
             }else m_uiSurgeOfPowerTimer -= uiDiff;	
 
-            if(m_creature->HasAura(SPELL_BERSERK)
+            if(m_creature->HasAura(SPELL_BERSERK))
                 DoMeleeAttackIfReady();
         }
         //Outro!

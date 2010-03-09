@@ -24,12 +24,6 @@ EndScriptData */
 #include "precompiled.h"
 #include "ulduar.h"
 
-/*
-#define SAY_AGGRO -1
-#define SAY_SLAY -1
-
-
-*/
 enum
 {
     //freya
@@ -52,8 +46,8 @@ enum
     SPELL_BRIGHTLEAFS_ESSENCE           = 62385,
 
     //abilities with Elder Ironbranch
-    SPELL_IRON_ROOTS                    = 62283,
-    H_SPELL_IRON_ROOTS                  = 62930,
+    SPELL_IRON_ROOTS_FREYA              = 62283,
+    H_SPELL_IRON_ROOTS_FREYA            = 62930,
     SPELL_IRONBRANCHS_ESSENCE           = 62387,
     
     SPELL_STRENGTHENED_IRON_ROOTS_SUMM  = 63601,
@@ -75,7 +69,7 @@ enum
     SPELL_UNSTABLE_SOLAR_BEAM           = 62243,
     SPELL_UNSTABLE_ENERGY               = 62217,
     H_SPELL_UNSTABLE_ENERGY             = 62922,
-    SPELL_PHOTOSYNTHESIS                = 62209
+    SPELL_PHOTOSYNTHESIS                = 62209,
 
     //Elder Ironbranch
     SPELL_IMPALE                        = 62310,
@@ -128,7 +122,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     bool IsCreatureAlive(Creature *pCreature)
     {
-        if(GetClosestCreatureWithEntry(m_creature, pCreature, 150.0f)
+        if(GetClosestCreatureWithEntry(m_creature, pCreature->GetEntry(), 150.0f))
             return true;
         
         return false;

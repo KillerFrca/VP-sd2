@@ -510,7 +510,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         {
             SetData(TYPE_FOUR_HORSEMEN, DONE);
     
-            AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_HORSEMEN : H_ACHIEVEMENT_HORSEMEN);
+            /*AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_HORSEMEN : H_ACHIEVEMENT_HORSEMEN);
             if(AchievHorsemen && this)
             {
                 Map::PlayerList const &lPlayers = instance->GetPlayers();
@@ -522,7 +522,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                             pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
                     }
                 }
-            }
+            }*/
         }
     }
     
@@ -650,7 +650,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             {
                 if (BlaumeuxDead && RivendareDead && ZeliekDead && KorthazzDead)
                 {
-                    AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_TOGETHER : H_ACHIEVEMENT_TOGETHER);
+                    /*AchievementEntry const *AchievHorsemen = GetAchievementStore()->LookupEntry(instance->IsRegularDifficulty() ? ACHIEVEMENT_TOGETHER : H_ACHIEVEMENT_TOGETHER);
                     if(AchievHorsemen && this)
                     {
                         Map::PlayerList const &lPlayers = instance->GetPlayers();
@@ -662,7 +662,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                                     pPlayer->GetAchievementMgr().CompletedAchievement(AchievHorsemen);
                             }
                         }
-                    }
+                    }*/
                     UpdateCheck = false;
                 }
             }else DeadTimer += uiDiff;
