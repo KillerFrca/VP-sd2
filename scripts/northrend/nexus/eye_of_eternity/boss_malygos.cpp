@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Malygos
-SD%Complete: 80%
-SDComment: need test, verify timers
+SD%Complete: 90%
+SDComment: verify timers
 SDAuthor: Tassadar
 SDCategory: Nexus, Eye of Eternity
 EndScriptData */
@@ -25,6 +25,7 @@ EndScriptData */
 #include "precompiled.h"
 #include "eye_of_eternity.h"
 #include "WorldPacket.h"
+#include "Vehicle.h"
 
 enum
 {
@@ -141,9 +142,6 @@ enum
 
     //////////////// PHASE 4 ////////////////
     NPC_ALEXSTRASZA                = 32295, // The Life-Binder
-    GO_ALEXSTRASZAS_GIFT           = 193905, // Loot chest
-    GO_ALEXSTRASZAS_GIFT_H         = 193967, // Loot chest
-
     SAY_INTRO1                     = -1616000,
     SAY_INTRO2                     = -1616001,
     SAY_INTRO3                     = -1616002,
@@ -530,20 +528,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 if(!itr->getSource()->isAlive())
                     continue;
                 itr->getSource()->NearTeleportTo(VortexLoc[0].x, VortexLoc[0].y, VORTEX_Z, 0); 
-                itr->getSource()->CastSpell(itr->getSource(), SPELL_VORTEX, true, NULL, NULL, m_creature->GetGUID());
-                
-                //Set aura to be negative
-                if(Aura *pTmpAura = itr->getSource()->GetAura(SPELL_VORTEX, EFFECT_INDEX_0))
-                    pTmpAura->SetNegative();
-                if(Aura *pTmpAura = itr->getSource()->GetAura(SPELL_VORTEX, EFFECT_INDEX_1))
-                    pTmpAura->SetNegative();
+                itr->getSource()->CastSpell(itr->getSource(), SPELL_VORTEX, true);
 
-                //Far sight, should be vehicle but this is enought
+              /*  //Far sight, should be vehicle but this is enought
                 if(Creature *pVortex = m_creature->SummonCreature(NPC_VORTEX, OtherLoc[1].x, OtherLoc[1].y, OtherLoc[1].z, OtherLoc[1].o, TEMPSUMMON_TIMED_DESPAWN, 11000))
                 {
                     pVortex->SetVisibility(VISIBILITY_OFF);
                     itr->getSource()->SetFarSightGUID(pVortex->GetGUID());
-                }
+                } */
             }        
         }
         else if(phase > 1 && phase < 26){
@@ -619,10 +611,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 {
                     if (pTemp->isAlive())
                     {
-                        if(action == 2)
+                       /* if(action == 2)
                             pTemp->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
                         else
-                            pTemp->GetMotionMaster()->Clear(false);
+                            pTemp->GetMotionMaster()->Clear(false); */
                     }
                 }
             }
@@ -807,11 +799,13 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         //Enrage timer.....
         if(m_uiEnrageTimer <= uiDiff)
         {
+            m_creature->StopMoving();
             DoCast(m_creature, SPELL_BERSERK);
             m_uiEnrageTimer = 600000;
             m_creature->SetSpeedRate(MOVE_FLIGHT, 3.5f, true);
             m_creature->SetSpeedRate(MOVE_RUN, 3.5f, true);
             m_creature->SetSpeedRate(MOVE_WALK, 3.5f, true);
+            SetCombatMovement(true);
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }else m_uiEnrageTimer -= uiDiff;
 
@@ -952,7 +946,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiTimer = 5000;
             }else m_uiTimer -= uiDiff;  
 
-            if(m_creature->HasAura(SPELL_BERSERK)
+            if(m_creature->HasAura(SPELL_BERSERK))
                 DoMeleeAttackIfReady(); // this is there just for case of enrage
         }
         else if(m_uiPhase == PHASE_DRAGONS)
@@ -1044,7 +1038,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiSurgeOfPowerTimer = 16000+rand()%15000;
             }else m_uiSurgeOfPowerTimer -= uiDiff;	
 
-            if(m_creature->HasAura(SPELL_BERSERK)
+            if(m_creature->HasAura(SPELL_BERSERK))
                 DoMeleeAttackIfReady();
         }
         //Outro!
@@ -1084,6 +1078,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     pTemp->SetVisibility(VISIBILITY_OFF);
                     pAlexstrasza = pTemp;
                 }
+
                 m_uiSubPhase = 0;
                 return;
             }
@@ -1112,10 +1107,10 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         m_uiSubPhase = SUBPHASE_DIE;
                         //Summon exit portal, platform and loot
                         m_creature->SummonGameobject(GO_EXIT_PORTAL, GOPositions[2].x, GOPositions[2].y, GOPositions[2].z, GOPositions[2].o, 0);
-                        m_creature->SummonGameobject(GO_PLATFORM, GOPositions[0].x, GOPositions[0].y, GOPositions[0].z, GOPositions[0].o, 0);
-                        if(GameObject *pGift = m_creature->SummonGameobject(m_bIsRegularMode ? GO_ALEXSTRASZAS_GIFT : GO_ALEXSTRASZAS_GIFT_H, GOPositions[1].x, GOPositions[1].y, GOPositions[1].z+4, GOPositions[2].o, 0))
+                        
+                        if(GameObject *pGift = m_creature->SummonGameobject(GO_PLATFORM, GOPositions[0].x, GOPositions[0].y, GOPositions[0].z, GOPositions[0].o, 0))
                             pAlexstrasza->SetFacingToObject(pGift);
-                        m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                        m_creature->getVictim()->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                         break;
                 }
                 m_uiSpeechCount++;
@@ -1157,13 +1152,14 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
     }
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (isDead)
+
+        if (isDead || pDoneBy->GetTypeId() != TYPEID_PLAYER)
         {
             uiDamage = 0;
             return;
         }
 
-        if (uiDamage > m_creature->GetHealth() && m_creature->GetVisibility() == VISIBILITY_ON)
+        if (uiDamage > m_creature->GetHealth())
         {
             isDead = true;
 
@@ -1173,10 +1169,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             m_creature->RemoveAllAuras();
             m_creature->AttackStop();
             SetCombatMovement(false);
-
-            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
-                m_creature->GetMotionMaster()->MovementExpired();
-
+            m_creature->StopMoving();
             uiDamage = 0;
             m_creature->SetHealth(1);
             m_creature->CastSpell(m_creature, SPELL_POWER_SPARK_PLAYERS, false);
@@ -1205,7 +1198,7 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
     {
         if(m_uiCheckTimer <= uiDiff)
         {
-            if(pMalygos && pMalygos->isAlive() && m_creature->GetVisibility() == VISIBILITY_ON)
+            if(pMalygos && pMalygos->isAlive() && m_creature->GetVisibility() == VISIBILITY_ON && !isDead)
             {
                 if(m_creature->IsWithinDist(pMalygos, 3.0f, false))
                 {

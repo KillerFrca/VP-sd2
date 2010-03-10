@@ -42,13 +42,17 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
     uint32 m_uiOutroCheck;
 
     uint64 m_uiMalygosGUID;
+    uint64 m_uiGiftGUID;
+    uint64 m_uiGiftHeroGUID;
 
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
 
         m_uiMalygosGUID = 0;
-        m_uiOutroCheck = 0; 
+        m_uiOutroCheck = 0;
+        m_uiGiftHeroGUID = 0;
+        m_uiGiftGUID =  0;
     }
     void OnCreatureCreate(Creature* pCreature)
     {
@@ -66,6 +70,12 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
+            case GO_ALEXSTRASZAS_GIFT:
+                m_uiGiftGUID = pGo->GetGUID();
+                break;
+            case GO_ALEXSTRASZAS_GIFT_H:
+                m_uiGiftHeroGUID = pGo->GetGUID();
+                break;
             default:
                 break;
         }
@@ -86,6 +96,10 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
         {
             case TYPE_MALYGOS:
                 m_auiEncounter[0] = uiData;
+                if(uiData == DONE)
+                {
+                    DoRespawnGameObject(m_uiGiftGUID, 30*MINUTE);
+                }
                 break;
             case TYPE_OUTRO_CHECK:
                 m_uiOutroCheck = uiData;
