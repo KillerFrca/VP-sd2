@@ -40,6 +40,7 @@ enum
     SPELL_BERSERK                       = 47008,
 
     SPELL_PHEROMONES_LG                 = 62619,
+    SPELL_POTENT_PHEROMONES             = 64321,
 
     //SPELL_SUMMON_ALLIES_OF_NATURE     = 62678, //better do that in sd2
     SPELL_SUMMON_WAVE_10                = 62688,
@@ -52,21 +53,22 @@ enum
     //abilities with Elder Brightleaf
     SPELL_UNSTABLE_ENERGY_FREYA         = 62451,
     H_SPELL_UNSTABLE_ENERGY_FREYA       = 62865,
-    SPELL_BRIGHTLEAFS_ESSENCE           = 62385, // insert into spell_script_target values (62385, 1, 32906);
+    SPELL_BRIGHTLEAFS_ESSENCE           = 62385,
+    SPELL_EFFECT_BRIGHTLEAF             = 63294,
 
     //abilities with Elder Ironbranch
     SPELL_IRON_ROOTS_FREYA              = 62283,
     H_SPELL_IRON_ROOTS_FREYA            = 62930,
-    SPELL_IRONBRANCHS_ESSENCE           = 62387, // insert into spell_script_target values (62387, 1, 32906);
+    SPELL_IRONBRANCHS_ESSENCE           = 62387,
+    SPELL_EFFECT_IRONBRANCH             = 63292,
     
     SPELL_STRENGTHENED_IRON_ROOTS_SUMM  = 63601,
     
-    NPC_STRENGTHENED_IRON_ROOTS         = 33168,
-
     //abilities with Elder Stonebark 
     SPELL_GROUND_TREMOR_FREYA           = 62437,
     H_SPELL_GROUND_TREMOR_FREYA         = 62859,
-    SPELL_STONEBARKS_ESSENCE            = 62386, // insert into spell_script_target values (62386, 1, 32906);
+    SPELL_STONEBARKS_ESSENCE            = 62386,
+    SPELL_EFFECT_STONEBARK              = 63295,
 
     //elders
     SPELL_DRAINED_OF_POWER              = 62467,
@@ -90,8 +92,6 @@ enum
     
     SPELL_IRON_ROOTS_SUMM               = 65160,
 
-    NPC_IRON_ROOTS                      = 33008,
-    
     //Elder Stonebark
     SPELL_FIST_OF_STONE                 = 62344,
     SPELL_BROKEN_BONES                  = 62356,
@@ -100,11 +100,22 @@ enum
     SPELL_PETRIFIED_BARK                = 62337,
     H_SPELL_PETRIFIED_BARK              = 62933,
 
+    SPELL_SUMMON_CHEST_1                = 62950,
+    SPELL_SUMMON_CHEST_2                = 62952,
+    SPELL_SUMMON_CHEST_3                = 62953,
+    SPELL_SUMMON_CHEST_4                = 62954,
+    SPELL_SUMMON_CHEST_5                = 62955,
+    SPELL_SUMMON_CHEST_6                = 62956,
+    SPELL_SUMMON_CHEST_7                = 62957,
+    SPELL_SUMMON_CHEST_8                = 62958,
+
     NPC_NATURE_BOMB                     = 34129,
     NPC_EONARS_GIFT                     = 33228,
     NPC_HEALTHY_SPORE                   = 33215,
+    NPC_IRON_ROOTS                      = 33008,
+    NPC_STRENGTHENED_IRON_ROOTS         = 33168,
 
-    NPC_ELDER_BRIGHTLEAF                = 32915, 
+    NPC_ELDER_BRIGHTLEAF                = 32915,
     NPC_ELDER_IRONBRANCH                = 32913,
     NPC_ELDER_STONEBARK                 = 32914,
 
@@ -114,21 +125,21 @@ enum
     NPC_WAVE_3_STORM                    = 32919,
     NPC_WAVE_10                         = 32918,
 
+    ACHI_KNOCK_1_NORM                   = 3177,
+    ACHI_KNOCK_2_NORM                   = 3178,
+    ACHI_KNOCK_3_NORM                   = 3179,
+    ACHI_KNOCK_1_HC                     = 3185,
+    ACHI_KNOCK_2_HC                     = 3186,
+    ACHI_KNOCK_3_HC                     = 3187,
+
 };
 
-//if (Creature* pFreya = (Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_FREYA)))
-/*void ReduceStack(Creature* pCreature, ScriptedInstance* instance, uint8 count)
-{
-    if(Aura *pAura = Unit::GetUnit((*pCreature), instance->GetData64(DATA_FREYA))->GetAura(SPELL_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
-        pAura->SetStackAmount(pAura->GetStackAmount() - count);
-}*/
 
 Creature* GetFreya(Creature* pCreature, ScriptedInstance* instance){return (Creature*)Unit::GetUnit((*pCreature), instance->GetData64(DATA_FREYA));}
 
 ///////////////
 //// Freya ////
 ///////////////
-// update creature_template set ScriptName = 'boss_freya' WHERE entry = 32906;
 struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 {
     boss_freyaAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -151,8 +162,13 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     uint32 spellIdCast;
     uint32 yell;
     uint32 Berserk_Timer;
+    uint32 ChangeFaction_Timer;
+    uint32 EndPhaseDespawn_Timer;
+    bool EndPhase;
     bool HardMode;
-
+    bool Knock1;
+    bool Knock2;
+    bool FactionChanged;
 
     void Reset()
     {
@@ -161,22 +177,24 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         Sunbeam_Timer = urand(44,49)*IN_MILISECONDS;
         Wave_Count = 0;
         Berserk_Timer = 10*MINUTE*IN_MILISECONDS;
+        ChangeFaction_Timer = 7*IN_MILISECONDS;
+        EndPhaseDespawn_Timer = 10*IN_MILISECONDS;
+        FactionChanged = false;
         HardMode = false;
+        EndPhase = false;
+        Knock1 = false;
+        Knock2 = false;
+
+        m_creature->setFaction(16);
     }
 
     void KilledUnit(Unit *victim)
     {
     }
 
-    void JustDied(Unit *victim)
-    {
-        if(HardMode)
-            ;//TODO: GO spawn
-    }
-
     void Aggro(Unit* pWho)
     {
-    //  DoScriptText(SAY_AGGRO, m_creature); //The Conservatory must be protected
+        //DoScriptText(SAY_AGGRO, m_creature); //The Conservatory must be protected
         m_creature->SetInCombatWithZone();
 
         if (m_pInstance)
@@ -184,6 +202,52 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         
         BuffOnAggro();
     }
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho)
+            return;
+
+        if (EndPhase)
+            return;
+        
+        if (m_creature->Attack(pWho, true))
+        {
+            m_creature->AddThreat(pWho);
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+
+            if (IsCombatMovement())
+                m_creature->GetMotionMaster()->MoveChase(pWho);
+        }
+    }
+    
+    void CompleteAchievement(uint16 entry)
+    {
+        /*Map* pMap = m_creature->GetMap();
+        AchievementEntry const *Achievement = GetAchievementStore()->LookupEntry(entry);
+        if(Achievement && pMap)
+        {
+            Map::PlayerList const &lPlayers = pMap->GetPlayers();
+            if (!lPlayers.isEmpty())
+            {
+                for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                {
+                    if (Player* pPlayer = itr->getSource())
+                        pPlayer->GetAchievementMgr().CompletedAchievement(Achievement);
+                }
+            }
+        }*/
+    }
+    void DamageTaken(Unit *done_by, uint32 &damage)
+    {
+        if (damage > m_creature->GetHealth())
+        {
+            damage = 0;
+            m_creature->SetHealth(1);
+            EndPhase = true;
+        }
+    }
+
     void JustReachedHome()
     {
         DespawnAllCreaturesWithEntry(NPC_NATURE_BOMB);
@@ -195,15 +259,12 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         DespawnAllCreaturesWithEntry(NPC_WAVE_3_STORM);
         DespawnAllCreaturesWithEntry(NPC_WAVE_10);
         DespawnAllCreaturesWithEntry(NPC_EONARS_GIFT);
+
+        for(uint32 i = NPC_ELDER_IRONBRANCH; i <= NPC_ELDER_BRIGHTLEAF; i++)
+            if(Creature* pTemp = GetClosestCreatureWithEntry(m_creature, i, 180.0f))
+                pTemp->RemoveAllAuras();
     }
 
-    bool IsCreatureAlive(Creature *pCreature)
-    {
-        if(GetClosestCreatureWithEntry(m_creature, pCreature->GetEntry(), 150.0f))
-            return true;
-        
-        return false;
-    }
 
     void BuffOnAggro()
     {
@@ -215,31 +276,40 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
         //chek hard mode and additional buffs
         bool BrightleafAlive;
+        bool StonebarkAlive;
+        bool IronbranchAlive;
         if(Creature* pBright = GetClosestCreatureWithEntry(m_creature, NPC_ELDER_BRIGHTLEAF, 180.0f))
         {
             m_creature->CastSpell(m_creature, SPELL_BRIGHTLEAFS_ESSENCE, true);
+            pBright->CastSpell(m_creature, SPELL_EFFECT_BRIGHTLEAF, true);
             pBright->CastSpell(pBright, SPELL_DRAINED_OF_POWER, true);
             BrightleafAlive = true;
         }else BrightleafAlive = false;
 
-        bool IronbranchAlive;
         if(Creature* pIron = GetClosestCreatureWithEntry(m_creature, NPC_ELDER_IRONBRANCH, 180.0f))
         {
             m_creature->CastSpell(m_creature, SPELL_IRONBRANCHS_ESSENCE, true);
+            pIron->CastSpell(m_creature, SPELL_EFFECT_IRONBRANCH, true);
             pIron->CastSpell(pIron, SPELL_DRAINED_OF_POWER, true);
             IronbranchAlive = true;
         }else IronbranchAlive = false;
 
-        bool StonebarkAlive;
         if(Creature* pStone = GetClosestCreatureWithEntry(m_creature, NPC_ELDER_STONEBARK, 180.0f))
         {
             m_creature->CastSpell(m_creature, SPELL_STONEBARKS_ESSENCE, true);
+            pStone->CastSpell(m_creature, SPELL_EFFECT_STONEBARK, true);
             pStone->CastSpell(pStone, SPELL_DRAINED_OF_POWER, true);
             StonebarkAlive = true;
         }else StonebarkAlive = false;
 
         if(BrightleafAlive && IronbranchAlive && StonebarkAlive)
             HardMode = true;
+        if(BrightleafAlive || IronbranchAlive || StonebarkAlive)
+            Knock1 = true;
+        if((BrightleafAlive && IronbranchAlive) || 
+            (BrightleafAlive && StonebarkAlive) || 
+            (IronbranchAlive && StonebarkAlive))
+            Knock2 = true;
 
         m_creature->SetHealth(m_creature->GetMaxHealth());
     }
@@ -258,6 +328,30 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if(EndPhase)
+        {
+            if(ChangeFaction_Timer < diff && !FactionChanged)
+            {
+                m_creature->RemoveAllAuras();
+                m_creature->CastSpell(SelectUnit(SELECT_TARGET_RANDOM,0), m_bIsRegularMode ? (HardMode ? SPELL_SUMMON_CHEST_2 : SPELL_SUMMON_CHEST_1) : (HardMode ? SPELL_SUMMON_CHEST_4 : SPELL_SUMMON_CHEST_3), true);
+                
+                if(HardMode)
+                    CompleteAchievement(m_bIsRegularMode ? ACHI_KNOCK_3_NORM : ACHI_KNOCK_3_HC);
+                else if(Knock2)
+                    CompleteAchievement(m_bIsRegularMode ? ACHI_KNOCK_2_NORM : ACHI_KNOCK_2_HC);
+                else if(Knock1)
+                    CompleteAchievement(m_bIsRegularMode ? ACHI_KNOCK_1_NORM : ACHI_KNOCK_1_HC);				
+                m_creature->ClearInCombat();
+                m_creature->setFaction(m_creature->getVictim()->getFaction());
+                FactionChanged = true;
+            }else ChangeFaction_Timer -= diff;
+
+            if(EndPhaseDespawn_Timer < diff)
+            {
+                m_creature->ForcedDespawn();
+            }else EndPhaseDespawn_Timer -= diff;
+            return;
+        }
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
@@ -320,7 +414,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         }else Sunbeam_Timer -= diff;
         
 
-        if(Wave_Count == 6 /*samethink like phase2 check*/)
+        if(Wave_Count == 6 /*somethink like phase2 check*/)
         {
         }
 
@@ -328,7 +422,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         {
             DoCast(SelectUnit(SELECT_TARGET_RANDOM,0), m_bIsRegularMode ? SPELL_SUNBEAM : H_SPELL_SUNBEAM);
             Berserk_Timer = IN_MILISECONDS;		
-        }else SBerserk_Timer -= diff;
+        }else Berserk_Timer -= diff;
         DoMeleeAttackIfReady();
 
         EnterEvadeIfOutOfCombatArea(diff);
@@ -340,7 +434,6 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 /////////////////////////////////////////////////
 /// nature bomb / eonar's gift / healthy spore///
 /////////////////////////////////////////////////
-// update creature_template set ScriptName = 'mob_freya_ground' WHERE entry IN (34129,33228);
 struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
 {
      mob_freya_groundAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -355,12 +448,41 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
 
     uint32 NatureBomb_Timer;
     uint32 EonarsGift_Timer;
-    bool EonarsGift_Pheromones;
+    uint32 NonSelectable_Timer;
+    uint32 Grow_Timer;
+    float size;
+
+    bool NpcNatureBomb;
+    bool NpcEonarsGift;
+    bool NpcHealthySpore;
+
+    bool NonSelectableRemoved;
+    bool Pheromones;
+    bool MaxSize;
+
     void Reset()
     {
         NatureBomb_Timer = urand(9,11)*IN_MILISECONDS;
         EonarsGift_Timer = urand(11,13)*IN_MILISECONDS;
-        EonarsGift_Pheromones = true;
+        NonSelectable_Timer = 5*IN_MILISECONDS;
+        Grow_Timer = 8*IN_MILISECONDS;
+        size = 0;
+        Pheromones = true;
+        NonSelectableRemoved = false;
+        MaxSize = false;
+        NpcNatureBomb = false;
+        NpcEonarsGift = false;
+        NpcHealthySpore = false;
+        if(m_creature->GetEntry() == NPC_NATURE_BOMB)
+            NpcNatureBomb = true;
+        if(m_creature->GetEntry() == NPC_EONARS_GIFT)
+            NpcEonarsGift = true;
+        if(m_creature->GetEntry() == NPC_HEALTHY_SPORE)
+            NpcHealthySpore = true;
+
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        if(NpcEonarsGift)
+            m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.000001);
     }
     void AttackStart(Unit* pWho){return;}
     void UpdateAI(const uint32 diff)
@@ -368,33 +490,47 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
         if(!m_creature->isAlive())
             return;
 
-        if(m_creature->GetEntry() == NPC_NATURE_BOMB)
+        if(NpcNatureBomb)
             if(NatureBomb_Timer < diff)
             {
                 m_creature->CastSpell(m_creature, m_bIsRegularMode ? SPELL_NATURE_BOMB : H_SPELL_NATURE_BOMB, true);
                 m_creature->ForcedDespawn();
             }else NatureBomb_Timer -= diff;
 
-        if(m_creature->GetEntry() == NPC_EONARS_GIFT)
+        if(NpcEonarsGift)
         {
+            if (!MaxSize)
+            {
+                size += diff/Grow_Timer;
+                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, size);
+            }
             if(EonarsGift_Timer < diff)
             {
                 m_creature->CastSpell(GetFreya(m_creature, m_pInstance), m_bIsRegularMode ? SPELL_LIFEBINDER_GIFT : H_SPELL_LIFEBINDER_GIFT, true);
-                // insert into spell_script_target values (62584, 1, 32906);
                 EonarsGift_Timer = IN_MILISECONDS;
             }else EonarsGift_Timer -= diff;
-            if(EonarsGift_Pheromones)
+
+            if(NonSelectable_Timer < diff && !NonSelectableRemoved)
             {
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->CastSpell(m_creature, SPELL_PHEROMONES_LG, true);
-                EonarsGift_Pheromones = false;
+                NonSelectableRemoved = true;
+            }else NonSelectable_Timer -= diff;
+        }
+        if(NpcHealthySpore)
+        {
+            if(Pheromones)
+            {
+                m_creature->CastSpell(m_creature, SPELL_POTENT_PHEROMONES, true);
+                Pheromones = false;
             }
         }
+
     }
 };
 ///////////////////////////////////////////
 /// iron roots / strenghtend iron roots ///
 ///////////////////////////////////////////
-// update creature_template set ScriptName = 'mob_iron_roots' WHERE entry IN (33008,33168);
 struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
 {
     mob_iron_rootsAI(Creature* pCreature) : ScriptedAI(pCreature) 
@@ -406,12 +542,20 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
     
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    bool NpcIronRoots;
+    bool NpcStrengthenedIronRoots;
 
     uint64 m_uiVictimGUID;
 
     void Reset()
     {
         m_uiVictimGUID = 0;
+        NpcStrengthenedIronRoots = false;
+        NpcIronRoots = false;
+        if (m_creature->GetEntry() == NPC_STRENGTHENED_IRON_ROOTS)
+            NpcStrengthenedIronRoots = true;
+        if (m_creature->GetEntry() == NPC_IRON_ROOTS)
+            NpcIronRoots = true;
     }
     void SetVictim(uint64 victim)
     {
@@ -420,9 +564,9 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
             m_uiVictimGUID = victim;
             if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
             {
-                if (m_creature->GetEntry() == NPC_STRENGTHENED_IRON_ROOTS)
+                if (NpcStrengthenedIronRoots)
                     pVictim->CastSpell(pVictim, m_bIsRegularMode ? SPELL_IRON_ROOTS_FREYA : H_SPELL_IRON_ROOTS_FREYA, true);
-                if (m_creature->GetEntry() == NPC_IRON_ROOTS)
+                if (NpcIronRoots)
                     pVictim->CastSpell(pVictim, m_bIsRegularMode ? SPELL_IRON_ROOTS : H_SPELL_IRON_ROOTS, true);
             }
         }
@@ -432,9 +576,9 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
     {
         if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
         {
-            if (m_creature->GetEntry() == NPC_STRENGTHENED_IRON_ROOTS)
+            if (NpcStrengthenedIronRoots)
                 pVictim->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_IRON_ROOTS_FREYA : H_SPELL_IRON_ROOTS_FREYA);
-            if (m_creature->GetEntry() == NPC_IRON_ROOTS)
+            if (NpcIronRoots)
                 pVictim->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_IRON_ROOTS : H_SPELL_IRON_ROOTS);
         }
     }
@@ -446,7 +590,6 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
 ///////////////////
 /// spawned adds///
 ///////////////////
-// update creature_template set ScriptName = 'mob_freya_spawned' WHERE entry IN (33203, 33202, 32916, 32919, 32918);
 struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
 {
     mob_freya_spawnedAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -495,6 +638,9 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
     {
         if(!m_creature->isAlive())
             return;
+
+        if (!m_creature->getVictim())
+            AttackStart(SelectUnit(SELECT_TARGET_RANDOM,0));
     }
 };
 CreatureAI* GetAI_boss_freya(Creature* pCreature)
@@ -538,3 +684,24 @@ void AddSC_boss_freya()
     newscript->GetAI = &GetAI_mob_freya_spawned;
     newscript->RegisterSelf();
 }
+
+/*
+UPDATE creature_template SET ScriptName = 'boss_freya' WHERE entry = 32906;
+UPDATE creature_template SET ScriptName = 'mob_freya_ground' WHERE entry IN (34129,33228);
+UPDATE creature_template SET ScriptName = 'mob_iron_roots' WHERE entry IN (33008,33168);
+UPDATE creature_template SET ScriptName = 'mob_freya_spawned' WHERE entry IN (33203, 33202, 32916, 32919, 32918);
+INSERT IGNORE INTO spell_script_target VALUES (62385, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (62387, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (62386, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (62584, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (62619, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (63294, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (63295, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (63292, 1, 32906);
+INSERT IGNORE INTO spell_script_target VALUES (62584, 1, 32906);
+INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194324','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
+INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194325','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
+INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194326','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
+INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194327','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
+// 194324 - normal, 194325 - normal hard, 194326 - hc, 194327 - hc hard
+*/
