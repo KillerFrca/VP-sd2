@@ -100,6 +100,9 @@ enum
     SPELL_PETRIFIED_BARK                = 62337,
     H_SPELL_PETRIFIED_BARK              = 62933,
 
+    SPELL_LIFEBINDERS_VISUAL            = 62579,
+    SPELL_LIFEBINDER_GROW               = 44833,
+
     SPELL_SUMMON_CHEST_1                = 62950,
     SPELL_SUMMON_CHEST_2                = 62952,
     SPELL_SUMMON_CHEST_3                = 62953,
@@ -414,7 +417,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         }else Sunbeam_Timer -= diff;
         
 
-        if(Wave_Count == 6 /*somethink like phase2 check*/)
+        if(Wave_Count == 6 /*something like phase2 check*/)
         {
         }
 
@@ -424,8 +427,6 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
             Berserk_Timer = IN_MILISECONDS;		
         }else Berserk_Timer -= diff;
         DoMeleeAttackIfReady();
-
-        EnterEvadeIfOutOfCombatArea(diff);
 
     }
 
@@ -450,14 +451,13 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
     uint32 EonarsGift_Timer;
     uint32 NonSelectable_Timer;
     uint32 Grow_Timer;
-    float size;
+    uint32 Grow_Count;
 
     bool NpcNatureBomb;
     bool NpcEonarsGift;
     bool NpcHealthySpore;
 
-    bool NonSelectableRemoved;
-    bool Pheromones;
+    bool Start;
     bool MaxSize;
 
     void Reset()
@@ -466,9 +466,8 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
         EonarsGift_Timer = urand(11,13)*IN_MILISECONDS;
         NonSelectable_Timer = 5*IN_MILISECONDS;
         Grow_Timer = 8*IN_MILISECONDS;
-        size = 0;
-        Pheromones = true;
-        NonSelectableRemoved = false;
+        Grow_Count = 1;
+        Start = true;
         MaxSize = false;
         NpcNatureBomb = false;
         NpcEonarsGift = false;
@@ -482,7 +481,7 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
 
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         if(NpcEonarsGift)
-            m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.000001);
+            m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.1);
     }
     void AttackStart(Unit* pWho){return;}
     void UpdateAI(const uint32 diff)
@@ -490,6 +489,17 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
         if(!m_creature->isAlive())
             return;
 
+        if (Start)
+        {
+            if(NpcEonarsGift)
+            {
+                m_creature->CastSpell(m_creature, SPELL_LIFEBINDERS_VISUAL, true);
+                m_creature->CastSpell(m_creature, 62559, true);
+            }
+            if(NpcHealthySpore)
+                m_creature->CastSpell(m_creature, SPELL_POTENT_PHEROMONES, true);
+            Start = false;
+        }
         if(NpcNatureBomb)
             if(NatureBomb_Timer < diff)
             {
@@ -499,33 +509,25 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
 
         if(NpcEonarsGift)
         {
-            if (!MaxSize)
+            if (Grow_Timer < diff && Grow_Count <= 10)
             {
-                size += diff/Grow_Timer;
-                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, size);
-            }
+                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.1*Grow_Count);
+                Grow_Timer = 700;
+                Grow_Count ++;
+            }else Grow_Timer -= diff;
+
             if(EonarsGift_Timer < diff)
             {
                 m_creature->CastSpell(GetFreya(m_creature, m_pInstance), m_bIsRegularMode ? SPELL_LIFEBINDER_GIFT : H_SPELL_LIFEBINDER_GIFT, true);
                 EonarsGift_Timer = IN_MILISECONDS;
             }else EonarsGift_Timer -= diff;
 
-            if(NonSelectable_Timer < diff && !NonSelectableRemoved)
+            if(NonSelectable_Timer < diff && m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
             {
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->CastSpell(m_creature, SPELL_PHEROMONES_LG, true);
-                NonSelectableRemoved = true;
             }else NonSelectable_Timer -= diff;
         }
-        if(NpcHealthySpore)
-        {
-            if(Pheromones)
-            {
-                m_creature->CastSpell(m_creature, SPELL_POTENT_PHEROMONES, true);
-                Pheromones = false;
-            }
-        }
-
     }
 };
 ///////////////////////////////////////////
@@ -687,7 +689,7 @@ void AddSC_boss_freya()
 
 /*
 UPDATE creature_template SET ScriptName = 'boss_freya' WHERE entry = 32906;
-UPDATE creature_template SET ScriptName = 'mob_freya_ground' WHERE entry IN (34129,33228);
+UPDATE creature_template SET ScriptName = 'mob_freya_ground' WHERE entry IN (34129,33228, 33215);
 UPDATE creature_template SET ScriptName = 'mob_iron_roots' WHERE entry IN (33008,33168);
 UPDATE creature_template SET ScriptName = 'mob_freya_spawned' WHERE entry IN (33203, 33202, 32916, 32919, 32918);
 INSERT IGNORE INTO spell_script_target VALUES (62385, 1, 32906);
@@ -703,5 +705,6 @@ INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, 
 INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194325','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
 INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194326','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
 INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194327','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
+UPDATE creature_template SET scale = 0.1 WHERE entry = 33228;
 // 194324 - normal, 194325 - normal hard, 194326 - hc, 194327 - hc hard
 */
