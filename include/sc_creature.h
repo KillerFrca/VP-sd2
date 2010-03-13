@@ -181,6 +181,8 @@ struct MANGOS_DLL_DECL ScriptedAI : public CreatureAI
 
     bool EnterEvadeIfOutOfCombatArea(const uint32 uiDiff);
 
+    bool IsCreatureAlive(Creature *pCreature);
+
     private:
         bool   m_bCombatMovement;
         uint32 m_uiEvadeCheckCooldown;
