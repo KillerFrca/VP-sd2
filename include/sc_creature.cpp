@@ -606,6 +606,14 @@ bool ScriptedAI::EnterEvadeIfOutOfCombatArea(const uint32 uiDiff)
     return true;
 }
 
+bool ScriptedAI::IsCreatureAlive(uint32 entry)
+{
+    if(GetClosestCreatureWithEntry(m_creature, entry, 150.0f))
+        return true;
+        
+    return false;
+}
+
 void Scripted_NoMovementAI::AttackStart(Unit* pWho)
 {
     if (!pWho)
