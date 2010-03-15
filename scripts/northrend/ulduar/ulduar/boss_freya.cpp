@@ -104,9 +104,11 @@ enum
     
     //Elder Brightleaf
     SPELL_BRIGHTLEAFS_FLUX              = 62262,
+    SPELL_BRIGHTLEAFS_FLUXP             = 62251,
+    SPELL_BRIGHTLEAFS_FLUXM             = 62252,
     SPELL_SOLAR_FLARE                   = 62240,
     H_SPELL_SOLAR_FLARE                 = 62920,
-    SPELL_UNSTABLE_SOLAR_BEAM           = 62243,
+    SPELL_UNSTABLE_SUN_BEAM             = 62243,
     SPELL_UNSTABLE_ENERGY               = 62217,
     H_SPELL_UNSTABLE_ENERGY             = 62922,
     SPELL_PHOTOSYNTHESIS                = 62209,
@@ -175,7 +177,6 @@ enum
     ACHI_KNOCK_1_HC                     = 3185,
     ACHI_KNOCK_2_HC                     = 3186,
     ACHI_KNOCK_3_HC                     = 3187,
-
 };
 
 
@@ -444,21 +445,20 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void HandleRoots(int8 times)
     {
-        for(int8 i = 0; i != times; i++)
+        for(int8 i = 0; i != times; )
         {
             if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
                 if(target->HasAura(SPELL_IRON_ROOTS_FREYA || H_SPELL_IRON_ROOTS_FREYA))
-                {
-                    i--;
                     return;
-                }
+
                 float x = target->GetPositionX();
                 float y = target->GetPositionY();
                 float z = target->GetPositionZ();
                 if(Creature* pRoots = m_creature->SummonCreature(NPC_STRENGTHENED_IRON_ROOTS, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                     ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
                 DoTeleportPlayer(target, x, y, z, target->GetOrientation());
+                i++;
             }
         }
     }
@@ -684,8 +684,15 @@ struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
+    uint32 BrightleafsFlux_Timer;
+    uint32 SolarFlare_Timer;
+    uint32 UnstableSunBeam_Timer;
+
     void Reset()
     {
+        BrightleafsFlux_Timer = 2*IN_MILISECONDS;
+        UnstableSunBeam_Timer = 3*IN_MILISECONDS;
+        SolarFlare_Timer = urand(50,60)*IN_MILISECONDS;
 
     }
 
@@ -710,8 +717,23 @@ struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
         if(!m_creature->isAlive())
             return;
 
-        if (!m_creature->getVictim())
-            AttackStart(SelectUnit(SELECT_TARGET_RANDOM,0));
+        if (BrightleafsFlux_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BRIGHTLEAFS_FLUX);
+            BrightleafsFlux_Timer = 5*IN_MILISECONDS;
+        }else BrightleafsFlux_Timer -= diff;
+
+        if(UnstableSunBeam_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_UNSTABLE_SUN_BEAM);
+            UnstableSunBeam_Timer = 5*IN_MILISECONDS;
+        }else UnstableSunBeam_Timer -= diff;
+
+        if (SolarFlare_Timer < diff)
+        {
+            DoCast(SelectUnit(SELECT_TARGET_RANDOM,0), m_bIsRegularMode ? SPELL_SOLAR_FLARE : H_SPELL_SOLAR_FLARE);
+            SolarFlare_Timer = urand(40,50)*IN_MILISECONDS;
+        }else SolarFlare_Timer -= diff;
 
          DoMeleeAttackIfReady();
     }
@@ -761,21 +783,20 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
     
     void HandleRoots(int8 times)
     {
-        for(int8 i = 0; i != times; i++)
+        for(int8 i = 0; i != times; )
         {
             if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
                 if(target->HasAura(SPELL_IRON_ROOTS || H_SPELL_IRON_ROOTS))
-                {
-                    i--;
                     return;
-                }
+
                 float x = target->GetPositionX();
                 float y = target->GetPositionY();
                 float z = target->GetPositionZ();
-                if(Creature* pRoots = m_creature->SummonCreature(NPC_IRON_ROOTS, target->GetPositionX(), target->GetPositionX(), target->GetPositionX(), 0, TEMPSUMMON_DEAD_DESPAWN, 0))
+                if(Creature* pRoots = m_creature->SummonCreature(NPC_IRON_ROOTS, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                     ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
                 DoTeleportPlayer(target, x, y, z, target->GetOrientation());
+                i++;
             }
         }
     }
@@ -963,8 +984,8 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
     {
         if(Wave3_DeathCountdown < diff && Wave3_FirstDeath && Wave3)
         {
-            if(IsCreatureAlive(NPC_WAVE_3_WATER ||NPC_WAVE_3_SNAPLASHER || NPC_WAVE_3_STORM))
-                m_creature->Respawn();
+            /*if(IsCreatureAlive(NPC_WAVE_3_WATER ||NPC_WAVE_3_SNAPLASHER || NPC_WAVE_3_STORM))
+                m_creature->Respawn();*/
         
         }else Wave3_DeathCountdown -= diff;
 
