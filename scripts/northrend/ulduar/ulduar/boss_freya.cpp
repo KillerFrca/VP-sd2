@@ -16,44 +16,15 @@
 
 /* ScriptData
 SDName: Freya
-SD%Complete: 0
-SDComment: PH.
+SD%Complete: 80
+SDComment: TODO: Brightleaf, Freya with Brightleaf, 3wave adds, nature bomb, correct mushroom
 SDCategory: Ulduar
 EndScriptData */
 
 #include "precompiled.h"
 #include "ulduar.h"
-
 enum
 {
-    /*-- Ulduar: Freya yells
-(-1700152,'The Conservatory must be protected!',15526,1,0,'freya - aggro'),
-(-1700153,'Elders, grant me your strength!',15527,1,0,'freya - hardmode aggro'),
-(-1700154,'Eonar, your servant requires aid!',15528,1,0,'freya - summon conservator'),
-(-1700155,'Children, assist me!',15533,1,0,'freya - summon elementals'),
-(-1700156,'The swarm of the elements shall overtake you!',15534,1,0,'freya - summon lashers'),
-(-1700157,'Forgive me.',15529,1,0,'freya - slay 01'),
-(-1700158,'From your death springs life anew!',15530,1,0,'freya - slay 02'),
-(-1700159,'You have strayed too far, wasted too much time!',15532,1,0,'freya - berserk'),
-(-1700160,'His hold on me dissipates. I can see clearly once more. Thank you, heroes.',15531,1,0,'freya - defeated'),
-(-1700161,'Eonar, your servant calls for your blessing!',15535,1,0,'freya - yoggsaron event'),
-
-
--- Ulduar: Elder Brightleaf yells
-(-1700162,'Matron, the Conservatory has been breached!',15483,1,0,'brightleaf - aggro'),
-(-1700163,'Fertilizer.',15485,1,0,'brightleaf - slay 01'),
-(-1700164,'Your corpse will nourish the soil!',15486,1,0,'brightleaf - slay 0s2'),
-(-1700165,'Matron, one has fallen!',15487,1,0,'brightleaf - death'),
--- Ulduar: Elder Stonebark yells
-(-1700166,'This place will serve as your graveyard.',15500,1,0,'stonebark - aggro'),
-(-1700167,'<Angry roar>',15501,3,0,'stonebark - slay 01'),
-(-1700168,'Such a waste.',15502,1,0,'stonebark - slay 02'),
-(-1700169,'Matron, flee! They are ruthless....',15503,1,0,'stonebark - death'),
--- Ulduar: Elder Ironbranch yells
-(-1700170,'Mortals have no place here!',15493,1,0,'ironbranch - aggro'),
-(-1700171,'I return you whence you came!',15494,1,0,'ironbranch - slay 01'),
-(-1700172,'BEGONE!',15495,1,0,'ironbranch - slay 02'),
-(-1700173,'Freya! They come for you.',15496,1,0,'ironbranch - death'),*/
     //freya yells
     SAY_AGGRO							= -1700152,
     SAY_AGGRO_HARD                      = -1700153,
@@ -71,6 +42,19 @@ enum
     SAY_STONE_SLAY_1                    = -1700167,
     SAY_STONE_SLAY_2                    = -1700168,
     SAY_STONE_DEATH                     = -1700169,
+
+    //ironbranch yells
+    SAY_IRON_AGGRO                      = -1700170,
+    SAY_IRON_SLAY_1                     = -1700171,
+    SAY_IRON_SLAY_2                     = -1700172,
+    SAY_IRON_DEATH                      = -1700173,
+
+    //brightleaf yells
+    SAY_BRIGHT_AGGRO                     = -1700162,
+    SAY_BRIGHT_SLAY_1                    = -1700163,
+    SAY_BRIGHT_SLAY_2                    = -1700164,
+    SAY_BRIGHT_DEATH                     = -1700165,
+    
     //freya
     //general abilities
     SPELL_SUNBEAM                       = 62623,
@@ -221,11 +205,13 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
         m_uiVictimGUID = 0;
         NpcStrengthenedIronRoots = false;
         NpcIronRoots = false;
-        if (m_creature->GetEntry() == NPC_STRENGTHENED_IRON_ROOTS)
-            NpcStrengthenedIronRoots = true;
-        if (m_creature->GetEntry() == NPC_IRON_ROOTS)
-            NpcIronRoots = true;
+        switch(m_creature->GetEntry())
+        {
+            case NPC_STRENGTHENED_IRON_ROOTS : NpcStrengthenedIronRoots = true; break;
+            case NPC_IRON_ROOTS: NpcIronRoots = true; break;
+        }
     }
+    void AttackStart(Unit* pWho){return;}
     void SetVictim(uint64 victim)
     {
         if (victim)
@@ -284,6 +270,8 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     uint32 ChangeFaction_Timer;
     uint32 EndPhaseDespawn_Timer;
     uint32 GroundTremor_Timer;
+    uint32 IronRoots_Timer;
+
     bool EndPhase;
     bool HardMode;
     bool Knock1;
@@ -304,6 +292,8 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         ChangeFaction_Timer = 7*IN_MILISECONDS;
         EndPhaseDespawn_Timer = 10*IN_MILISECONDS;
         GroundTremor_Timer = urand(20,25)*IN_MILISECONDS;
+        IronRoots_Timer = urand(35,40)*IN_MILISECONDS;
+
         FactionChanged = false;
         HardMode = false;
         EndPhase = false;
@@ -458,13 +448,17 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         {
             if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
-                if(target->HasAura(SPELL_IRON_ROOTS || H_SPELL_IRON_ROOTS || SPELL_IRON_ROOTS_FREYA || H_SPELL_IRON_ROOTS_FREYA))
+                if(target->HasAura(SPELL_IRON_ROOTS_FREYA || H_SPELL_IRON_ROOTS_FREYA))
                 {
                     i--;
                     return;
                 }
-                if(Creature* pRoots = m_creature->SummonCreature(NPC_STRENGTHENED_IRON_ROOTS, target->GetPositionX(), target->GetPositionX(), target->GetPositionX(), 0, TEMPSUMMON_DEAD_DESPAWN, 0))
+                float x = target->GetPositionX();
+                float y = target->GetPositionY();
+                float z = target->GetPositionZ();
+                if(Creature* pRoots = m_creature->SummonCreature(NPC_STRENGTHENED_IRON_ROOTS, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                     ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
+                DoTeleportPlayer(target, x, y, z, target->GetOrientation());
             }
         }
     }
@@ -562,6 +556,14 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                 GroundTremor_Timer = urand(26,29)*IN_MILISECONDS;
             }else GroundTremor_Timer -= diff;
         }
+        if(IronbranchAlive)
+        {
+            if(IronRoots_Timer < diff)
+            {
+                HandleRoots(m_bIsRegularMode ? 1 : 2);              //not sure about how many times roots should be summoned
+                IronRoots_Timer = urand(50,70)*IN_MILISECONDS;
+            }else IronRoots_Timer -= diff;
+        }
         
 
         if(Wave_Count == 6 /*something like phase2 check*/)
@@ -572,7 +574,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_BERSERK);
             DoScriptText(SAY_BERSERK, m_creature);
-            Berserk_Timer = IN_MILISECONDS;		
+            Berserk_Timer = 60*IN_MILISECONDS;		
         }else Berserk_Timer -= diff;
         DoMeleeAttackIfReady();
 
@@ -686,10 +688,22 @@ struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
     {
 
     }
+
+    void Aggro(Unit* pWho)
+    {
+        DoScriptText(SAY_BRIGHT_AGGRO, m_creature);
+    }
+
     void JustDied(Unit* Killer)
     {
-
+        DoScriptText(SAY_BRIGHT_DEATH, m_creature);
     }
+
+    void KilledUnit(Unit *victim)
+    {
+        DoScriptText(urand(0,1) ? SAY_BRIGHT_SLAY_1 : SAY_BRIGHT_SLAY_2, m_creature);
+    }
+
 
     void UpdateAI(const uint32 diff)
     {
@@ -719,16 +733,31 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
     bool m_bIsRegularMode;
 
     uint32 IronRoots_Timer;
+    uint32 ThronSwarm_Timer;
+    uint32 Impale_Timer;
     
     void Reset()
     {
         IronRoots_Timer = urand(8,10)*IN_MILISECONDS;
-
+        ThronSwarm_Timer = urand(4,6)*IN_MILISECONDS;
+        Impale_Timer = urand(40,50)*IN_MILISECONDS;;
     }
+
+    void Aggro(Unit* pWho)
+    {
+        DoScriptText(SAY_IRON_AGGRO, m_creature);
+    }
+
     void JustDied(Unit* Killer)
     {
-
+        DoScriptText(SAY_IRON_DEATH, m_creature);
     }
+
+    void KilledUnit(Unit *victim)
+    {
+        DoScriptText(urand(0,1) ? SAY_IRON_SLAY_1 : SAY_IRON_SLAY_2, m_creature);
+    }
+
     
     void HandleRoots(int8 times)
     {
@@ -741,8 +770,12 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
                     i--;
                     return;
                 }
+                float x = target->GetPositionX();
+                float y = target->GetPositionY();
+                float z = target->GetPositionZ();
                 if(Creature* pRoots = m_creature->SummonCreature(NPC_IRON_ROOTS, target->GetPositionX(), target->GetPositionX(), target->GetPositionX(), 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                     ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
+                DoTeleportPlayer(target, x, y, z, target->GetOrientation());
             }
         }
     }
@@ -754,9 +787,21 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
 
         if (IronRoots_Timer < diff)
         {
-            HandleRoots(m_bIsRegularMode ? 1 : 2);
+            HandleRoots(m_bIsRegularMode ? 1 : 2);              //not sure about how many times roots should be summoned
             IronRoots_Timer = urand(23, 28)*IN_MILISECONDS;
         }else IronRoots_Timer -= diff;
+
+        if (ThronSwarm_Timer < diff)
+        {
+            DoCast(SelectUnit(SELECT_TARGET_RANDOM,1), m_bIsRegularMode ? SPELL_THORN_SWARM : H_SPELL_THORN_SWARM);
+            ThronSwarm_Timer = urand(9,11)*IN_MILISECONDS;
+        }else ThronSwarm_Timer -= diff;
+
+        if (Impale_Timer < diff)
+        {
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_IMPALE : H_SPELL_IMPALE);
+            Impale_Timer = urand(50,60)*IN_MILISECONDS;
+        }else Impale_Timer -= diff;
 
          DoMeleeAttackIfReady();
     }
@@ -854,9 +899,11 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
     bool Snaplasher;
     bool DetonatingLasher;
     bool Wave3;
+    bool Wave3_FirstDeath;
 
     uint32 FlameLash_Timer;
     uint32 NaturesFury_Timer;
+    uint32 Wave3_DeathCountdown;
 
     void Reset()
     {
@@ -867,8 +914,10 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
         Snaplasher = false;
         DetonatingLasher = false;
         Wave3 = false;
+        Wave3_FirstDeath = false;
         FlameLash_Timer = urand(5,10)*IN_MILISECONDS;
         NaturesFury_Timer = urand(8,10)*IN_MILISECONDS;
+        Wave3_DeathCountdown = 10*IN_MILISECONDS;
         switch(m_creature->GetEntry())
         {
             case NPC_WAVE_1:            AncientConservator = true; m_creature->CastSpell(m_creature, SPELL_CONSERVATORS_GRIP, true); break;
@@ -884,7 +933,10 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
         if (AncientConservator)
             ReduceStack(30);
         if (Wave3)
+        {
             ReduceStack(10);
+            Wave3_FirstDeath = true;
+        }
         if (DetonatingLasher)
             ReduceStack(2);
     }
@@ -909,6 +961,13 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if(Wave3_DeathCountdown < diff && Wave3_FirstDeath && Wave3)
+        {
+            if(IsCreatureAlive(NPC_WAVE_3_WATER ||NPC_WAVE_3_SNAPLASHER || NPC_WAVE_3_STORM))
+                m_creature->Respawn();
+        
+        }else Wave3_DeathCountdown -= diff;
+
         if(!m_creature->isAlive())
             return;
         
@@ -1023,4 +1082,33 @@ INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, 
 INSERT IGNORE INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `faction`, `flags`, `size`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `data0`, `data1`, `data2`, `data3`, `data4`, `data5`, `data6`, `data7`, `data8`, `data9`, `data10`, `data11`, `data12`, `data13`, `data14`, `data15`, `data16`, `data17`, `data18`, `data19`, `data20`, `data21`, `data22`, `data23`, `ScriptName`) VALUES('194327','3','8628','Freya\'s Gift','','','','0','0','1','0','0','0','0','0','0','1634','0','0','1','0','0','0','0','0','0','0','1','0','1','0','1','0','0','0','0','0','0','0','0','');
 UPDATE creature_template SET scale = 0.1 WHERE entry = 33228;
 // 194324 - normal, 194325 - normal hard, 194326 - hc, 194327 - hc hard
+
+-- Ulduar: Freya yells
+(-1700152,'The Conservatory must be protected!',15526,1,0,'freya - aggro'),
+(-1700153,'Elders, grant me your strength!',15527,1,0,'freya - hardmode aggro'),
+(-1700154,'Eonar, your servant requires aid!',15528,1,0,'freya - summon conservator'),
+(-1700155,'Children, assist me!',15533,1,0,'freya - summon elementals'),
+(-1700156,'The swarm of the elements shall overtake you!',15534,1,0,'freya - summon lashers'),
+(-1700157,'Forgive me.',15529,1,0,'freya - slay 01'),
+(-1700158,'From your death springs life anew!',15530,1,0,'freya - slay 02'),
+(-1700159,'You have strayed too far, wasted too much time!',15532,1,0,'freya - berserk'),
+(-1700160,'His hold on me dissipates. I can see clearly once more. Thank you, heroes.',15531,1,0,'freya - defeated'),
+(-1700161,'Eonar, your servant calls for your blessing!',15535,1,0,'freya - yoggsaron event'),
+
+
+-- Ulduar: Elder Brightleaf yells
+(-1700162,'Matron, the Conservatory has been breached!',15483,1,0,'brightleaf - aggro'),
+(-1700163,'Fertilizer.',15485,1,0,'brightleaf - slay 01'),
+(-1700164,'Your corpse will nourish the soil!',15486,1,0,'brightleaf - slay 0s2'),
+(-1700165,'Matron, one has fallen!',15487,1,0,'brightleaf - death'),
+-- Ulduar: Elder Stonebark yells
+(-1700166,'This place will serve as your graveyard.',15500,1,0,'stonebark - aggro'),
+(-1700167,'<Angry roar>',15501,3,0,'stonebark - slay 01'),
+(-1700168,'Such a waste.',15502,1,0,'stonebark - slay 02'),
+(-1700169,'Matron, flee! They are ruthless....',15503,1,0,'stonebark - death'),
+-- Ulduar: Elder Ironbranch yells
+(-1700170,'Mortals have no place here!',15493,1,0,'ironbranch - aggro'),
+(-1700171,'I return you whence you came!',15494,1,0,'ironbranch - slay 01'),
+(-1700172,'BEGONE!',15495,1,0,'ironbranch - slay 02'),
+(-1700173,'Freya! They come for you.',15496,1,0,'ironbranch - death'),
 */
