@@ -142,6 +142,7 @@ enum
 
     //////////////// PHASE 4 ////////////////
     NPC_ALEXSTRASZA                = 32295, // The Life-Binder
+
     SAY_INTRO1                     = -1616000,
     SAY_INTRO2                     = -1616001,
     SAY_INTRO3                     = -1616002,
@@ -1169,6 +1170,10 @@ struct MANGOS_DLL_DECL mob_power_sparkAI : public ScriptedAI
             m_creature->RemoveAllAuras();
             m_creature->AttackStop();
             SetCombatMovement(false);
+
+            m_creature->GetMotionMaster()->MovementExpired();
+
+            m_creature->GetMotionMaster()->Clear(false);
             m_creature->StopMoving();
             uiDamage = 0;
             m_creature->SetHealth(1);
