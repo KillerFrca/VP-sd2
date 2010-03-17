@@ -26,6 +26,7 @@ EndScriptData */
 #include "eye_of_eternity.h"
 #include "WorldPacket.h"
 #include "Vehicle.h"
+#include "ByteBuffer.h"
 
 enum
 {
@@ -730,12 +731,12 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
 
     }
     //Spell not in DBC, but on retail client recieve its opcode, so..
-    void SendDeepBreathCast()
+    /*void SendDeepBreathCast()
     {
         WorldPacket data(SMSG_SPELL_GO, 50);
-        data.append(m_creature->GetPackGUID());
+        data << m_creature->GetPackGUID();
 
-        data.append(m_creature->GetPackGUID());
+        data << m_creature->GetPackGUID();
         data << uint8(1);
         data << uint32(SPELL_DEEP_BREATH);
         data << uint32(256);
@@ -746,7 +747,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         data << uint8(0);
 
         m_creature->SendMessageToSet(&data, false);
-    }
+    }*/
 
     void UpdateAI(const uint32 uiDiff)
     {
@@ -918,7 +919,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             {
                 DoScriptText(SAY_ARCANE_PULSE, m_creature);
                 DoScriptText(SAY_ARCANE_PULSE_WARN, m_creature);
-                SendDeepBreathCast();
+                //SendDeepBreathCast();
                 if(Creature *pTrigger = GetClosestCreatureWithEntry(m_creature, NPC_AOE_TRIGGER, 60.0f))
                     DoCast(pTrigger, SPELL_SURGE_OF_POWER_BREATH);
 
