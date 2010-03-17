@@ -188,6 +188,7 @@ bool GossipSelect_npc_torastrasza(Player* pPlayer, Creature* pCreature, uint32 u
     }
     return true;
 }
+
 void AddSC_dragonblight()
 {
     Script *newscript;

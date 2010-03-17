@@ -10,5 +10,7 @@ enum
 
     NPC_WYRMREST_SKYTALON        = 30161, // Dragon Vehicle in Third Phase
     NPC_MALYGOS                  = 28859,
+    GO_ALEXSTRASZAS_GIFT         = 193905, // Loot chest
+    GO_ALEXSTRASZAS_GIFT_H       = 193967, // Loot chest
 };
 #endif

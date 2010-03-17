@@ -1019,6 +1019,18 @@
 				<Filter
 					Name="sunken_temple"
 					>
+					<File
+						RelativePath="..\scripts\eastern_kingdoms\sunken_temple\instance_sunken_temple.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\eastern_kingdoms\sunken_temple\sunken_temple.h"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\eastern_kingdoms\sunken_temple\sunken_temple.cpp"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="sunwell_plateau"
@@ -1452,11 +1464,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\scripts\kalimdor\ruins_of_ahnqiraj\ruins_of_ahnqiraj.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\scripts\kalimdor\ruins_of_ahnqiraj\instance_ruins_of_ahnqiraj.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\scripts\kalimdor\ruins_of_ahnqiraj\instance_ruins_of_ahnqiraj.h"
+						RelativePath="..\scripts\kalimdor\ruins_of_ahnqiraj\ruins_of_ahnqiraj.h"
 						>
 					</File>
 				</Filter>
@@ -1550,8 +1566,8 @@
 				</File>
 				<File
 					RelativePath="..\scripts\northrend\howling_fjord.cpp"
-                    >
-                </File>
+					>
+				</File>
 				<File
 					RelativePath="..\scripts\northrend\icecrown.cpp"
 					>
@@ -1634,6 +1650,38 @@
 					<Filter
 						Name="trial_of_the_crusader"
 						>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_anubarak_trial.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_faction_champions.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_jaraxxus.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_northrend_beasts.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_twin_valkyr.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\instance_trial_of_the_crusader.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\trial_of_the_crusader.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\trial_of_the_crusader.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter
@@ -1680,6 +1728,110 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="icecrown_citadel"
+					>
+					<Filter
+						Name="icecrown_citadel"
+						>
+ 						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\blood_prince_council.cpp"
+ 							>
+ 						</File>
+ 						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_blood_queen_lanathel.cpp"
+ 							>
+ 						</File>
+ 						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_deathbringer_saurfang.cpp"
+ 							>
+ 						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_festergut.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_lady_deathwhisper.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_lord_marrowgar.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_proffesor_putricide.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_rotface.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_sindragosa.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_the_lich_king.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\boss_valithria_dreamwalker.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\gunship_battle.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="frozen_halls"
+						>
+						<Filter
+							Name="pit_of_saron"
+							>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron\boss_forgemaster_gafrost.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron\boss_krick_and_ick.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron\boss_scourgelord_tyrannus.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="halls_of_reflection"
+							>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_falryn.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_lich_king.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_marwyn.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="forge_of_souls"
+							>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\boss_bronjahm.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\boss_devourer_of_souls.cpp"
+								>
+							</File>
+						</Filter>
+					</Filter>
+ 				</Filter>
 				<Filter
 					Name="naxxramas"
 					>
@@ -1854,6 +2006,14 @@
 							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.cpp"
 							>
 						</File>
+						<File
+							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.h"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\ulduar\halls_of_stone\instance_halls_of_stone.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="ulduar"
@@ -1935,6 +2095,18 @@
 				<Filter
 					Name="violet_hold"
 					>
+						<File
+							RelativePath="..\scripts\northrend\violet_hold\violet_hold.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\violet_hold\violet_hold.h"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\violet_hold\instance_violet_hold.cpp"
+							>
+						</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -2434,6 +2606,10 @@
 				</File>
 				<File
 					RelativePath="..\scripts\world\npcs_special.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\scripts\world\spell_scripts.cpp"
 					>
 				</File>
 			</Filter>

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
 * This program is free software licensed under GPL version 2
 * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -132,6 +132,8 @@ extern void AddSC_boss_dathrohan_balnazzar();
 extern void AddSC_boss_order_of_silver_hand();
 extern void AddSC_instance_stratholme();
 extern void AddSC_stratholme();
+extern void AddSC_instance_sunken_temple();                 //sunken_temple
+extern void AddSC_sunken_temple();
 extern void AddSC_boss_brutallus();                         //sunwell_plateau
 extern void AddSC_boss_kalecgos();
 extern void AddSC_instance_sunwell_plateau();
@@ -263,6 +265,16 @@ extern void AddSC_boss_anubarak();                          //azjol-nerub
 extern void AddSC_boss_hadronox();
 extern void AddSC_boss_krikthir();
 extern void AddSC_instance_azjol_nerub();
+extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
+extern void AddSC_boss_jaraxxus();
+extern void AddSC_boss_anubarak_trial();
+extern void AddSC_twin_valkyr();
+extern void AddSC_instance_trial_of_the_crusader();
+extern void AddSC_boss_argent_challenge();                 //Crusaders' Coliseum, trial_of_the_champion
+extern void AddSC_boss_black_knight();
+extern void AddSC_boss_grand_champions();
+extern void AddSC_instance_trial_of_the_champion();
+extern void AddSC_trial_of_the_champion();
 extern void AddSC_boss_dred();                              //draktharon_keep
 extern void AddSC_boss_novos();                             
 extern void AddSC_boss_tharonja();
@@ -336,11 +348,6 @@ extern void AddSC_boss_ymiron();
 extern void AddSC_instance_pinnacle();
 extern void AddSC_instance_violet_hold();                   //violet_hold
 extern void AddSC_violet_hold();
-extern void AddSC_boss_argent_challenge();                 // Trial of the Champion
-extern void AddSC_boss_black_knight();
-extern void AddSC_boss_grand_champions();
-extern void AddSC_instance_trial_of_the_champion();
-extern void AddSC_trial_of_the_champion();
 
 extern void AddSC_borean_tundra();
 extern void AddSC_dalaran();
@@ -560,6 +567,8 @@ void AddScripts()
     AddSC_boss_order_of_silver_hand();
     AddSC_instance_stratholme();
     AddSC_stratholme();
+    AddSC_instance_sunken_temple();                         //sunken_temple
+    AddSC_sunken_temple();
     AddSC_boss_brutallus();                                 //sunwell_plateau
     AddSC_boss_kalecgos();
     AddSC_instance_sunwell_plateau();
@@ -691,6 +700,16 @@ void AddScripts()
     AddSC_boss_hadronox();
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
+    AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
+    AddSC_boss_jaraxxus();
+    AddSC_boss_anubarak_trial();
+    AddSC_twin_valkyr();
+    AddSC_instance_trial_of_the_crusader();
+    AddSC_boss_argent_challenge();                          //Crusaders' Coliseum, trial_of_the_champion
+    AddSC_boss_black_knight();
+    AddSC_boss_grand_champions();
+    AddSC_instance_trial_of_the_champion();
+    AddSC_trial_of_the_champion();
     AddSC_boss_dred();                                      //draktharon_keep
     AddSC_boss_novos();
     AddSC_boss_tharonja();
@@ -764,11 +783,6 @@ void AddScripts()
     AddSC_instance_pinnacle();
     AddSC_instance_violet_hold();                           //violet_hold
     AddSC_violet_hold();
-    AddSC_boss_argent_challenge();                          // Trial of the Champion
-    AddSC_boss_black_knight();
-    AddSC_boss_grand_champions();
-    AddSC_instance_trial_of_the_champion();
-    AddSC_trial_of_the_champion();
 
     AddSC_borean_tundra();
     AddSC_dalaran();

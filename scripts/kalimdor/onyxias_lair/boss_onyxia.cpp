@@ -194,7 +194,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
     {
         uint32 uiMaxCount = sizeof(aMoveData)/sizeof(sOnyxMove);
 
-        int iTemp = rand()%(uiMaxCount-1);
+        uint32 iTemp = urand(0, uiMaxCount-1);
 
         if (iTemp >= m_uiMovePoint)
             ++iTemp;
@@ -253,7 +253,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else
             {
-                if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 60)
+                if (m_creature->GetHealthPercent() < 60.0f)
                 {
                     m_uiPhase = PHASE_BREATH;
 
@@ -276,7 +276,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         }
         else
         {
-            if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
+            if (m_creature->GetHealthPercent() < 40.0f)
             {
                 m_uiPhase = PHASE_END;
                 DoScriptText(SAY_PHASE_3_TRANS, m_creature);

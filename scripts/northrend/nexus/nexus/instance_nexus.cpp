@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -188,10 +188,7 @@ struct MANGOS_DLL_DECL instance_nexus : public ScriptedInstance
             if (Creature* pCreature = instance->GetCreature(m_uiKeristrazaGUID))
             {
                 if (pCreature->isAlive())
-                {
                     pCreature->RemoveAurasDueToSpell(SPELL_FROZEN_PRISON);
-                    pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                }
             }
         }
 

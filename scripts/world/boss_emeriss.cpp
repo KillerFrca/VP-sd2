@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -72,7 +72,7 @@ struct MANGOS_DLL_DECL boss_emerissAI : public ScriptedAI
         if (m_uiSleep_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_SLEEP);
+                DoCastSpellIfCan(pTarget, SPELL_SLEEP);
 
             m_uiSleep_Timer = urand(8000, 16000);
         }
@@ -82,7 +82,7 @@ struct MANGOS_DLL_DECL boss_emerissAI : public ScriptedAI
         //NoxiousBreath_Timer
         if (m_uiNoxiousBreath_Timer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_NOXIOUSBREATH);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_NOXIOUSBREATH);
             m_uiNoxiousBreath_Timer = urand(14000, 20000);
         }
         else
@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_emerissAI : public ScriptedAI
         //Tailsweep every 2 seconds
         if (m_uiTailSweep_Timer < uiDiff)
         {
-            DoCast(m_creature, SPELL_TAILSWEEP);
+            DoCastSpellIfCan(m_creature, SPELL_TAILSWEEP);
             m_uiTailSweep_Timer = 2000;
         }
         else
@@ -100,7 +100,7 @@ struct MANGOS_DLL_DECL boss_emerissAI : public ScriptedAI
         //MarkOfNature_Timer
         //if (m_uiMarkOfNature_Timer < uiDiff)
         //{
-        //    DoCast(m_creature->getVictim(), SPELL_MARKOFNATURE);
+        //    DoCastSpellIfCan(m_creature->getVictim(), SPELL_MARKOFNATURE);
         //    m_uiMarkOfNature_Timer = 45000;
         //}
         //else
@@ -109,18 +109,18 @@ struct MANGOS_DLL_DECL boss_emerissAI : public ScriptedAI
         //VolatileInfection_Timer
         if (m_uiVolatileInfection_Timer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_VOLATILEINFECTION);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_VOLATILEINFECTION);
             m_uiVolatileInfection_Timer = urand(7000, 12000);
         }
         else
             m_uiVolatileInfection_Timer -= uiDiff;
 
         //CorruptionofEarth at 75%, 50% and 25%
-        if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) <= (100-(25*m_uiCorruptionsCasted)))
+        if (m_creature->GetHealthPercent() < float(100 - 25*m_uiCorruptionsCasted))
         {
             ++m_uiCorruptionsCasted;                        // prevent casting twice on same hp
             DoScriptText(SAY_CASTCORRUPTION, m_creature);
-            DoCast(m_creature->getVictim(), SPELL_CORRUPTIONOFEARTH);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_CORRUPTIONOFEARTH);
         }
 
         DoMeleeAttackIfReady();

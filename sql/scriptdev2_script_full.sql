@@ -3,7 +3,7 @@
 --
 
 DELETE FROM sd2_db_version;
-INSERT INTO sd2_db_version (version) VALUES ('ScriptDev2 (for MaNGOS 9410 +) ');
+INSERT INTO sd2_db_version (version) VALUES ('ScriptDev2 (for MaNGOS 9599+) ');
 
 --
 -- Below contains data for table `script_texts` mainly used in C++ parts.
@@ -574,7 +574,15 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1000552,'Breaking off a piece of its bark, the %s hands it to you before departing.',0,2,0,0,'woodlands EMOTE_CREATE'),
 
 (-1000553,'Be ready, $N. I hear the council returning. Prepare to ambush!',0,0,0,0,'deathstalker_faerleia SAY_START'),
-(-1000554,'Well done. A blow to Arugal no doubt!',0,0,0,0,'deathstalker_faerleia SAY_END');
+(-1000554,'Well done. A blow to Arugal no doubt!',0,0,0,0,'deathstalker_faerleia SAY_END'),
+
+(-1000555,'Back... to work...',0,0,0,0,'exhausted vrykul SAY_RAND_WORK1'),
+(-1000556,'You treat us worse than animals!',0,0,0,0,'exhausted vrykul SAY_RAND_WORK2'),
+(-1000557,'We will have revenge...some day.',0,0,0,0,'exhausted vrykul SAY_RAND_WORK3'),
+(-1000558,'Curse you! You will not treat me like a beast!',0,0,0,0,'exhausted vrykul SAY_RAND_ATTACK1'),
+(-1000559,'I\'d rather die fighting than live like a slave.',0,0,0,0,'exhausted vrykul SAY_RAND_ATTACK2'),
+(-1000560,'Enough! I will teach you some manners, wench!',0,0,0,0,'exhausted vrykul SAY_RAND_ATTACK3');
+
 -- -1 033 000 SHADOWFANG KEEP
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
 (-1033000,'Follow me and I\'ll open the courtyard door for you.',0,0,7,1,'prisoner ashcrombe SAY_FREE_AS'),
@@ -1087,7 +1095,7 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1533038,'Help me! Save me!',8875,1,0,0,'thaddius SAY_SCREAM3'),
 (-1533039,'Please, nooo!',8876,1,0,0,'thaddius SAY_SCREAM4'),
 
-(-1533040,'Foolishly you have sought your own demise. Brazenly you have disregarded powers beyond your understanding. You have fought hard to invade the realm of the harvester. Now there is only one way out - to walk the lonely path of the damned.',8807,1,0,0,'gothik SAY_SPEECH'),
+(-1533040,'Foolishly you have sought your own demise.',8807,1,0,0,'gothik SAY_SPEECH_1'),
 (-1533041,'Death is the only escape.',8806,1,0,0,'gothik SAY_KILL'),
 (-1533042,'I... am... undone!',8805,1,0,0,'gothik SAY_DEATH'),
 (-1533043,'I have waited long enough! Now, you face the harvester of souls!',8808,1,0,0,'gothik SAY_TELEPORT'),
@@ -1171,8 +1179,8 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1533113,'The races of the world will perish. It is only a matter of time.',8830,1,0,0,'heigan SAY_TAUNT1'),
 (-1533114,'I see endless suffering, I see torment, I see rage. I see... everything!',8831,1,0,0,'heigan SAY_TAUNT2'),
 (-1533115,'Soon... the world will tremble!',8832,1,0,0,'heigan SAY_TAUNT3'),
-(-1533116,'The end is upon you.',8833,1,0,0,'heigan SAY_TAUNT4'),
-(-1533117,'Hungry worms will feast on your rotten flesh!',8834,1,0,0,'heigan SAY_TAUNT5'),
+(-1533116,'The end is upon you.',8833,1,0,0,'heigan SAY_CHANNELING'),
+(-1533117,'Hungry worms will feast on your rotten flesh!',8834,1,0,0,'heigan SAY_TAUNT4'),
 (-1533118,'Noo... o...',8828,1,0,0,'heigan SAY_DEATH'),
 
 (-1533119,'%s spots a nearby Zombie to devour!',0,3,0,0,'gluth EMOTE_ZOMBIE'),
@@ -1186,7 +1194,24 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1533126,'Show them no mercy!',8856,1,0,0,'razuvious SAY_COMMAND2'),
 (-1533127,'You disappoint me, students!',8858,1,0,0,'razuvious SAY_COMMAND3'),
 (-1533128,'The time for practice is over! Show me what you\'ve learned!',8859,1,0,0,'razuvious SAY_COMMAND4'),
-(-1533129,'An honorable... death...',8860,1,0,0,'razuvious SAY_DEATH');
+(-1533129,'An honorable... death...',8860,1,0,0,'razuvious SAY_DEATH'),
+
+(-1533130,'%s summons forth Skeletal Warriors!',0,3,0,0,'noth EMOTE_WARRIOR'),
+(-1533131,'%s teleports to the balcony above!',0,3,0,0,'noth EMOTE_SKELETON'),
+(-1533132,'%s raises more skeletons!',0,3,0,0,'noth EMOTE_TELEPORT'),
+(-1533133,'%s teleports back into the battle!',0,3,0,0,'noth EMOTE_TELEPORT_RETURN'),
+
+(-1533134,'A Guardian of Icecrown enters the fight!',0,3,0,0,'kelthuzad EMOTE_GUARDIAN'),
+(-1533135,'%s strikes!',0,3,0,0,'kelthuzad EMOTE_PHASE2'),
+
+(-1533136,'%s teleports and begins to channel a spell!',0,3,0,0,'heigan EMOTE_TELEPORT'),
+(-1533137,'%s rushes to attack once more!',0,3,0,0,'heigan EMOTE_RETURN'),
+
+(-1533138,'%s teleports into the fray!',0,3,0,0,'gothik EMOTE_TO_FRAY'),
+(-1533139,'The central gate opens!',0,3,0,0,'gothik EMOTE_GATE'),
+(-1533140,'Brazenly you have disregarded powers beyond your understanding.',0,1,0,0,'gothik SAY_SPEECH_2'),
+(-1533141,'You have fought hard to invade the realm of the harvester.',0,1,0,0,'gothik SAY_SPEECH_3'),
+(-1533142,'Now there is only one way out - to walk the lonely path of the damned.',0,1,0,0,'gothik SAY_SPEECH_4');
 
 -- -1 534 000 THE BATTLE OF MT. HYJAL
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES

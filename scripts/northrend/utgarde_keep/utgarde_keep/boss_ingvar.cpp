@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -149,7 +149,7 @@ struct MANGOS_DLL_DECL boss_ingvarAI : public ScriptedAI
         {
             if (m_uiCleaveTimer < uiDiff)
             {
-                DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+                DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE);
                 m_uiCleaveTimer = urand(2500, 7000);
             }
             else
@@ -157,7 +157,7 @@ struct MANGOS_DLL_DECL boss_ingvarAI : public ScriptedAI
 
             if (m_uiSmashTimer < uiDiff)
             {
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_SMASH : SPELL_SMASH_H);
+                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_SMASH : SPELL_SMASH_H);
                 m_uiSmashTimer = urand(8000, 15000);
             }
             else
@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_ingvarAI : public ScriptedAI
             if (m_uiStaggeringRoarTimer < uiDiff)
             {
                 DoScriptText(EMOTE_ROAR, m_creature);
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_STAGGERING_ROAR : SPELL_STAGGERING_ROAR_H);
+                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_STAGGERING_ROAR : SPELL_STAGGERING_ROAR_H);
                 m_uiStaggeringRoarTimer = urand(15000, 30000);
             }
             else
@@ -174,7 +174,7 @@ struct MANGOS_DLL_DECL boss_ingvarAI : public ScriptedAI
 
             if (m_uiEnrageTimer < uiDiff)
             {
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : SPELL_ENRAGE_H);
+                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : SPELL_ENRAGE_H);
                 m_uiEnrageTimer = urand(10000, 20000);
             }
             else

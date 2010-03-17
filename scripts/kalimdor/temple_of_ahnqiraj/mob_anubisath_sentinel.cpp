@@ -228,17 +228,7 @@ struct MANGOS_DLL_DECL aqsentinelAI : public ScriptedAI
         {
             if (!spell->Effect[i])
                 continue;
-			SpellEffectIndex effIndex = EFFECT_INDEX_0;
-			switch(i)
-			{
-				case 1:
-					effIndex = EFFECT_INDEX_1;
-					break;
-				case 2:
-					effIndex = EFFECT_INDEX_2;
-					break;
-			}
-            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, effIndex);
+            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, SpellEffectIndex(i));
             m_creature->AddAura(a);
         }
     }
