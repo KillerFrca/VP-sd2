@@ -43,6 +43,9 @@ npc_rogue_trainer        80%    Scripted trainers, so they are able to offer ite
 npc_sayge               100%    Darkmoon event fortune teller, buff player based on answers given
 npc_tabard_vendor        50%    allow recovering quest related tabards, achievement related ones need core support
 npc_locksmith            75%    list of keys needs to be confirmed
+npc_onyxian_whelpling   100%    non-combat pet emote
+npc_wormhole            100%    ENG wormhole item 48933
+npc_time_lost_drake_controller  controller for NPC 32491 (Time-lost Proto-drake) to make its spawns random.  
 EndContentData */
 
 /*########
@@ -1625,6 +1628,7 @@ enum
     QUEST_HOTTER_THAN_HELL_A              = 10758,
     QUEST_HOTTER_THAN_HELL_H              = 10764,
     QUEST_RETURN_TO_KHAGDAR               = 9837,
+    QUEST_SCEPTER_OF_CELEBRAS             = 7046,
     QUEST_CONTAINMENT                     = 13159,
 
     ITEM_ARCATRAZ_KEY                     = 31084,
@@ -1632,6 +1636,7 @@ enum
     ITEM_SKELETON_KEY                     = 13704,
     ITEM_SHATTERED_HALLS_KEY              = 28395,
     ITEM_THE_MASTERS_KEY                  = 24490,
+    ITEM_SCEPTER_OF_CELEBRAS              = 17191,
     ITEM_VIOLET_HOLD_KEY                  = 42482,
 
     SPELL_ARCATRAZ_KEY                    = 54881,
@@ -1639,6 +1644,7 @@ enum
     SPELL_SKELETON_KEY                    = 54883,
     SPELL_SHATTERED_HALLS_KEY             = 54884,
     SPELL_THE_MASTERS_KEY                 = 54885,
+    SPELL_SCEPTER_OF_CELEBRAS             = 56211,
     SPELL_VIOLET_HOLD_KEY                 = 67253
 };
 
@@ -1647,6 +1653,7 @@ enum
 #define GOSSIP_LOST_SKELETON_KEY         "I've lost my key to the Scholomance."
 #define GOSSIP_LOST_SHATTERED_HALLS_KEY  "I've lost my key to the Shattered Halls."
 #define GOSSIP_LOST_THE_MASTERS_KEY      "I've lost my key to the Karazhan."
+#define GOSSIP_LOST_SCEPTER              "I've lost my Scepter of Celebras"
 #define GOSSIP_LOST_VIOLET_HOLD_KEY      "I've lost my key to the Violet Hold."
 
 
@@ -1679,6 +1686,10 @@ bool GossipHello_npc_locksmith(Player* pPlayer, Creature* pCreature)
     if (pPlayer->GetQuestRewardStatus(QUEST_CONTAINMENT) && !pPlayer->HasItemCount(ITEM_VIOLET_HOLD_KEY, 1, true))
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_VIOLET_HOLD_KEY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF +6);
 
+    // Scepter of Celebras
+    if (pPlayer->GetQuestRewardStatus(QUEST_SCEPTER_OF_CELEBRAS) && !pPlayer->HasItemCount(ITEM_SCEPTER_OF_CELEBRAS, 1, true))
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_SCEPTER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF +7);
+
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 
     return true;
@@ -1710,10 +1721,343 @@ bool GossipSelect_npc_locksmith(Player* pPlayer, Creature* pCreature, uint32 uiS
             break;
         case GOSSIP_ACTION_INFO_DEF+6:
             pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->CastSpell(pPlayer, SPELL_SCEPTER_OF_CELEBRAS, false);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+7:
+            pPlayer->CLOSE_GOSSIP_MENU();
             pPlayer->CastSpell(pPlayer, SPELL_VIOLET_HOLD_KEY, false);
             break;
     }
     return true;
+}
+
+/*#######################
+# npc_onyxian_whelpling #
+########################*/
+#define SAY_ONYX_WHELP    -1366071
+#define SPELL_DEEP_BREATH 69004
+
+struct MANGOS_DLL_DECL npc_onyxian_whelplingAI : public ScriptedAI
+{
+    npc_onyxian_whelplingAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    uint32 m_uiEmoteTimer;
+    Unit *owner;
+
+    void Reset()
+    {
+        owner = m_creature->GetOwner();
+        if(owner)
+            m_creature->GetMotionMaster()->MoveFollow(owner, 1, (M_PI/2)); 
+        m_uiEmoteTimer = 5000;
+    }
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiEmoteTimer < uiDiff)
+        {
+            DoScriptText(SAY_ONYX_WHELP, m_creature);
+            m_creature->CastSpell(m_creature, SPELL_DEEP_BREATH, false);
+            m_uiEmoteTimer = 60000+rand()%300000;
+        }else m_uiEmoteTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_onyxian_whelpling(Creature* pCreature)
+{
+    return new npc_onyxian_whelplingAI(pCreature);
+}
+
+/*######
+## npc_wormhole
+######*/
+
+#define GOSSIP_ITEM_WORMHOLE1    "Borean Tundra"
+#define GOSSIP_ITEM_WORMHOLE2    "Borean Tundra"
+#define GOSSIP_ITEM_WORMHOLE3    "Howling Fjord"
+#define GOSSIP_ITEM_WORMHOLE4    "Sholazar Basin"
+#define GOSSIP_ITEM_WORMHOLE5    "Icecrown"
+#define GOSSIP_ITEM_WORMHOLE6    "Storm Peaks"
+#define GOSSIP_ITEM_WORMHOLE7    "Underground..."
+
+enum
+{
+    GOSSIP_TEXTID_WORMHOLE1      = 14785,
+    SAY_WORMHOLE_ANOMALY         = -1531099,
+    NPC_ANOMALY                  = 19686,
+};
+struct MANGOS_DLL_DECL npc_wormholeAI : public ScriptedAI
+{
+    npc_wormholeAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    uint32 despawnTimer;
+    void Reset()
+    {
+        despawnTimer = 60000;
+        if(roll_chance_f(1))
+        {
+            DoScriptText(SAY_WORMHOLE_ANOMALY, m_creature);
+            for(int i = 0; i <= 2; i++)
+            {
+                 m_creature->SummonCreature(NPC_ANOMALY, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000);
+            }
+            despawnTimer = 3000;
+        }
+
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (despawnTimer < uiDiff)
+        {
+            m_creature->ForcedDespawn();
+        }else despawnTimer -= uiDiff; 
+    }
+};
+
+CreatureAI* GetAI_npc_wormhole(Creature* pCreature)
+{
+    return new npc_wormholeAI(pCreature);
+}
+bool GossipHello_npc_wormhole(Player* pPlayer, Creature* pCreature)
+{    
+    
+    if(urand(0,1)) {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+    } else {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+    switch(urand(0,50)) {
+        case 15:
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_WORMHOLE7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+            break;
+    }
+    
+    
+
+    pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_WORMHOLE1, pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_wormhole(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    switch(uiAction) {
+        case GOSSIP_ACTION_INFO_DEF+1:
+            // Borean Tundra, 54.15
+            pPlayer->TeleportTo(571,4300.52,5452.59,64.3578,3.84644);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+2:
+            // Borean Tundra, 51.45
+            pPlayer->TeleportTo(571,3136.24,5603.01,52.3244,1.38835);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+3:
+            // Howling Fjord, 58,48
+            pPlayer->TeleportTo(571,1151.36,-4935.54,299.061,3.4366);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+4:
+            // Sholazar Basin, 48,37
+            pPlayer->TeleportTo(571,6192.98,4801.52,219.963,2.21874);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+5:
+            // Icecrown, 65,31
+            pPlayer->TeleportTo(571,8096.98,1401.17,776.921,2.63893);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+6:
+            // Storm Peaks, 43,25
+            pPlayer->TeleportTo(571,8975.23,-1255.25,1059.01,5.80022);
+            break;
+        case GOSSIP_ACTION_INFO_DEF+7:
+            // Bonus location - underground in Dalaran
+            pPlayer->TeleportTo(571,5856.654297,517.693665,599.817932,2.1);
+            break;
+    }
+
+    return true;
+}
+
+/*################################
+# npc_time_lost_drake_controller #
+#################################*/
+struct Locations
+{
+    float x, y, z, o;
+    uint32 id;
+};
+static Locations SpawnLoc[]=
+{
+    //13 locations in storm peaks
+    {7573.996, -131.688, 897.956, 1.899},
+    {8122.577, -732.081, 1006.656, 5.600},
+    {8610.194, -1041.021, 550.699, 3.056},
+    {8724.768, -1340.422, 870.166, 3.504},
+    {7336.514, -1006.855, 907.828, 4.471},
+    {7354.466, -1656.856, 1141.252, 2.795},
+    {6820.968, -1804.341, 942.078, 1.594},
+    {6453.129, -1544.845, 492.526, 2.932},
+    {7066.843, -1066.930, 893.788, 3.054},
+    {6630.028, -840.184, 673.220, 2.480},
+    {6903.040, -417.403, 996.679, 0.261},
+    {6541.038, -228.798, 816.373, 4.045},
+    {7076.384, 111.577, 1022.646, 0.848},
+};
+
+#define NPC_TIME_LOST_PROTO_DRAKE    32491
+#define GOSSIP_TELE_TO_DRAKE         "Teleport me to drake"
+struct MANGOS_DLL_DECL npc_time_lost_drake_controllerAI : public ScriptedAI
+{
+    npc_time_lost_drake_controllerAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    int8 m_uiLastSpawn;
+    Creature *pProtoDrake;
+
+    uint32 m_uiCheckTimer;
+    uint32 m_uiRelocationTimer;
+    void Reset()
+    {
+        m_uiLastSpawn = -1;
+
+        m_uiCheckTimer = 5000;
+        m_uiRelocationTimer = 60000;
+
+        SpawnDrake();
+
+        m_creature->SetVisibility(VISIBILITY_OFF);
+    }
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    bool IsDrakeAlive()
+    {
+        if(!pProtoDrake)
+            return false;
+
+        if(pProtoDrake->isAlive())
+            return true;
+
+        return false;
+    }
+    bool IsDrakeInCombat()
+    {
+        if(!pProtoDrake)
+            return false;
+
+        if(!pProtoDrake->isAlive())
+            return false;
+
+        if(pProtoDrake->isInCombat())
+            return true;
+        
+        return false;
+    }
+
+    void SpawnDrake(int8 spawnLoc = -1)
+    {
+
+        uint8 tmp = rand()%12;
+        while(tmp == m_uiLastSpawn)
+            tmp = rand()%12;
+
+        if(spawnLoc != -1)
+            tmp = spawnLoc;
+
+        if(Creature *pTemp = m_creature->SummonCreature(NPC_TIME_LOST_PROTO_DRAKE, SpawnLoc[tmp].x, SpawnLoc[tmp].y, SpawnLoc[tmp].z, SpawnLoc[tmp].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 50000))
+        {
+            pProtoDrake = pTemp;
+            m_uiLastSpawn = tmp;
+        }    
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+           if (m_uiRelocationTimer < uiDiff)
+        {
+            if(IsDrakeAlive() && !IsDrakeInCombat())
+            {
+                pProtoDrake->ForcedDespawn();
+                SpawnDrake();
+            }
+            else if(!IsDrakeAlive())
+            {
+                SpawnDrake();
+            }            
+            m_uiRelocationTimer = 60000;//3600000;
+        }else m_uiRelocationTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_time_lost_drake_controller(Creature* pCreature)
+{
+    return new npc_time_lost_drake_controllerAI(pCreature);
+}
+bool GossipHello_npc_time_lost_drake_controller(Player* pPlayer, Creature* pCreature)
+{
+
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TELE_TO_DRAKE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF +1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_time_lost_drake_controller(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    switch(uiAction)
+    {
+        
+        case GOSSIP_ACTION_INFO_DEF+1:
+            pPlayer->CLOSE_GOSSIP_MENU();
+            pPlayer->TeleportTo(571, SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].x, 
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].y,
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].z,
+                SpawnLoc[((npc_time_lost_drake_controllerAI*)pCreature->AI())->m_uiLastSpawn].o);
+            break;
+
+    }
+    return true;
+}
+struct MANGOS_DLL_DECL npc_rune_blade : public ScriptedAI
+{
+    npc_rune_blade(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    void Reset()
+    {
+        Unit * owner = m_creature->GetOwner();
+        if (!owner || owner->GetTypeId() != TYPEID_PLAYER)
+            return;
+
+        // Cannot be Selected or Attacked
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+        // Add visible weapon
+        if (Item const * item = ((Player *)owner)->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND))
+            m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, item->GetProto()->ItemId);
+
+        // Add stats scaling
+        int32 damageDone=owner->CalculateDamage(BASE_ATTACK, true); // might be average damage instead ?
+        int32 meleeSpeed=owner->m_modAttackSpeedPct[BASE_ATTACK];
+        m_creature->CastCustomSpell(m_creature, 51906, &damageDone, &meleeSpeed, NULL, true);
+
+        // Visual Glow
+        m_creature->CastSpell(m_creature, 53160, true);
+
+        // Start Chasing victim
+        if (uint64 guid = ((Player*)owner)->GetSelection())
+            if (Unit *target = m_creature->GetUnit(*owner,guid))
+                if (!target->IsFriendlyTo(owner))
+                    m_creature->Attack(target,true);
+
+    }
+};
+CreatureAI* GetAI_npc_rune_blade(Creature* pCreature)
+{
+    return new npc_rune_blade(pCreature);
 }
 
 void AddSC_npcs_special()
@@ -1805,4 +2149,31 @@ void AddSC_npcs_special()
     newscript->pGossipHello =  &GossipHello_npc_locksmith;
     newscript->pGossipSelect = &GossipSelect_npc_locksmith;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_onyxian_whelpling";
+    newscript->GetAI = &GetAI_npc_onyxian_whelpling;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_wormhole";
+    newscript->pGossipHello =  &GossipHello_npc_wormhole;
+    newscript->pGossipSelect = &GossipSelect_npc_wormhole;
+    newscript->GetAI = &GetAI_npc_wormhole;
+    newscript->RegisterSelf();
+        
+    newscript = new Script;
+    newscript->Name = "npc_time_lost_drake_controller";
+    newscript->pGossipHello =  &GossipHello_npc_time_lost_drake_controller;
+    newscript->pGossipSelect = &GossipSelect_npc_time_lost_drake_controller;
+    newscript->GetAI = &GetAI_npc_time_lost_drake_controller;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_runeblade";
+    newscript->GetAI = &GetAI_npc_rune_blade;
+    newscript->RegisterSelf();
 }
+/*
+INSERT IGNORE INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entry_2`, `difficulty_entry_3`, `KillCredit1`, `KillCredit2`, `modelid_A`, `modelid_A2`, `modelid_H`, `modelid_H2`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `minhealth`, `maxhealth`, `minmana`, `maxmana`, `armor`, `faction_A`, `faction_H`, `npcflag`, `speed`, `scale`, `rank`, `mindmg`, `maxdmg`, `dmgschool`, `attackpower`, `dmg_multiplier`, `baseattacktime`, `rangeattacktime`, `unit_class`, `unit_flags`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_class`, `trainer_race`, `minrangedmg`, `maxrangedmg`, `rangedattackpower`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `spell1`, `spell2`, `spell3`, `spell4`, `PetSpellDataId`, `mingold`, `maxgold`, `AIName`, `MovementType`, `InhabitType`, `unk16`, `unk17`, `RacialLeader`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `movementId`, `RegenHealth`, `equipment_id`, `mechanic_immune_mask`, `flags_extra`, `ScriptName`) VALUES ('62491', '0', '0', '0', '0', '0', '10045', '0', '10045', '0', 'Time-Lost Proto-Drake spawn controller', 'To make its spawns random', NULL, '0', '80', '80', '1000', '1000', '0', '0', '0', '35', '35', '1', '1', '1', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '', '0', '3', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '128', 'npc_time_lost_drake_controller');
+*/

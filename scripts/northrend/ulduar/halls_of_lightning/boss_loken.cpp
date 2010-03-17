@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -159,7 +159,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
                 //breaks at movement, can we assume when it's time, this spell is casted and also must stop movement?
                 //m_creature->CastSpell(m_creature, SPELL_PULSING_SHOCKWAVE_AURA, true);
 
-                  //DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_PULSING_SHOCKWAVE_N : SPELL_PULSING_SHOCKWAVE_H); // need core support
+                  //DoCast(m_creature, m_bIsRegularMode ? SPELL_PULSING_SHOCKWAVE_N : SPELL_PULSING_SHOCKWAVE_H); // need core support
                 m_bIsAura = true;
                 m_uiResumePulsingShockwave_Timer = 0;
             }
@@ -170,7 +170,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
         if (m_uiArcLightning_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCastSpellIfCan(pTarget, SPELL_ARC_LIGHTNING);
+                DoCast(pTarget, SPELL_ARC_LIGHTNING);
 
             m_uiArcLightning_Timer = urand(15000, 16000);
         }
@@ -186,7 +186,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
                 case 2: DoScriptText(SAY_NOVA_3, m_creature);break;
             }
 
-            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_LIGHTNING_NOVA_N : SPELL_LIGHTNING_NOVA_H);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_LIGHTNING_NOVA_N : SPELL_LIGHTNING_NOVA_H);
 
             m_bIsAura = false;
             m_uiResumePulsingShockwave_Timer = (m_bIsRegularMode ? 5000 : 4000); // Pause Pulsing Shockwave aura
@@ -196,7 +196,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
             m_uiLightningNova_Timer -= uiDiff;
 
         // Health check
-        if (m_creature->GetHealthPercent() < float(100 - 25*m_uiHealthAmountModifier))
+        if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < (100-(25*m_uiHealthAmountModifier)))
         {
             switch(m_uiHealthAmountModifier)
             {
