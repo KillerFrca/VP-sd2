@@ -71,7 +71,7 @@ enum
     SPELL_PHEROMONES_LG                 = 62619,
     SPELL_POTENT_PHEROMONES             = 64321,
 
-    //SPELL_SUMMON_ALLIES_OF_NATURE     = 62678, //better do that in sd2
+    SPELL_SUMMON_ALLIES_OF_NATURE     = 62678, //better do that in sd2
     SPELL_SUMMON_WAVE_10                = 62688,
     SPELL_SUMMON_WAVE_3                 = 62686,
     SPELL_SUMMON_WAVE_1                 = 62685,
@@ -91,7 +91,7 @@ enum
     SPELL_IRONBRANCHS_ESSENCE           = 62387,
     SPELL_EFFECT_IRONBRANCH             = 63292,
     
-    //SPELL_STRENGTHENED_IRON_ROOTS_SUMM  = 63601, better way to do that through SummonCreature for better control with summoned creature
+    SPELL_STRENGTHENED_IRON_ROOTS_SUMM  = 63601, //better way to do that through SummonCreature for better control with summoned creature
     
     //abilities with Elder Stonebark 
     SPELL_GROUND_TREMOR_FREYA           = 62437,
@@ -179,6 +179,7 @@ enum
     ACHI_KNOCK_3_HC                     = 3187,
 };
 
+
 Creature* GetFreya(Creature* pCreature, ScriptedInstance* instance){return (Creature*)Unit::GetUnit((*pCreature), instance->GetData64(DATA_FREYA));}
 
 ///////////////////////////////////////////
@@ -242,6 +243,9 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) { }
 };
 
+///////////////
+//// Freya ////
+///////////////
 struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 {
     boss_freyaAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -338,20 +342,20 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     
     void CompleteAchievement(uint16 entry)
     {
-        /*Map* pMap = m_creature->GetMap();
-        AchievementEntry const *Achievement = GetAchievementStore()->LookupEntry(entry);
-        if(Achievement && pMap)
-        {
-            Map::PlayerList const &lPlayers = pMap->GetPlayers();
-            if (!lPlayers.isEmpty())
-            {
-                for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-                {
-                    if (Player* pPlayer = itr->getSource())
-                        pPlayer->GetAchievementMgr().CompletedAchievement(Achievement);
-                }
-            }
-        }*/
+        //Map* pMap = m_creature->GetMap();
+        //AchievementEntry const *Achievement = GetAchievementStore()->LookupEntry(entry);
+        //if(Achievement && pMap)
+        //{
+        //    Map::PlayerList const &lPlayers = pMap->GetPlayers();
+        //    if (!lPlayers.isEmpty())
+        //    {
+        //        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        //        {
+        //            if (Player* pPlayer = itr->getSource())
+        //                pPlayer->GetAchievementMgr().CompletedAchievement(Achievement);
+        //        }
+        //    }
+        //}
     }
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
@@ -383,13 +387,11 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void BuffOnAggro()
     {
-        //buff on start
         m_creature->CastSpell(m_creature, SPELL_ATTUNED_TO_NATURE, true);
         if(Aura *pAura = m_creature->GetAura(SPELL_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
             pAura->SetStackAmount(150);
         m_creature->CastSpell(m_creature, m_bIsRegularMode ? SPELL_TOUCH_OF_EONAR : H_SPELL_TOUCH_OF_EONAR, true);
 
-        //chek hard mode and additional buffs
         if(Creature* pBright = GetClosestCreatureWithEntry(m_creature, NPC_ELDER_BRIGHTLEAF, 180.0f))
         {
             m_creature->CastSpell(m_creature, SPELL_BRIGHTLEAFS_ESSENCE, true);
@@ -451,10 +453,10 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                 float y = target->GetPositionY();
                 float z = target->GetPositionZ();
                 if(Creature* pRoots = m_creature->SummonCreature(NPC_STRENGTHENED_IRON_ROOTS, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
-                    //((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
+                    ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
                 DoTeleportPlayer(target, x, y, z, target->GetOrientation());
                 i++;
-            }
+            }else break;
         }
     }
 
@@ -511,7 +513,6 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                 spellIdCast = spellId2;
             if(Wave_Count == 2 || Wave_Count == 5)
                 spellIdCast = spellId3;
-
             m_creature->CastSpell(m_creature, spellIdCast, true);
             
             switch(spellIdCast)
@@ -661,6 +662,230 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
     }
 };
 
+////////////////////////
+/// Elder Brightleaf ///
+////////////////////////
+struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
+{
+    boss_elder_brightleafAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    uint32 BrightleafsFlux_Timer;
+    uint32 SolarFlare_Timer;
+    uint32 UnstableSunBeam_Timer;
+
+    void Reset()
+    {
+        BrightleafsFlux_Timer = 2*IN_MILISECONDS;
+        UnstableSunBeam_Timer = 3*IN_MILISECONDS;
+        SolarFlare_Timer = urand(50,60)*IN_MILISECONDS;
+
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        DoScriptText(SAY_BRIGHT_AGGRO, m_creature);
+    }
+
+    void JustDied(Unit* Killer)
+    {
+        DoScriptText(SAY_BRIGHT_DEATH, m_creature);
+    }
+
+    void KilledUnit(Unit *victim)
+    {
+        DoScriptText(urand(0,1) ? SAY_BRIGHT_SLAY_1 : SAY_BRIGHT_SLAY_2, m_creature);
+    }
+
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(!m_creature->isAlive())
+            return;
+
+        if (BrightleafsFlux_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BRIGHTLEAFS_FLUX);
+            BrightleafsFlux_Timer = 5*IN_MILISECONDS;
+        }else BrightleafsFlux_Timer -= diff;
+
+        if(UnstableSunBeam_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_UNSTABLE_SUN_BEAM);
+            UnstableSunBeam_Timer = 5*IN_MILISECONDS;
+        }else UnstableSunBeam_Timer -= diff;
+
+        if (SolarFlare_Timer < diff)
+        {
+            DoCast(SelectUnit(SELECT_TARGET_RANDOM,0), m_bIsRegularMode ? SPELL_SOLAR_FLARE : H_SPELL_SOLAR_FLARE);
+            SolarFlare_Timer = urand(40,50)*IN_MILISECONDS;
+        }else SolarFlare_Timer -= diff;
+
+         DoMeleeAttackIfReady();
+    }
+};
+
+////////////////////////
+/// Elder Ironbranch ///
+////////////////////////
+struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
+{
+    boss_elder_ironbranchAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    uint32 IronRoots_Timer;
+    uint32 ThronSwarm_Timer;
+    uint32 Impale_Timer;
+    
+    void Reset()
+    {
+        IronRoots_Timer = urand(8,10)*IN_MILISECONDS;
+        ThronSwarm_Timer = urand(4,6)*IN_MILISECONDS;
+        Impale_Timer = urand(40,50)*IN_MILISECONDS;;
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        DoScriptText(SAY_IRON_AGGRO, m_creature);
+    }
+
+    void JustDied(Unit* Killer)
+    {
+        DoScriptText(SAY_IRON_DEATH, m_creature);
+    }
+
+    void KilledUnit(Unit *victim)
+    {
+        DoScriptText(urand(0,1) ? SAY_IRON_SLAY_1 : SAY_IRON_SLAY_2, m_creature);
+    }
+
+    
+    void HandleRoots(int8 times)
+    {
+        for(int8 i = 0; i != times; )
+        {
+            if(Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
+            {
+                if(target->HasAura(SPELL_IRON_ROOTS || H_SPELL_IRON_ROOTS))
+                    return;
+
+                float x = target->GetPositionX();
+                float y = target->GetPositionY();
+                float z = target->GetPositionZ();
+                if(Creature* pRoots = m_creature->SummonCreature(NPC_IRON_ROOTS, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
+                    ((mob_iron_rootsAI*)pRoots->AI())->SetVictim(target->GetGUID());
+                DoTeleportPlayer(target, x, y, z, target->GetOrientation());
+                i++;
+            }else break;
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(!m_creature->isAlive())
+            return;
+
+        if (IronRoots_Timer < diff)
+        {
+            HandleRoots(m_bIsRegularMode ? 1 : 2);              //not sure about how many times roots should be summoned
+            IronRoots_Timer = urand(23, 28)*IN_MILISECONDS;
+        }else IronRoots_Timer -= diff;
+
+        if (ThronSwarm_Timer < diff)
+        {
+            DoCast(SelectUnit(SELECT_TARGET_RANDOM,1), m_bIsRegularMode ? SPELL_THORN_SWARM : H_SPELL_THORN_SWARM);
+            ThronSwarm_Timer = urand(9,11)*IN_MILISECONDS;
+        }else ThronSwarm_Timer -= diff;
+
+        if (Impale_Timer < diff)
+        {
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_IMPALE : H_SPELL_IMPALE);
+            Impale_Timer = urand(50,60)*IN_MILISECONDS;
+        }else Impale_Timer -= diff;
+
+         DoMeleeAttackIfReady();
+    }
+};
+
+///////////////////////
+/// Elder Stonebark ///
+///////////////////////
+struct MANGOS_DLL_DECL boss_elder_stonebarkAI : public ScriptedAI
+{
+    boss_elder_stonebarkAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    uint32 GroundTremor_Timer;
+    uint32 FistOfStone_Timer;
+    uint32 PetrifiedBark_Timer;
+    void Reset()
+    {
+        GroundTremor_Timer = urand(7,10)*IN_MILISECONDS;
+        FistOfStone_Timer = urand(13,16)*IN_MILISECONDS;
+        PetrifiedBark_Timer = urand(30,40)*IN_MILISECONDS;
+
+    }
+    void Aggro(Unit* pWho)
+    {
+        DoScriptText(SAY_STONE_AGGRO, m_creature);
+    }
+
+    void JustDied(Unit* Killer)
+    {
+        DoScriptText(SAY_STONE_DEATH, m_creature);
+    }
+
+    void KilledUnit(Unit *victim)
+    {
+        DoScriptText(urand(0,1) ? SAY_STONE_SLAY_1 : SAY_STONE_SLAY_2, m_creature);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if(GroundTremor_Timer < diff)
+        {
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_GROUND_TREMOR : H_SPELL_GROUND_TREMOR);
+            GroundTremor_Timer = urand(18,22)*IN_MILISECONDS;
+        }else GroundTremor_Timer -= diff;
+
+        if(FistOfStone_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_FIST_OF_STONE);
+            FistOfStone_Timer = urand(45,55)*IN_MILISECONDS;
+        }else FistOfStone_Timer -= diff;
+
+        if(PetrifiedBark_Timer < diff)
+        {
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_PETRIFIED_BARK : H_SPELL_PETRIFIED_BARK);
+            PetrifiedBark_Timer = urand(30,40)*IN_MILISECONDS;
+        }else PetrifiedBark_Timer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
 ///////////////////
 /// spawned adds///
 ///////////////////
@@ -780,6 +1005,18 @@ CreatureAI* GetAI_mob_iron_roots(Creature* pCreature)
 {
     return new mob_iron_rootsAI(pCreature);
 }
+CreatureAI* GetAI_boss_elder_brightleaf(Creature* pCreature)
+{
+    return new boss_elder_brightleafAI(pCreature);
+}
+CreatureAI* GetAI_boss_elder_ironbranch(Creature* pCreature)
+{
+    return new boss_elder_ironbranchAI(pCreature);
+}
+CreatureAI* GetAI_boss_elder_stonebark(Creature* pCreature)
+{
+    return new boss_elder_stonebarkAI(pCreature);
+}
 CreatureAI* GetAI_mob_freya_spawned(Creature* pCreature)
 {
     return new mob_freya_spawnedAI(pCreature);
@@ -804,6 +1041,20 @@ void AddSC_boss_freya()
     newscript->GetAI = &GetAI_mob_iron_roots;
     newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "boss_elder_brightleaf";
+    newscript->GetAI = &GetAI_boss_elder_brightleaf;
+    newscript->RegisterSelf();
+    
+    newscript = new Script;
+    newscript->Name = "boss_elder_ironbranch";
+    newscript->GetAI = &GetAI_boss_elder_ironbranch;
+    newscript->RegisterSelf();
+    
+    newscript = new Script;
+    newscript->Name = "boss_elder_stonebark";
+    newscript->GetAI = &GetAI_boss_elder_stonebark;
+    newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "mob_freya_spawned";
